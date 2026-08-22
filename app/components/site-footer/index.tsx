@@ -1,8 +1,9 @@
-import { Activity, FolderGit2, Mail } from 'lucide-react';
+import { Activity, Mail } from 'lucide-react';
 import Link from 'next/link';
 
 import { Badge } from '@/app/ui/badge';
 import { Button } from '@/app/ui/button';
+import SiGithub from '@icons-pack/react-simple-icons/icons/SiGithub';
 import { Separator } from '@/app/ui/separator';
 
 import {
@@ -118,7 +119,7 @@ export default function SiteFooter() {
               </p>
               <div className="mt-5 flex flex-col items-start gap-1">
                 <Button
-                  className="h-auto px-0"
+                  className="h-auto gap-1.5 px-0"
                   nativeButton={false}
                   render={<a href={SITE_FOOTER_CONNECT.EMAIL_HREF} />}
                   size="sm"
@@ -128,7 +129,7 @@ export default function SiteFooter() {
                   {SITE_FOOTER_CONNECT.EMAIL_LABEL}
                 </Button>
                 <Button
-                  className="h-auto px-0"
+                  className="h-auto gap-1.5 px-0"
                   nativeButton={false}
                   render={
                     <a href={SITE_FOOTER_CONNECT.GITHUB_HREF} rel="noreferrer" target="_blank" />
@@ -136,7 +137,12 @@ export default function SiteFooter() {
                   size="sm"
                   variant="link"
                 >
-                  <FolderGit2 data-icon="inline-start" />
+                  <span
+                    className="inline-flex size-3.5 shrink-0 items-center justify-center"
+                    data-icon="inline-start"
+                  >
+                    <SiGithub className="size-3.5" color="currentColor" title="GitHub" />
+                  </span>
                   {SITE_FOOTER_CONNECT.GITHUB_LABEL}
                 </Button>
               </div>

@@ -1,6 +1,7 @@
 'use client';
 
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
+import { useEffect } from 'react';
+import { AnimatePresence, motion, useAnimationControls, useReducedMotion } from 'motion/react';
 import Image from 'next/image';
 
 import {
@@ -10,6 +11,7 @@ import {
   HERO_MEAL_ROTATE_MS,
   type HeroMealSlide,
 } from './constants';
+import { cn } from '@/lib/utils';
 
 type HeroMealPhotoProps = Readonly<{
   meal: HeroMealSlide;
@@ -18,6 +20,38 @@ type HeroMealPhotoProps = Readonly<{
   kenBurns?: boolean;
   showCycleProgress?: boolean;
 }>;
+
+type HeroKenBurnsLayerProps = Readonly<{
+  meal: HeroMealSlide;
+  sizes: string;
+  priority: boolean;
+  rotateS: number;
+}>;
+
+function HeroKenBurnsLayer({ meal, sizes, priority, rotateS }: HeroKenBurnsLayerProps) {
+  const controls = useAnimationControls();
+
+  useEffect(() => {
+    controls.set({ scale: HERO_MEAL_KEN_BURNS_FROM });
+    void controls.start({
+      scale: HERO_MEAL_KEN_BURNS_TO,
+      transition: { duration: rotateS, ease: 'linear' },
+    });
+  }, [controls, meal.KEY, rotateS]);
+
+  return (
+    <motion.div animate={controls} className="absolute inset-0 origin-center">
+      <Image
+        src={meal.IMAGE_SRC}
+        alt={meal.IMAGE_ALT}
+        fill
+        priority={priority}
+        sizes={sizes}
+        className={cn('object-cover', meal.IMAGE_OBJECT_CLASS)}
+      />
+    </motion.div>
+  );
+}
 
 export function HeroMealPhoto({
   meal,
@@ -32,40 +66,31 @@ export function HeroMealPhoto({
     duration: reduceMotion ? 0.2 : HERO_MEAL_PHOTO_CROSSFADE_S,
     ease: [0.22, 1, 0.36, 1] as const,
   };
-  const scaleFrom = kenBurns ? HERO_MEAL_KEN_BURNS_FROM : 1;
-  const scaleTo = kenBurns ? HERO_MEAL_KEN_BURNS_TO : 1;
+  const useKenBurns = kenBurns && reduceMotion !== true;
 
   return (
     <>
-      <AnimatePresence initial={false}>
+      <AnimatePresence initial={false} mode="sync">
         <motion.div
           key={meal.KEY}
-          className="absolute inset-0"
-          initial={{ opacity: 0, filter: 'blur(16px)', scale: scaleFrom }}
-          animate={{ opacity: 1, filter: 'blur(0px)', scale: scaleTo }}
-          exit={{
-            opacity: 0,
-            filter: 'blur(12px)',
-            scale: kenBurns ? HERO_MEAL_KEN_BURNS_TO : 1.05,
-          }}
-          transition={
-            reduceMotion || !kenBurns
-              ? crossfade
-              : {
-                  opacity: crossfade,
-                  filter: crossfade,
-                  scale: { duration: rotateS, ease: 'linear' },
-                }
-          }
+          className="absolute inset-0 overflow-hidden"
+          initial={reduceMotion ? { opacity: 0 } : { opacity: 0, filter: 'blur(16px)' }}
+          animate={{ opacity: 1, filter: 'blur(0px)' }}
+          exit={reduceMotion ? { opacity: 0 } : { opacity: 0, filter: 'blur(12px)' }}
+          transition={crossfade}
         >
-          <Image
-            src={meal.IMAGE_SRC}
-            alt={meal.IMAGE_ALT}
-            fill
-            priority={priority}
-            sizes={sizes}
-            className="object-cover"
-          />
+          {useKenBurns ? (
+            <HeroKenBurnsLayer meal={meal} priority={priority} rotateS={rotateS} sizes={sizes} />
+          ) : (
+            <Image
+              src={meal.IMAGE_SRC}
+              alt={meal.IMAGE_ALT}
+              fill
+              priority={priority}
+              sizes={sizes}
+              className={cn('object-cover', meal.IMAGE_OBJECT_CLASS)}
+            />
+          )}
         </motion.div>
       </AnimatePresence>
       {showCycleProgress && reduceMotion !== true ? (

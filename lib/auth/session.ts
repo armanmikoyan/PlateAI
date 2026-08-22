@@ -1,5 +1,30 @@
 import { readAuthServerUrl } from '@/lib/auth/config';
 
+function upstreamResponseHeaders(upstream: Response): Headers {
+  const headers = new Headers();
+
+  upstream.headers.forEach((value, key) => {
+    if (key.toLowerCase() === 'set-cookie') {
+      return;
+    }
+    headers.set(key, value);
+  });
+
+  const setCookies = upstream.headers.getSetCookie?.() ?? [];
+  if (setCookies.length > 0) {
+    for (const cookie of setCookies) {
+      headers.append('set-cookie', cookie);
+    }
+  } else {
+    const cookie = upstream.headers.get('set-cookie');
+    if (cookie) {
+      headers.append('set-cookie', cookie);
+    }
+  }
+
+  return headers;
+}
+
 export async function proxyAuthRequest(request: Request, pathSegments: readonly string[]): Promise<Response> {
   const targetPath = pathSegments.join('/');
   const requestUrl = new URL(request.url);
@@ -29,10 +54,9 @@ export async function proxyAuthRequest(request: Request, pathSegments: readonly 
   }
 
   const upstream = await fetch(targetUrl, init);
-  const responseHeaders = new Headers(upstream.headers);
 
   return new Response(upstream.body, {
     status: upstream.status,
-    headers: responseHeaders,
+    headers: upstreamResponseHeaders(upstream),
   });
 }

@@ -1,5 +1,7 @@
 import type { ServerConfig } from '@/types.js';
 
+const MONGODB_URI_TEMPLATE = /\$\{([^}]+)\}/g;
+
 function requiredEnv(name: string, value: string | undefined): string {
   const trimmed = value?.trim();
 
@@ -8,6 +10,25 @@ function requiredEnv(name: string, value: string | undefined): string {
   }
 
   return trimmed;
+}
+
+function readMongoDbUri(env: NodeJS.ProcessEnv): string {
+  const template = env.MONGODB_URI?.trim();
+
+  if (!template) {
+    throw new Error('MONGODB_URI is required.');
+  }
+
+  return template.replace(MONGODB_URI_TEMPLATE, (_match, name: string) => {
+    const key = name.trim();
+    const value = env[key]?.trim();
+
+    if (!value) {
+      throw new Error(`${key} is required for MONGODB_URI.`);
+    }
+
+    return encodeURIComponent(value);
+  });
 }
 
 export function readServerConfig(env: NodeJS.ProcessEnv = process.env): ServerConfig {
@@ -19,7 +40,7 @@ export function readServerConfig(env: NodeJS.ProcessEnv = process.env): ServerCo
 
   return {
     PORT: port,
-    MONGODB_URI: requiredEnv('MONGODB_URI', env.MONGODB_URI),
+    MONGODB_URI: readMongoDbUri(env),
     JWT_SECRET: requiredEnv('JWT_SECRET', env.JWT_SECRET),
     GOOGLE_CLIENT_ID: requiredEnv('GOOGLE_CLIENT_ID', env.GOOGLE_CLIENT_ID),
     GOOGLE_CLIENT_SECRET: requiredEnv('GOOGLE_CLIENT_SECRET', env.GOOGLE_CLIENT_SECRET),

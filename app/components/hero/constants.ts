@@ -60,6 +60,7 @@ export type HeroMealSlide = Readonly<{
   KEY: string;
   IMAGE_SRC: string;
   IMAGE_ALT: string;
+  IMAGE_OBJECT_CLASS?: string;
   NAME: string;
   CHIPS: readonly HeroMockMealChipRow[];
   CALORIES: string;
@@ -264,6 +265,7 @@ export const HERO_MEAL_SLIDES: readonly HeroMealSlide[] = [
     KEY: 'salad',
     IMAGE_SRC: '/images/hero-salad.png',
     IMAGE_ALT: 'Garden salad with cherry tomatoes, cucumber, and peppers in a grey bowl',
+    IMAGE_OBJECT_CLASS: 'object-[center_40%]',
     NAME: 'Garden salad bowl',
     CHIPS: [
       { ICON: Salad, ICON_CLASS: 'text-positive/90', TEXT: 'Greens' },

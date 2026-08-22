@@ -1,13 +1,26 @@
 'use client';
 
 import Link from 'next/link';
+import { ChevronDownIcon, LogInIcon, LogOutIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Button } from '@/app/ui/button';
+
 import { NAV_AUTH } from './constants';
-import type { AuthMeResponse } from '@/lib/auth/types';
+import { initialsForName } from './utils';
+import { Avatar, AvatarFallback } from '@/app/ui/avatar';
+import { Button } from '@/app/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/app/ui/dropdown-menu';
+import type { AuthMeResponse, AuthUser } from '@/lib/auth/types';
 
 export function NavBarAuth() {
-  const [userName, setUserName] = useState<string | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -22,7 +35,7 @@ export function NavBarAuth() {
 
         const payload = (await response.json()) as AuthMeResponse;
         if (!cancelled) {
-          setUserName(payload.user.name);
+          setUser(payload.user);
         }
       } catch {
         // Ignore — treat as signed out.
@@ -41,23 +54,66 @@ export function NavBarAuth() {
   }, []);
 
   if (!ready) {
-    return null;
+    return <div aria-hidden className="size-9 shrink-0 rounded-full bg-muted/60 sm:size-11" />;
   }
 
-  if (!userName) {
+  if (!user) {
     return (
-      <Button render={<Link href="/login" />} nativeButton={false} size="sm" variant="outline">
-        {NAV_AUTH.SIGN_IN}
+      <Button
+        aria-label={NAV_AUTH.SIGN_IN}
+        className="shrink-0 gap-1.5"
+        render={<Link href="/login" />}
+        nativeButton={false}
+        size="sm"
+        variant="outline"
+      >
+        <LogInIcon data-icon="inline-start" />
+        <span className="hidden xl:inline">{NAV_AUTH.SIGN_IN}</span>
       </Button>
     );
   }
 
   return (
-    <div className="flex items-center gap-2">
-      <span className="text-content-muted hidden max-w-32 truncate text-sm sm:inline">{userName}</span>
-      <Button render={<Link href="/api/auth/logout" />} nativeButton={false} size="sm" variant="ghost">
-        {NAV_AUTH.SIGN_OUT}
-      </Button>
-    </div>
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        aria-label={NAV_AUTH.ACCOUNT_MENU}
+        render={
+          <Button
+            className="size-9 shrink-0 rounded-full p-0 sm:h-11 sm:w-auto sm:gap-2 sm:rounded-full sm:border sm:border-button-outline-border sm:bg-button-outline-surface/40 sm:py-1 sm:pr-3 sm:pl-1 sm:hover:bg-button-outline-hover"
+            size="icon"
+            variant="ghost"
+          />
+        }
+      >
+        <Avatar className="size-8 after:hidden sm:size-10">
+          <AvatarFallback className="bg-surface-overlay text-content text-xs font-semibold sm:text-sm">
+            {initialsForName(user.name)}
+          </AvatarFallback>
+        </Avatar>
+        <span className="hidden max-w-32 truncate text-sm font-medium sm:inline">{user.name}</span>
+        <ChevronDownIcon className="text-muted-foreground hidden size-4 sm:inline" />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-60">
+        <DropdownMenuGroup>
+          <DropdownMenuLabel className="flex flex-col gap-0.5 font-normal">
+            <span className="truncate font-medium text-foreground">{user.name}</span>
+            <span className="truncate text-xs text-muted-foreground">{user.email}</span>
+          </DropdownMenuLabel>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuItem
+            className="cursor-pointer"
+            // Full-page navigation so the auth server can clear the session cookie.
+            // eslint-disable-next-line @next/next/no-html-link-for-pages -- not a Next.js route
+            render={<a href="/api/auth/logout" />}
+            nativeButton={false}
+          >
+            <LogOutIcon />
+            {NAV_AUTH.SIGN_OUT}
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

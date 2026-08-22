@@ -1,0 +1,41 @@
+services:
+  auth:
+    image: ${DOCKER_AUTH_IMAGE}
+    container_name: plateai-auth
+    restart: unless-stopped
+    environment:
+      PORT: 4000
+      NODE_ENV: production
+      JWT_SECRET: ${JWT_SECRET}
+      MONGODB_URI: ${MONGODB_URI}
+      MONGODB_USERNAME: ${MONGODB_USERNAME}
+      MONGODB_PASSWORD: ${MONGODB_PASSWORD}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      GOOGLE_CALLBACK_URL: ${GOOGLE_CALLBACK_URL}
+      FRONTEND_URL: ${FRONTEND_URL}
+    networks:
+      - plateai-net
+
+  web:
+    image: ${DOCKER_IMAGE}
+    container_name: plateai
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    environment:
+      NODE_ENV: production
+      JWT_SECRET: ${JWT_SECRET}
+      AUTH_SERVER_URL: http://plateai-auth:4000
+      AI_TEST_MODE: ${AI_TEST_MODE}
+      AI_IMAGE_PROVIDER: ${AI_IMAGE_PROVIDER}
+      AI_IMAGE_MODEL: ${AI_IMAGE_MODEL}
+      AI_PROVIDER_API_KEY: ${AI_PROVIDER_API_KEY}
+    depends_on:
+      - auth
+    networks:
+      - plateai-net
+
+networks:
+  plateai-net:
+    name: plateai-net

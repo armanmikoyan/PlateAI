@@ -1,10 +1,12 @@
+import Image from 'next/image';
+
 export function HeroBetweenCardsArrow() {
   return (
     <div
       className="pointer-events-none flex shrink-0 justify-center py-2 max-lg:py-3 lg:min-h-0 lg:items-center lg:py-0"
       aria-hidden
     >
-      <img
+      <Image
         src="/icons/hero-right-arrow.svg"
         alt=""
         width={100}

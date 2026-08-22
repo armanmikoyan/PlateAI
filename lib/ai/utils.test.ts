@@ -3,7 +3,11 @@ import { describe, expect, it } from 'vitest';
 import { createImageAnalysisProvider } from '@/lib/ai/create-provider';
 import { AiConfigError } from '@/lib/ai/errors';
 import { parseMealImageAnalysis } from '@/lib/ai/parse-analysis';
-import { readImageAnalysisProviderConfig, readImageAnalysisTestMode, imageMimeForAnalysis } from '@/lib/ai/utils';
+import {
+  readImageAnalysisProviderConfig,
+  readImageAnalysisTestMode,
+  imageMimeForAnalysis,
+} from '@/lib/ai/utils';
 
 describe('readImageAnalysisProviderConfig', () => {
   it('reads gemini config from env', () => {

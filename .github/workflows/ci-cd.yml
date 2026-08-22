@@ -12,6 +12,8 @@ concurrency:
 
 env:
   DOCKER_IMAGE: armanmikoyan/plateai
+  DOCKER_AUTH_IMAGE: armanmikoyan/plateai-auth
+  EC2_APP_DIR: plateai
 
 jobs:
   ci:
@@ -56,6 +58,14 @@ jobs:
       AI_IMAGE_PROVIDER: ${{ vars.AI_IMAGE_PROVIDER }}
       AI_IMAGE_MODEL: ${{ vars.AI_IMAGE_MODEL }}
       AI_PROVIDER_API_KEY: ${{ secrets.AI_PROVIDER_API_KEY }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      FRONTEND_URL: ${{ vars.FRONTEND_URL }}
+      GOOGLE_CALLBACK_URL: ${{ vars.GOOGLE_CALLBACK_URL }}
+      GOOGLE_CLIENT_ID: ${{ vars.GOOGLE_CLIENT_ID }}
+      GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+      MONGODB_URI: ${{ vars.MONGODB_URI }}
+      MONGODB_USERNAME: ${{ vars.MONGODB_USERNAME }}
+      MONGODB_PASSWORD: ${{ secrets.MONGODB_PASSWORD }}
     steps:
       - name: Set deployment URL
         id: deployment-info
@@ -70,7 +80,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push production image
+      - name: Build and push Next.js image
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -81,28 +91,76 @@ jobs:
             ${{ env.DOCKER_IMAGE }}:latest
             ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
 
+      - name: Build and push auth server image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./server
+          file: server/Dockerfile
+          target: runner
+          push: true
+          tags: |
+            ${{ env.DOCKER_AUTH_IMAGE }}:latest
+            ${{ env.DOCKER_AUTH_IMAGE }}:${{ github.sha }}
+
+      - name: Copy compose manifest
+        uses: appleboy/scp-action@v1
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: compose.prod.yaml
+          target: ${{ env.EC2_APP_DIR }}
+
       - name: Deploy on EC2
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
+          envs: >-
+            AI_TEST_MODE,AI_IMAGE_PROVIDER,AI_IMAGE_MODEL,AI_PROVIDER_API_KEY,
+            JWT_SECRET,FRONTEND_URL,GOOGLE_CALLBACK_URL,GOOGLE_CLIENT_ID,
+            GOOGLE_CLIENT_SECRET,MONGODB_URI,MONGODB_USERNAME,MONGODB_PASSWORD,
+            DOCKER_IMAGE,DOCKER_AUTH_IMAGE,EC2_APP_DIR
           script: |
             set -euo pipefail
-            docker pull ${{ env.DOCKER_IMAGE }}:latest
-            docker stop plateai 2>/dev/null || true
-            docker rm plateai 2>/dev/null || true
-            docker stop mealai 2>/dev/null || true
-            docker rm mealai 2>/dev/null || true
-            docker run -d \
-              --name plateai \
-              --restart unless-stopped \
-              -p 3000:3000 \
-              -e AI_TEST_MODE="${{ env.AI_TEST_MODE }}" \
-              -e AI_IMAGE_PROVIDER="${{ env.AI_IMAGE_PROVIDER }}" \
-              -e AI_IMAGE_MODEL="${{ env.AI_IMAGE_MODEL }}" \
-              -e AI_PROVIDER_API_KEY="${{ env.AI_PROVIDER_API_KEY }}" \
-              ${{ env.DOCKER_IMAGE }}:latest
+            cd "$HOME/$EC2_APP_DIR"
+            if ! docker compose version >/dev/null 2>&1; then
+              if command -v docker-compose >/dev/null 2>&1; then
+                compose() { docker-compose "$@"; }
+              else
+                mkdir -p "$HOME/.docker/cli-plugins"
+                curl -fsSL "https://github.com/docker/compose/releases/download/v2.29.7/docker-compose-linux-$(uname -m)" \
+                  -o "$HOME/.docker/cli-plugins/docker-compose"
+                chmod +x "$HOME/.docker/cli-plugins/docker-compose"
+                compose() { docker compose "$@"; }
+              fi
+            else
+              compose() { docker compose "$@"; }
+            fi
+            printf '%s\n' \
+              "DOCKER_IMAGE=${DOCKER_IMAGE}:latest" \
+              "DOCKER_AUTH_IMAGE=${DOCKER_AUTH_IMAGE}:latest" \
+              "JWT_SECRET=${JWT_SECRET}" \
+              "MONGODB_URI=${MONGODB_URI}" \
+              "MONGODB_USERNAME=${MONGODB_USERNAME}" \
+              "MONGODB_PASSWORD=${MONGODB_PASSWORD}" \
+              "GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}" \
+              "GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}" \
+              "GOOGLE_CALLBACK_URL=${GOOGLE_CALLBACK_URL}" \
+              "FRONTEND_URL=${FRONTEND_URL}" \
+              "AI_TEST_MODE=${AI_TEST_MODE}" \
+              "AI_IMAGE_PROVIDER=${AI_IMAGE_PROVIDER}" \
+              "AI_IMAGE_MODEL=${AI_IMAGE_MODEL}" \
+              "AI_PROVIDER_API_KEY=${AI_PROVIDER_API_KEY}" \
+              > .env
+            compose -f compose.prod.yaml down --remove-orphans 2>/dev/null || true
+            for name in plateai plateai-auth mealai; do
+              docker stop "$name" 2>/dev/null || true
+              docker rm "$name" 2>/dev/null || true
+            done
+            compose -f compose.prod.yaml pull
+            compose -f compose.prod.yaml up -d --remove-orphans
             docker image prune -f
 
       - name: Deployment summary

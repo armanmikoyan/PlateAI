@@ -5,7 +5,7 @@ import { useSyncExternalStore } from 'react';
 
 import { cn } from '@/lib/utils';
 
-import { NAV, NAV_MAIN_SECTION_LINKS } from './constants';
+import { NAV_MAIN_SECTION_LINKS } from './constants';
 import type { NavBarSectionLinksProps } from './types';
 import {
   getNavScrollSpyServerSnapshot,
@@ -54,15 +54,6 @@ export function NavBarSectionLinks({ onAfterNavigate, variant }: NavBarSectionLi
           </a>
         );
       })}
-      <span
-        className={cn(
-          'cursor-default select-none text-content-muted',
-          variant === 'drawer' && 'block px-3 py-2.5 text-base text-content-subtle',
-        )}
-        aria-label={`${NAV.LOGIN} (coming soon)`}
-      >
-        {NAV.LOGIN}
-      </span>
     </>
   );
 }

@@ -35,20 +35,22 @@ export function Navbar() {
           </Link>
         </div>
 
-        <div className="ml-auto flex items-center gap-2 sm:gap-3">
-          <NavBarAuth />
-          <div className="text-content-muted hidden shrink-0 flex-wrap items-center justify-end gap-x-5 gap-y-2 text-sm font-medium sm:gap-x-8 sm:text-base lg:flex">
+        <div className="ml-auto flex shrink-0 items-center gap-2 sm:gap-3">
+          <div className="text-content-muted hidden shrink-0 flex-nowrap items-center justify-end gap-x-4 text-sm font-medium xl:flex xl:gap-x-8 xl:text-base">
             <NavBarSectionLinks variant="desktop" />
+          </div>
+          <div className="shrink-0">
+            <NavBarAuth />
           </div>
 
           <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
             <SheetTrigger
               aria-label={menuOpen ? NAV.MENU_CLOSE : NAV.MENU_OPEN}
-              render={<Button className="lg:hidden" size="icon" variant="outline" />}
+              render={<Button className="xl:hidden" size="icon" variant="outline" />}
             >
               <Menu />
             </SheetTrigger>
-            <SheetContent className="lg:hidden" side="left">
+            <SheetContent className="xl:hidden" side="left">
               <SheetHeader>
                 <SheetTitle>{NAV.MENU_HEADING}</SheetTitle>
               </SheetHeader>

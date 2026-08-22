@@ -11,7 +11,6 @@ export const NAV = {
   FEEDBACK: 'Wall of love',
   PRICING: 'Pricing',
   FAQ: 'FAQ',
-  LOGIN: 'Login',
   MENU_OPEN: 'Open menu',
   MENU_CLOSE: 'Close menu',
   MENU_HEADING: 'On this page',
@@ -20,6 +19,7 @@ export const NAV = {
 export const NAV_AUTH = {
   SIGN_IN: 'Sign in',
   SIGN_OUT: 'Sign out',
+  ACCOUNT_MENU: 'Account menu',
 } as const;
 
 /** Order matches page flow — used for scroll-spy (last section whose top is above the trigger wins). */
