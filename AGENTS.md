@@ -56,11 +56,17 @@ Feature folders live under **`app/components/<kebab-case-name>/`**. Standard fil
 
 Shared server/domain logic that is not feature UI (e.g. AI providers) belongs under **`lib/<kebab-name>/`**, not inside `app/components/`.
 
-App-wide **metadata** strings used only by the root layout live in **`app/layout.tsx`** next to `export const metadata` (e.g. `SITE_METADATA` with **SCREAMING_SNAKE_CASE** keys — same convention as feature `constants.ts`).
+## Express server (`server/`)
+
+OAuth + JWT + MongoDB under **`server/src/routes/<kebab-name>/`** — same file pattern as app features (`index.ts`, `constants.ts`, `types.ts`, `utils.ts`, plus **`auth-controller.ts`** / **`auth-service.ts`** when routes need it). **`index.ts` is the router only**; import siblings via **`@/`** (e.g. `@/routes/auth/google-oauth.js`), no re-exports, no `../` across folders. ESM imports use **`.js`** extensions.
+
+App config: **`server/src/config.ts`**, **`server/src/types.ts`**, **`server/src/models/`**. Env: **`server/.env`** from **`server/.env.example`**; **`JWT_SECRET`** must match Next **`.env.local`**. Dev: **`npm run dev:server`**.
+
+**`AUTH.COOKIE_NAME`** in `server/src/routes/auth/constants.ts` must match **`lib/auth/constants.ts`**.
 
 ## Copy / UI strings
 
-Do not hardcode user-visible text inside feature components. Import from **`app/components/<feature>/constants.ts`** using the UPPERCASE export(s) defined there. Root layout metadata copy is colocated in **`app/layout.tsx`** as above, also using UPPERCASE naming.
+Do not hardcode user-visible text inside feature components. Import from **`app/components/<feature>/constants.ts`** using the UPPERCASE export(s) defined there. Root layout metadata copy is colocated in **`app/layout.tsx`** next to `export const metadata` (e.g. `SITE_METADATA` with **SCREAMING_SNAKE_CASE** keys — same convention as feature `constants.ts`).
 
 ## Documentation
 

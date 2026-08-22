@@ -35,6 +35,26 @@ export function sleep(ms: number): Promise<void> {
   });
 }
 
+export function imageMimeForAnalysis(file: Pick<File, 'name' | 'type'>): string {
+  const type = file.type.trim().toLowerCase();
+
+  if (type === 'image/jpeg' || type === 'image/png' || type === 'image/webp') {
+    return type;
+  }
+
+  const extension = file.name.split('.').pop()?.toLowerCase();
+
+  if (extension === 'png') {
+    return 'image/png';
+  }
+
+  if (extension === 'webp') {
+    return 'image/webp';
+  }
+
+  return 'image/jpeg';
+}
+
 export function readImageAnalysisProviderConfig(
   env: NodeJS.ProcessEnv = process.env,
 ): ImageAnalysisProviderConfig {

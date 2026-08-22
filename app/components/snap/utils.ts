@@ -9,7 +9,7 @@ import {
   type HeroNutrientTileRowModel,
   type HeroStatTileModel,
 } from '@/app/components/hero/constants';
-import { ACCEPTED_IMAGE_TYPES, SNAP, SNAP_ANALYSIS_STATUS, SNAP_CONFIDENCE_LABELS, SNAP_HEADING_PHASE } from './constants';
+import { SNAP, SNAP_ANALYSIS_STATUS, SNAP_CONFIDENCE_LABELS, SNAP_HEADING_PHASE } from './constants';
 import type { SnapAnalysisState, SnapHeadingCopy, SnapHeadingPhase, SnapPhoto } from './types';
 
 const SNAP_MACRO_ROW_KEYS = new Set<HeroNutrientMetricRow['KEY']>(['PROTEIN', 'CARBS', 'FAT']);
@@ -119,21 +119,8 @@ export function snapMacroTilesForAnalysis(
   });
 }
 
-export function isAcceptedImageFile(file: File): boolean {
-  return ACCEPTED_IMAGE_TYPES.some((type) => type === file.type);
-}
-
 export function firstAcceptedImageFile(files: FileList | null): File | null {
-  if (!files) {
-    return null;
-  }
-
-  const file = files.item(0);
-  if (!file || !isAcceptedImageFile(file)) {
-    return null;
-  }
-
-  return file;
+  return files?.item(0) ?? null;
 }
 
 export function blobImageLoader({ src }: ImageLoaderProps): string {

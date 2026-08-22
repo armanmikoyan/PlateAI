@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { createImageAnalysisProvider } from '@/lib/ai/create-provider';
 import { AiConfigError } from '@/lib/ai/errors';
 import { parseMealImageAnalysis } from '@/lib/ai/parse-analysis';
-import { readImageAnalysisProviderConfig, readImageAnalysisTestMode } from '@/lib/ai/utils';
+import { readImageAnalysisProviderConfig, readImageAnalysisTestMode, imageMimeForAnalysis } from '@/lib/ai/utils';
 
 describe('readImageAnalysisProviderConfig', () => {
   it('reads gemini config from env', () => {
@@ -39,6 +39,19 @@ describe('readImageAnalysisProviderConfig', () => {
         AI_PROVIDER_API_KEY: 'test-key',
       }),
     ).toThrow(AiConfigError);
+  });
+});
+
+describe('imageMimeForAnalysis', () => {
+  it('uses the file type when present', () => {
+    expect(imageMimeForAnalysis({ name: 'meal.png', type: 'image/png' })).toBe('image/png');
+  });
+
+  it('falls back from the extension when type is empty', () => {
+    expect(imageMimeForAnalysis({ name: 'meal.png', type: '' })).toBe('image/png');
+    expect(imageMimeForAnalysis({ name: 'meal.jpg', type: 'application/octet-stream' })).toBe(
+      'image/jpeg',
+    );
   });
 });
 

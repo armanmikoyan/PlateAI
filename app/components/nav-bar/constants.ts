@@ -17,6 +17,11 @@ export const NAV = {
   MENU_HEADING: 'On this page',
 } as const;
 
+export const NAV_AUTH = {
+  SIGN_IN: 'Sign in',
+  SIGN_OUT: 'Sign out',
+} as const;
+
 /** Order matches page flow — used for scroll-spy (last section whose top is above the trigger wins). */
 export const NAV_MAIN_SECTION_LINKS: readonly NavMainSectionLinkRow[] = [
   { SECTION_ID: 'how-it-works', HREF: '/#how-it-works', LABEL: NAV.HOW_IT_WORKS },

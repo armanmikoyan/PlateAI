@@ -4,27 +4,13 @@ import { SNAP, SNAP_ANALYSIS_STATUS, SNAP_HEADING_PHASE } from './constants';
 import {
   fileFromJpegDataUrl,
   firstAcceptedImageFile,
-  isAcceptedImageFile,
   snapHeadingCopy,
   snapHeadingPhase,
 } from './utils';
 
-describe('isAcceptedImageFile', () => {
-  it('accepts jpeg, png, and webp', () => {
-    expect(isAcceptedImageFile(new File([], 'meal.jpg', { type: 'image/jpeg' }))).toBe(true);
-    expect(isAcceptedImageFile(new File([], 'meal.png', { type: 'image/png' }))).toBe(true);
-    expect(isAcceptedImageFile(new File([], 'meal.webp', { type: 'image/webp' }))).toBe(true);
-  });
-
-  it('rejects other types', () => {
-    expect(isAcceptedImageFile(new File([], 'meal.gif', { type: 'image/gif' }))).toBe(false);
-    expect(isAcceptedImageFile(new File([], 'meal.pdf', { type: 'application/pdf' }))).toBe(false);
-  });
-});
-
 describe('firstAcceptedImageFile', () => {
-  it('returns the first accepted file', () => {
-    const file = new File([], 'meal.jpg', { type: 'image/jpeg' });
+  it('returns the first file without checking mime type', () => {
+    const file = new File([], 'meal.jpg', { type: '' });
     const list = {
       length: 1,
       item: (index: number) => (index === 0 ? file : null),
@@ -33,16 +19,8 @@ describe('firstAcceptedImageFile', () => {
     expect(firstAcceptedImageFile(list)).toBe(file);
   });
 
-  it('returns null for empty or rejected lists', () => {
+  it('returns null for empty lists', () => {
     expect(firstAcceptedImageFile(null)).toBeNull();
-
-    const file = new File([], 'meal.gif', { type: 'image/gif' });
-    const list = {
-      length: 1,
-      item: (index: number) => (index === 0 ? file : null),
-    } as FileList;
-
-    expect(firstAcceptedImageFile(list)).toBeNull();
   });
 });
 

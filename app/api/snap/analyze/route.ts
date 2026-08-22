@@ -1,7 +1,7 @@
 import { analyzeMealImage } from '@/lib/ai/analyze-meal-image';
 import { AiConfigError, AiParseError, AiProviderError } from '@/lib/ai/errors';
-
-const ACCEPTED_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
+import { imageMimeForAnalysis } from '@/lib/ai/utils';
+import { getAuthSession } from '@/lib/auth/jwt';
 
 type AnalyzeSuccessResponse = Readonly<{
   analysis: Awaited<ReturnType<typeof analyzeMealImage>>;
@@ -16,22 +16,24 @@ function errorResponse(message: string, status: number) {
 }
 
 export async function POST(request: Request) {
+  const session = await getAuthSession(request.headers.get('cookie'));
+
+  if (!session) {
+    return errorResponse('Sign in required.', 401);
+  }
+
   try {
     const formData = await request.formData();
     const image = formData.get('image');
 
     if (!(image instanceof File)) {
-      return errorResponse('Upload a PNG, JPG, or WebP meal photo.', 400);
-    }
-
-    if (!ACCEPTED_IMAGE_TYPES.has(image.type)) {
-      return errorResponse('Use a PNG, JPG, or WebP image.', 400);
+      return errorResponse('Upload a meal photo.', 400);
     }
 
     const imageBase64 = Buffer.from(await image.arrayBuffer()).toString('base64');
     const analysis = await analyzeMealImage({
       imageBase64,
-      mimeType: image.type,
+      mimeType: imageMimeForAnalysis(image),
     });
 
     return Response.json({ analysis } satisfies AnalyzeSuccessResponse);

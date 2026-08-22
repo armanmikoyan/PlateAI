@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --hostname 0.0.0.0",
+    "dev:server": "npm run dev --prefix server",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
@@ -16,6 +17,7 @@
     "@google/generative-ai": "^0.24.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "jose": "^6.2.10",
     "jotai": "^2.20.1",
     "lucide-react": "^1.21.0",
     "motion": "^13.1.1",

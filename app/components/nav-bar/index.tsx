@@ -8,6 +8,7 @@ import { Button } from '@/app/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/app/ui/sheet';
 
 import { NAV } from './constants';
+import { NavBarAuth } from './nav-bar-auth';
 import { NavBarSectionLinks } from './nav-bar-section-links';
 
 export function Navbar() {
@@ -35,6 +36,7 @@ export function Navbar() {
         </div>
 
         <div className="ml-auto flex items-center gap-2 sm:gap-3">
+          <NavBarAuth />
           <div className="text-content-muted hidden shrink-0 flex-wrap items-center justify-end gap-x-5 gap-y-2 text-sm font-medium sm:gap-x-8 sm:text-base lg:flex">
             <NavBarSectionLinks variant="desktop" />
           </div>

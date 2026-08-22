@@ -8,7 +8,7 @@ import tseslint from 'typescript-eslint';
 export default defineConfig([
   ...nextVitals,
   ...nextTs,
-  globalIgnores(['.next/**', 'out/**', 'build/**', 'next-env.d.ts']),
+  globalIgnores(['.next/**', 'out/**', 'build/**', 'next-env.d.ts', 'server/**']),
   {
     files: ['app/**/*.{ts,tsx}', 'lib/**/*.ts'],
     plugins: { 'check-file': checkFile },
