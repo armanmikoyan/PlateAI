@@ -8,7 +8,7 @@ import type { SnapAnalyzeCtaProps } from './types';
 
 export function SnapAnalyzeCta({ onAnalyze }: SnapAnalyzeCtaProps) {
   return (
-    <Card className={cn('border-dashed', SNAP_PHOTO_CARD_SHELL)}>
+    <Card className={cn('h-full border-dashed', SNAP_PHOTO_CARD_SHELL)}>
       <CardContent className="flex h-full flex-col items-center justify-center gap-4 p-6">
         <ShimmerButton
           type="button"

@@ -1,5 +1,6 @@
 import type { ImageLoaderProps } from 'next/image';
 import type { MealAnalysisConfidence, MealImageAnalysis } from '@/lib/ai/types';
+import { MEAL_IMAGE_ANALYSIS_TEST_DELAY_MS } from '@/lib/ai/constants';
 import type { DeviceType } from '@/lib/device-detection/types';
 import { DEVICE_TYPE } from '@/lib/device-detection/types';
 import {
@@ -9,7 +10,7 @@ import {
   type HeroNutrientTileRowModel,
   type HeroStatTileModel,
 } from '@/app/components/hero/constants';
-import { SNAP, SNAP_ANALYSIS_STATUS, SNAP_CONFIDENCE_LABELS, SNAP_HEADING_PHASE } from './constants';
+import { SNAP, SNAP_ANALYSIS_STATUS, SNAP_CONFIDENCE_LABELS, SNAP_HEADING_PHASE, SNAP_LOCKED_CALORIES_VALUE, SNAP_LOCKED_NUTRIENT_VALUES } from './constants';
 import type { SnapAnalysisState, SnapHeadingCopy, SnapHeadingPhase, SnapPhoto } from './types';
 
 const SNAP_MACRO_ROW_KEYS = new Set<HeroNutrientMetricRow['KEY']>(['PROTEIN', 'CARBS', 'FAT']);
@@ -68,6 +69,14 @@ export function snapHeadingCopy(
     };
   }
 
+  if (phase === SNAP_HEADING_PHASE.SUCCESS) {
+    return {
+      PHASE: phase,
+      TITLE: SNAP.HEADING_LOCKED_TITLE,
+      SUBTITLE: SNAP.HEADING_LOCKED_SUBTITLE,
+    };
+  }
+
   if (phase === SNAP_HEADING_PHASE.ERROR) {
     return {
       PHASE: phase,
@@ -76,18 +85,10 @@ export function snapHeadingCopy(
     };
   }
 
-  if (analysisState.STATUS !== SNAP_ANALYSIS_STATUS.SUCCESS) {
-    return {
-      PHASE: SNAP_HEADING_PHASE.IDLE,
-      TITLE: SNAP.TITLE,
-      SUBTITLE: deviceType === DEVICE_TYPE.PHONE ? SNAP.SUBTITLE_PHONE : SNAP.SUBTITLE,
-    };
-  }
-
   return {
-    PHASE: phase,
-    TITLE: `${analysisState.ANALYSIS.mealName} detected`,
-    SUBTITLE: SNAP.HEADING_DETECTED_SUBTITLE,
+    PHASE: SNAP_HEADING_PHASE.IDLE,
+    TITLE: SNAP.TITLE,
+    SUBTITLE: deviceType === DEVICE_TYPE.PHONE ? SNAP.SUBTITLE_PHONE : SNAP.SUBTITLE,
   };
 }
 
@@ -149,4 +150,23 @@ const SNAP_CONFIDENCE_LABEL_BY_VALUE: Record<MealAnalysisConfidence, string> = {
 
 export function snapConfidenceLabel(confidence: MealAnalysisConfidence): string {
   return SNAP_CONFIDENCE_LABEL_BY_VALUE[confidence];
+}
+
+export function snapPlaceholderAnalysisDelayMs(): number {
+  const { MIN, MAX } = MEAL_IMAGE_ANALYSIS_TEST_DELAY_MS;
+  return MIN + Math.random() * (MAX - MIN);
+}
+
+export function snapLockedCaloriesTile(): HeroStatTileModel {
+  return {
+    ...HERO_CALORIES_TILE,
+    VALUE: SNAP_LOCKED_CALORIES_VALUE,
+  };
+}
+
+export function snapLockedNutrientTiles(): readonly HeroNutrientTileRowModel[] {
+  return HERO_NUTRIENT_METRIC_ROWS.map((row) => ({
+    ...row,
+    VALUE: SNAP_LOCKED_NUTRIENT_VALUES[row.KEY],
+  }));
 }

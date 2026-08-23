@@ -58,10 +58,24 @@ describe('snapHeadingCopy', () => {
     ).toBe(SNAP.HEADING_PHOTO_READY_TITLE);
   });
 
-  it('uses detected meal name after success', () => {
+  it('uses analyzing copy while loading', () => {
+    const photo = { FILE: new File([], 'plate.jpg'), PREVIEW_URL: 'blob:test' };
+
+    expect(
+      snapHeadingCopy(photo, { STATUS: SNAP_ANALYSIS_STATUS.LOADING }, DEVICE_TYPE.DESKTOP),
+    ).toEqual({
+      PHASE: SNAP_HEADING_PHASE.LOADING,
+      TITLE: SNAP.HEADING_LOADING_TITLE,
+      SUBTITLE: SNAP.HEADING_LOADING_SUBTITLE,
+    });
+  });
+
+  it('uses locked copy after success', () => {
+    const photo = { FILE: new File([], 'plate.jpg'), PREVIEW_URL: 'blob:test' };
+
     expect(
       snapHeadingCopy(
-        { FILE: new File([], 'plate.jpg'), PREVIEW_URL: 'blob:test' },
+        photo,
         {
           STATUS: SNAP_ANALYSIS_STATUS.SUCCESS,
           ANALYSIS: {
@@ -78,8 +92,8 @@ describe('snapHeadingCopy', () => {
       ),
     ).toEqual({
       PHASE: SNAP_HEADING_PHASE.SUCCESS,
-      TITLE: 'Chicken bowl detected',
-      SUBTITLE: SNAP.HEADING_DETECTED_SUBTITLE,
+      TITLE: SNAP.HEADING_LOCKED_TITLE,
+      SUBTITLE: SNAP.HEADING_LOCKED_SUBTITLE,
     });
   });
 

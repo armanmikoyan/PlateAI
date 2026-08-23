@@ -2,14 +2,11 @@
 
 import { useCallback } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import { SNAP, SNAP_ANALYSIS_STATUS } from './constants';
+import { MEAL_IMAGE_ANALYSIS_TEST_FIXTURE } from '@/lib/ai/constants';
+import { SNAP_ANALYSIS_STATUS } from './constants';
 import { snapAnalysisAtom, snapPhotoAtom } from './state';
-import type {
-  SnapAnalyzeErrorResponse,
-  SnapAnalyzeSuccessResponse,
-  UseSnapAnalyzeResult,
-  UseSnapPhotoResult,
-} from './types';
+import type { UseSnapAnalyzeResult, UseSnapPhotoResult } from './types';
+import { snapPlaceholderAnalysisDelayMs } from './utils';
 
 export function useSnapPhoto(): UseSnapPhotoResult {
   const photo = useAtomValue(snapPhotoAtom);
@@ -55,35 +52,14 @@ export function useSnapAnalyze(): UseSnapAnalyzeResult {
 
     setAnalysisState({ STATUS: SNAP_ANALYSIS_STATUS.LOADING });
 
-    try {
-      const formData = new FormData();
-      formData.append('image', photo.FILE);
+    await new Promise((resolve) => {
+      window.setTimeout(resolve, snapPlaceholderAnalysisDelayMs());
+    });
 
-      const response = await fetch('/api/snap/analyze', {
-        method: 'POST',
-        body: formData,
-      });
-
-      const payload = (await response.json()) as SnapAnalyzeSuccessResponse & SnapAnalyzeErrorResponse;
-
-      if (!response.ok || !payload.analysis) {
-        setAnalysisState({
-          STATUS: SNAP_ANALYSIS_STATUS.ERROR,
-          MESSAGE: payload.error ?? SNAP.ANALYSIS_ERROR,
-        });
-        return;
-      }
-
-      setAnalysisState({
-        STATUS: SNAP_ANALYSIS_STATUS.SUCCESS,
-        ANALYSIS: payload.analysis,
-      });
-    } catch {
-      setAnalysisState({
-        STATUS: SNAP_ANALYSIS_STATUS.ERROR,
-        MESSAGE: SNAP.ANALYSIS_ERROR,
-      });
-    }
+    setAnalysisState({
+      STATUS: SNAP_ANALYSIS_STATUS.SUCCESS,
+      ANALYSIS: MEAL_IMAGE_ANALYSIS_TEST_FIXTURE,
+    });
   }, [photo, setAnalysisState]);
 
   return { analysisState, analyzePhoto, resetAnalysis };

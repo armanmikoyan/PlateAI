@@ -1,41 +1,92 @@
 'use client';
 
-import { CheckCircle2, LoaderCircle } from 'lucide-react';
 import Image from 'next/image';
-import { HERO } from '@/app/components/hero/constants';
-import { HeroNutrientTile } from '@/app/components/hero/hero-nutrient-tile';
+import Link from 'next/link';
+import { LoaderCircle } from 'lucide-react';
+
+import { buildPricingTierHref } from '@/app/components/pricing/utils';
 import { Badge } from '@/app/ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/ui/card';
+import { Card, CardContent } from '@/app/ui/card';
 import { cn } from '@/lib/utils';
-import { SNAP, SNAP_ANALYSIS_STATUS, SNAP_PHOTO_CARD_SHELL } from './constants';
-import type { SnapAnalysisReadoutProps } from './types';
+
 import {
-  blobImageLoader,
-  snapCaloriesTileForAnalysis,
-  snapConfidenceLabel,
-  snapMacroTilesForAnalysis,
-} from './utils';
+  SNAP,
+  SNAP_ANALYSIS_STATUS,
+  SNAP_ANALYSIS_CARD_SHELL,
+  SNAP_LOCKED_PREVIEW,
+  SNAP_PHOTO_CARD_SHELL,
+} from './constants';
+import { SnapAnalysisLockedPreview } from './snap-analysis-locked-preview';
+import { SnapAnalysisUnlockCta } from './snap-analysis-unlock-cta';
+import { SnapLockedValue } from './snap-locked-value';
+import type { SnapAnalysisReadoutProps } from './types';
+import { blobImageLoader } from './utils';
+
+function SnapAnalysisResultHeader({ previewUrl }: Readonly<{ previewUrl: string }>) {
+  return (
+    <div className="border-edge flex shrink-0 min-w-0 items-start gap-3 border-b px-4 py-3 sm:px-5">
+      <span className="relative size-14 shrink-0 overflow-hidden rounded-lg sm:size-16">
+        <Image
+          src={previewUrl}
+          alt={SNAP.PREVIEW_ALT}
+          fill
+          unoptimized
+          loader={blobImageLoader}
+          sizes="64px"
+          className="object-cover"
+        />
+      </span>
+      <div className="min-w-0 flex-1 pt-0.5">
+        <Badge variant="ghost">{SNAP.ANALYSIS_DETECTED}</Badge>
+        <p className="font-heading mt-1.5 text-base font-semibold tracking-tight sm:text-lg">
+          <SnapLockedValue value={SNAP_LOCKED_PREVIEW.MEAL_NAME_VALUE} />
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function SnapAnalysisLoadingCard() {
+  return (
+    <Card
+      className={cn('@container/result flex h-full w-full flex-col', SNAP_PHOTO_CARD_SHELL)}
+      aria-live="polite"
+      aria-busy
+    >
+      <CardContent className="flex h-full flex-col items-center justify-center gap-3 p-6 text-center">
+        <LoaderCircle className="text-muted-foreground size-8 animate-spin" aria-hidden />
+        <p className="text-muted-foreground text-sm">{SNAP.ANALYZING}</p>
+      </CardContent>
+    </Card>
+  );
+}
+
+function SnapAnalysisLockedCard({ photo }: Readonly<{ photo: SnapAnalysisReadoutProps['photo'] }>) {
+  return (
+    <Card
+      className={cn(
+        '@container/result flex w-full cursor-pointer flex-col transition-shadow motion-reduce:transition-none hover:shadow-md',
+        SNAP_ANALYSIS_CARD_SHELL,
+      )}
+      aria-live="polite"
+    >
+      <CardContent className="relative flex flex-col gap-0 p-0">
+        <SnapAnalysisResultHeader previewUrl={photo.PREVIEW_URL} />
+        <SnapAnalysisLockedPreview />
+
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-background/40">
+          <SnapAnalysisUnlockCta />
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
 
 export function SnapAnalysisReadout({ analysisState, photo }: SnapAnalysisReadoutProps) {
-  if (analysisState.STATUS === SNAP_ANALYSIS_STATUS.LOADING) {
-    return (
-      <Card
-        className={cn('@container/result flex w-full flex-col', SNAP_PHOTO_CARD_SHELL)}
-        aria-live="polite"
-        aria-busy="true"
-      >
-        <CardContent className="text-muted-foreground flex flex-1 items-center justify-center gap-2 text-sm">
-          <LoaderCircle className="size-5 animate-spin" aria-hidden />
-          {SNAP.ANALYZING}
-        </CardContent>
-      </Card>
-    );
-  }
-
   if (analysisState.STATUS === SNAP_ANALYSIS_STATUS.ERROR) {
     return (
       <Card
-        className={cn('@container/result flex w-full flex-col', SNAP_PHOTO_CARD_SHELL)}
+        className={cn('@container/result flex h-full w-full flex-col', SNAP_PHOTO_CARD_SHELL)}
         aria-live="polite"
       >
         <CardContent className="flex flex-1 items-center justify-center p-6 text-center text-sm text-destructive">
@@ -49,66 +100,17 @@ export function SnapAnalysisReadout({ analysisState, photo }: SnapAnalysisReadou
     return null;
   }
 
-  const { ANALYSIS } = analysisState;
-  const caloriesTile = snapCaloriesTileForAnalysis(ANALYSIS);
-  const macroTiles = snapMacroTilesForAnalysis(ANALYSIS);
+  if (analysisState.STATUS === SNAP_ANALYSIS_STATUS.LOADING) {
+    return <SnapAnalysisLoadingCard />;
+  }
 
   return (
-    <Card
-      className="@container/result flex w-full flex-col"
-      role="region"
-      aria-labelledby="snap-result-title"
-      aria-live="polite"
+    <Link
+      href={buildPricingTierHref('plus')}
+      aria-label={SNAP.PAYWALL_ARIA}
+      className="block w-full rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
     >
-      <CardContent className="flex flex-col gap-3 sm:gap-4">
-        <Card size="sm">
-          <CardHeader>
-            <div className="flex min-w-0 items-start gap-3">
-              <span className="relative size-14 shrink-0 overflow-hidden rounded-lg sm:size-16">
-                <Image
-                  src={photo.PREVIEW_URL}
-                  alt={SNAP.PREVIEW_ALT}
-                  fill
-                  unoptimized
-                  loader={blobImageLoader}
-                  sizes="64px"
-                  className="object-cover"
-                />
-              </span>
-              <div className="min-w-0 flex-1">
-                <Badge variant="ghost">{SNAP.ANALYSIS_DETECTED}</Badge>
-                <CardTitle id="snap-result-title">{ANALYSIS.mealName}</CardTitle>
-                <CardDescription className="flex items-center gap-1.5">
-                  <CheckCircle2 className="text-positive" aria-hidden />
-                  {snapConfidenceLabel(ANALYSIS.confidence)}
-                </CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-        </Card>
-
-        <div className="flex flex-col gap-2">
-          <div>
-            <p className="font-heading text-sm font-medium tracking-tight">
-              {HERO.NUTRIENTS_SECTION_LABEL}
-            </p>
-            <p className="text-muted-foreground mt-0.5 text-xs/relaxed">{SNAP.ANALYSIS_SCOPE}</p>
-          </div>
-
-          <div className="grid min-w-0 grid-cols-2 gap-1.5 *:min-w-0 md:gap-2 @xl/result:grid-cols-4">
-            <div className="col-span-2 @xl/result:col-span-4">
-              <HeroNutrientTile {...caloriesTile} />
-            </div>
-            {macroTiles.map((row) => (
-              <HeroNutrientTile key={row.LABEL} {...row} />
-            ))}
-          </div>
-
-          {ANALYSIS.notes ? (
-            <p className="text-muted-foreground text-sm/relaxed">{ANALYSIS.notes}</p>
-          ) : null}
-        </div>
-      </CardContent>
-    </Card>
+      <SnapAnalysisLockedCard photo={photo} />
+    </Link>
   );
 }

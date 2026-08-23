@@ -10,6 +10,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/ap
 import { NAV } from './constants';
 import { NavBarAuth } from './nav-bar-auth';
 import { NavBarSectionLinks } from './nav-bar-section-links';
+import { NavBarSnapCta } from './nav-bar-snap-cta';
 
 export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -38,6 +39,9 @@ export function Navbar() {
         <div className="ml-auto flex shrink-0 items-center gap-2 sm:gap-3">
           <div className="text-content-muted hidden shrink-0 flex-nowrap items-center justify-end gap-x-4 text-sm font-medium xl:flex xl:gap-x-8 xl:text-base">
             <NavBarSectionLinks variant="desktop" />
+          </div>
+          <div className="shrink-0">
+            <NavBarSnapCta />
           </div>
           <div className="shrink-0">
             <NavBarAuth />

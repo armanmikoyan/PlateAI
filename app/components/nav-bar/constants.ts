@@ -14,6 +14,11 @@ export const NAV = {
   MENU_OPEN: 'Open menu',
   MENU_CLOSE: 'Close menu',
   MENU_HEADING: 'On this page',
+  SNAP_CTA: 'Snap a plate',
+  SNAP_CTA_HREF: '/snap',
+  SNAP_CTA_SHIMMER_BACKGROUND:
+    'linear-gradient(165deg, var(--color-cta-soft) 0%, var(--color-cta) 48%, var(--color-cta-deep) 100%)',
+  SNAP_CTA_SHIMMER_COLOR: 'var(--color-content)',
 } as const;
 
 export const NAV_AUTH = {

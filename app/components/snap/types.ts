@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import type { MealImageAnalysis } from '@/lib/ai/types';
+import type { HeroStatTileChrome } from '@/app/components/hero/constants';
 import { SNAP_ANALYSIS_STATUS, type SnapHeadingPhase } from './constants';
 
 export type SnapPhoto = Readonly<{
@@ -45,6 +46,21 @@ export type SnapAnalysisReadoutProps = Readonly<{
   analysisState: SnapAnalysisState;
   photo: SnapPhoto;
 }>;
+
+export type SnapAnalysisPaywallProps = Readonly<{
+  children: ReactNode;
+  className?: string;
+}>;
+
+export type SnapLockedValueProps = Readonly<{
+  value: string;
+  className?: string;
+}>;
+
+export type SnapLockedNutrientTileProps = HeroStatTileChrome &
+  Readonly<{
+    value: string;
+  }>;
 
 export type SnapPhotoActionsProps = Readonly<{
   disabled: boolean;

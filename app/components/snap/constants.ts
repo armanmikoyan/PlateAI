@@ -64,9 +64,39 @@ export const SNAP = {
   HEADING_PHOTO_READY_SUBTITLE: 'Tap Analyze plate to estimate calories and macros.',
   HEADING_LOADING_TITLE: 'Analyzing your plate',
   HEADING_LOADING_SUBTITLE: 'Reading nutrition from your photo…',
-  HEADING_DETECTED_SUBTITLE: 'Estimated from your photo. Adjust portions if needed.',
+  HEADING_LOCKED_TITLE: 'Paid plan required to unlock results',
+  HEADING_LOCKED_SUBTITLE:
+    'Your photo is ready. Upgrade to Plus or Pro to see calories, macros, and the full breakdown.',
+  HEADING_SHELL: 'min-h-[8.75rem] sm:min-h-[9.25rem]',
   HEADING_NOT_DETECTED_TITLE: 'Meal not detected',
   HEADING_NOT_DETECTED_SUBTITLE: 'Try a clearer shot of the full plate, then analyze again.',
+  PAYWALL_CTA: 'See plans',
+  PAYWALL_ARIA: 'Nutrition analysis locked — view pricing plans',
+  PAYWALL_CTA_SHIMMER_BACKGROUND:
+    'linear-gradient(165deg, var(--color-cta-soft) 0%, var(--color-cta) 48%, var(--color-cta-deep) 100%)',
+  PAYWALL_CTA_SHIMMER_COLOR: 'var(--color-content)',
+} as const;
+
+export const SNAP_LOCKED_PREVIEW = {
+  MEAL_NAME_LABEL: 'Meal name',
+  MEAL_NAME_VALUE: 'Chicken bowl',
+  CONFIDENCE_LABEL: 'Confidence',
+  CONFIDENCE_VALUE: 'High confidence',
+  NOTES_LABEL: 'Notes',
+  NOTES_VALUE: 'Portions estimated from your photo.',
+} as const;
+
+export const SNAP_LOCKED_CALORIES_VALUE = '520' as const;
+
+export const SNAP_LOCKED_NUTRIENT_VALUES = {
+  PROTEIN: '42',
+  CARBS: '38',
+  FAT: '18',
+  FIBER: '6',
+  SAT_FAT: '4',
+  SUGAR: '8',
+  SODIUM: '640',
+  POTASSIUM: '420',
 } as const;
 
 export const SNAP_CONFIDENCE_LABELS = {
@@ -81,6 +111,12 @@ export const SNAP_CAMERA_CAPTURE_FILE = 'plate.jpg' as const;
 
 export const SNAP_PHOTO_CARD_SHELL =
   'relative h-72 w-full gap-0 overflow-hidden py-0 sm:h-80 lg:h-128' as const;
+
+export const SNAP_ANALYSIS_CARD_SHELL =
+  'relative w-full gap-0 overflow-hidden py-0' as const;
+
+export const SNAP_STAGE_GRID_SHELL =
+  'relative grid w-full min-w-0 grid-cols-1 items-start gap-5 [&>*]:min-w-0 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:gap-8' as const;
 
 export const ACCEPTED_IMAGE_TYPES: readonly AcceptedImageType[] = [
   'image/jpeg',

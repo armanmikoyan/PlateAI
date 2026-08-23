@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { Settings2 } from 'lucide-react';
 import { Button } from '@/app/ui/button';
 import { Card } from '@/app/ui/card';
+import { cn } from '@/lib/utils';
 import { SNAP, SNAP_PHOTO_CARD_SHELL } from './constants';
 import { SnapPhotoActions } from './snap-photo-actions';
 import type { SnapMealPhotoCardProps } from './types';
@@ -46,7 +47,7 @@ export function SnapMealPhotoCard({
   }
 
   return (
-    <Card className={SNAP_PHOTO_CARD_SHELL}>
+    <Card className={cn('h-full', SNAP_PHOTO_CARD_SHELL)}>
       <div className="relative h-full w-full overflow-hidden">
         <Image
           src={previewUrl}

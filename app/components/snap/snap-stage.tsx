@@ -1,6 +1,6 @@
 'use client';
 
-import { HERO_ENTER_GRID_SHELL } from '@/app/components/hero/constants';
+import { SNAP_STAGE_GRID_SHELL } from './constants';
 import { HeroBetweenCardsArrow } from '@/app/components/hero/hero-between-cards-arrow';
 import { SnapMealPhotoCard } from './snap-meal-photo-card';
 import { SnapAnalysisReadout } from './snap-analysis-readout';
@@ -14,17 +14,19 @@ function SnapStageGrid({
   photoActionsDisabled,
 }: SnapStageGridProps) {
   return (
-    <div className={HERO_ENTER_GRID_SHELL}>
-      <div className="relative z-0 flex w-full min-w-0 lg:self-start">
+    <div className={SNAP_STAGE_GRID_SHELL}>
+      <div className="relative z-0 w-full min-w-0">
         <SnapMealPhotoCard
-          key={`${photo.PREVIEW_URL}-${String(photoActionsDisabled ?? false)}`}
+          key={photo.PREVIEW_URL}
           previewUrl={photo.PREVIEW_URL}
           photoActions={photoActions}
           photoActionsDisabled={photoActionsDisabled}
         />
       </div>
-      <HeroBetweenCardsArrow />
-      <div className="relative z-0 flex w-full min-w-0">{right}</div>
+      <div className="self-center">
+        <HeroBetweenCardsArrow />
+      </div>
+      <div className="relative z-0 w-full min-w-0">{right}</div>
     </div>
   );
 }
