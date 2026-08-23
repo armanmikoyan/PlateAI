@@ -1,9 +1,9 @@
 import type { NextFunction, Request, Response } from 'express';
 
+import { User, type UserDocument } from '@/models/user.js';
 import { AUTH, AUTH_ERRORS } from '@/routes/auth/constants.js';
-import { createLoginSession, getAuthenticatedUser } from '@/routes/auth/auth-service.js';
+import { createLoginSession, getAuthenticatedUser, toAuthUser } from '@/routes/auth/auth-service.js';
 import { authCookieOptions } from '@/routes/auth/utils.js';
-import type { UserDocument } from '@/models/user.js';
 import type { ServerConfig } from '@/types.js';
 
 export async function googleCallback(
@@ -29,14 +29,21 @@ export async function googleCallback(
 }
 
 export async function getMe(config: ServerConfig, request: Request, response: Response): Promise<void> {
-  const user = await getAuthenticatedUser(config, request.headers.cookie);
+  const tokenUser = await getAuthenticatedUser(config, request.headers.cookie);
+
+  if (!tokenUser) {
+    response.status(401).json({ error: AUTH_ERRORS.NOT_SIGNED_IN });
+    return;
+  }
+
+  const user = await User.findById(tokenUser.id).exec();
 
   if (!user) {
     response.status(401).json({ error: AUTH_ERRORS.NOT_SIGNED_IN });
     return;
   }
 
-  response.json({ user });
+  response.json({ user: toAuthUser(user) });
 }
 
 export function logout(config: ServerConfig, response: Response): void {

@@ -14,6 +14,8 @@ export function toAuthUser(user: UserDocument): AuthUser {
     email: user.email,
     name: user.name,
     image: user.image ?? null,
+    subscriptionPlan: user.subscriptionPlan ?? null,
+    subscriptionStatus: user.subscriptionStatus ?? null,
   };
 }
 

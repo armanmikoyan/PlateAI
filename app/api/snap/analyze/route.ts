@@ -1,10 +1,15 @@
 import { analyzeMealImage } from '@/lib/ai/analyze-meal-image';
 import { AiConfigError, AiParseError, AiProviderError } from '@/lib/ai/errors';
 import { imageMimeForAnalysis } from '@/lib/ai/utils';
-import { getAuthSession } from '@/lib/auth/jwt';
+import { fetchAuthUser } from '@/lib/auth/me';
+import { isSnapAnalysisLocked } from '@/lib/billing/entitlements';
 
 type AnalyzeSuccessResponse = Readonly<{
   analysis: Awaited<ReturnType<typeof analyzeMealImage>>;
+}>;
+
+type AnalyzeLockedResponse = Readonly<{
+  locked: true;
 }>;
 
 type AnalyzeErrorResponse = Readonly<{
@@ -16,10 +21,14 @@ function errorResponse(message: string, status: number) {
 }
 
 export async function POST(request: Request) {
-  const session = await getAuthSession(request.headers.get('cookie'));
+  const user = await fetchAuthUser(request.headers.get('cookie'));
 
-  if (!session) {
+  if (!user) {
     return errorResponse('Sign in required.', 401);
+  }
+
+  if (isSnapAnalysisLocked(user)) {
+    return Response.json({ locked: true } satisfies AnalyzeLockedResponse, { status: 403 });
   }
 
   try {

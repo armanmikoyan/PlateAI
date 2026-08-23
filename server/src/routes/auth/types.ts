@@ -1,8 +1,12 @@
+import type { SubscriptionPlan, SubscriptionStatus } from '@/models/subscription-constants.js';
+
 export type AuthUser = Readonly<{
   id: string;
   email: string;
   name: string;
   image: string | null;
+  subscriptionPlan: SubscriptionPlan | null;
+  subscriptionStatus: SubscriptionStatus | null;
 }>;
 
 export type AuthMeResponse = Readonly<{

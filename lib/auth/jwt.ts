@@ -41,6 +41,8 @@ export async function verifyAuthToken(token: string): Promise<AuthUser | null> {
       email: payload.email,
       name: payload.name,
       image: typeof payload.image === 'string' ? payload.image : null,
+      subscriptionPlan: null,
+      subscriptionStatus: null,
     };
   } catch {
     return null;

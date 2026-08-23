@@ -1,6 +1,7 @@
 import type { ImageLoaderProps } from 'next/image';
 import type { MealAnalysisConfidence, MealImageAnalysis } from '@/lib/ai/types';
 import { MEAL_IMAGE_ANALYSIS_TEST_DELAY_MS } from '@/lib/ai/constants';
+import { sleep } from '@/lib/ai/utils';
 import type { DeviceType } from '@/lib/device-detection/types';
 import { DEVICE_TYPE } from '@/lib/device-detection/types';
 import {
@@ -71,6 +72,17 @@ export function snapHeadingCopy(
   }
 
   if (phase === SNAP_HEADING_PHASE.SUCCESS) {
+    if (
+      analysisState.STATUS === SNAP_ANALYSIS_STATUS.SUCCESS &&
+      analysisState.LOCKED === false
+    ) {
+      return {
+        PHASE: phase,
+        TITLE: analysisState.ANALYSIS.mealName,
+        SUBTITLE: SNAP.ANALYSIS_SCOPE,
+      };
+    }
+
     return {
       PHASE: phase,
       TITLE: SNAP.HEADING_LOCKED_TITLE,
@@ -153,15 +165,24 @@ export function snapConfidenceLabel(confidence: MealAnalysisConfidence): string 
   return SNAP_CONFIDENCE_LABEL_BY_VALUE[confidence];
 }
 
-export function snapPlaceholderAnalysisDelayMs(): number {
-  const { MIN, MAX } = MEAL_IMAGE_ANALYSIS_TEST_DELAY_MS;
-  return MIN + Math.random() * (MAX - MIN);
-}
-
 export function snapLockedCaloriesTile(): HeroStatTileChrome {
   return HERO_CALORIES_TILE;
 }
 
 export function snapLockedNutrientTiles(): readonly HeroNutrientMetricRow[] {
   return HERO_NUTRIENT_METRIC_ROWS;
+}
+
+export function snapLockedPreviewDelayMs(): number {
+  const { MIN, MAX } = MEAL_IMAGE_ANALYSIS_TEST_DELAY_MS;
+  return MIN + Math.floor(Math.random() * (MAX - MIN + 1));
+}
+
+export async function waitForSnapLockedPreviewDelay(startedAtMs: number): Promise<void> {
+  const elapsedMs = Date.now() - startedAtMs;
+  const remainingMs = snapLockedPreviewDelayMs() - elapsedMs;
+
+  if (remainingMs > 0) {
+    await sleep(remainingMs);
+  }
 }

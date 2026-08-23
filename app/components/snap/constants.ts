@@ -50,6 +50,7 @@ export const SNAP = {
   ANALYZE: 'Analyze plate',
   ANALYZE_CTA: 'Tap to analyze',
   ANALYZING: 'Analyzing your plate…',
+  SIGN_IN_REQUIRED: 'Sign in to analyze your photo.',
   ANALYSIS_ERROR: 'Could not analyze that photo. Try again with a clearer shot.',
   ANALYSIS_DETECTED: 'Detected meal',
   ANALYSIS_SCOPE: 'Estimated from your photo',

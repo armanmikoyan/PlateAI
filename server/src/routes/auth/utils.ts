@@ -44,6 +44,8 @@ export async function verifyAuthToken(config: ServerConfig, token: string): Prom
       email: payload.email,
       name: payload.name,
       image: typeof payload.image === 'string' ? payload.image : null,
+      subscriptionPlan: null,
+      subscriptionStatus: null,
     };
   } catch {
     return null;

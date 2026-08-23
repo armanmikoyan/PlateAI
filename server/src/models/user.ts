@@ -1,11 +1,26 @@
 import { Schema, model, type InferSchemaType, type Types } from 'mongoose';
 
+import {
+  SUBSCRIPTION_PLAN,
+  SUBSCRIPTION_STATUS,
+} from '@/models/subscription-constants.js';
+
 const userSchema = new Schema(
   {
     googleId: { type: String, required: true, unique: true, index: true },
     email: { type: String, required: true, unique: true, index: true },
     name: { type: String, required: true },
     image: { type: String, default: null },
+    subscriptionPlan: {
+      type: String,
+      enum: Object.values(SUBSCRIPTION_PLAN),
+      default: null,
+    },
+    subscriptionStatus: {
+      type: String,
+      enum: Object.values(SUBSCRIPTION_STATUS),
+      default: null,
+    },
   },
   { timestamps: true },
 );

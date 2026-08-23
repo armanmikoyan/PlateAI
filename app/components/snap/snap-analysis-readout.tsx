@@ -18,11 +18,12 @@ import {
 } from './constants';
 import { SnapAnalysisLockedPreview } from './snap-analysis-locked-preview';
 import { SnapAnalysisUnlockCta } from './snap-analysis-unlock-cta';
+import { SnapAnalysisUnlockedReadout } from './snap-analysis-unlocked-readout';
 import { SnapLockedPlaceholder } from './snap-locked-placeholder';
 import type { SnapAnalysisReadoutProps } from './types';
 import { blobImageLoader } from './utils';
 
-function SnapAnalysisResultHeader({ previewUrl }: Readonly<{ previewUrl: string }>) {
+function SnapAnalysisLockedHeader({ previewUrl }: Readonly<{ previewUrl: string }>) {
   return (
     <div className="border-edge flex shrink-0 min-w-0 items-start gap-3 border-b px-4 py-3 sm:px-5">
       <span className="relative size-14 shrink-0 overflow-hidden rounded-lg sm:size-16">
@@ -71,7 +72,7 @@ function SnapAnalysisLockedCard({ photo }: Readonly<{ photo: SnapAnalysisReadout
       aria-live="polite"
     >
       <CardContent className="relative flex flex-col gap-0 p-0">
-        <SnapAnalysisResultHeader previewUrl={photo.PREVIEW_URL} />
+        <SnapAnalysisLockedHeader previewUrl={photo.PREVIEW_URL} />
         <SnapAnalysisLockedPreview />
 
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-background/40">
@@ -102,6 +103,22 @@ export function SnapAnalysisReadout({ analysisState, photo }: SnapAnalysisReadou
 
   if (analysisState.STATUS === SNAP_ANALYSIS_STATUS.LOADING) {
     return <SnapAnalysisLoadingCard />;
+  }
+
+  if (analysisState.LOCKED === false) {
+    return (
+      <Card
+        className={cn('@container/result flex w-full flex-col', SNAP_ANALYSIS_CARD_SHELL)}
+        aria-live="polite"
+      >
+        <CardContent className="flex flex-col gap-0 p-0">
+          <SnapAnalysisUnlockedReadout
+            analysis={analysisState.ANALYSIS}
+            previewUrl={photo.PREVIEW_URL}
+          />
+        </CardContent>
+      </Card>
+    );
   }
 
   return (

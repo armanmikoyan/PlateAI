@@ -25,7 +25,8 @@ export type UseSnapPhotoResult = Readonly<{
 export type SnapAnalysisState =
   | Readonly<{ STATUS: typeof SNAP_ANALYSIS_STATUS.IDLE }>
   | Readonly<{ STATUS: typeof SNAP_ANALYSIS_STATUS.LOADING }>
-  | Readonly<{ STATUS: typeof SNAP_ANALYSIS_STATUS.SUCCESS }>
+  | Readonly<{ STATUS: typeof SNAP_ANALYSIS_STATUS.SUCCESS; LOCKED: true }>
+  | Readonly<{ STATUS: typeof SNAP_ANALYSIS_STATUS.SUCCESS; LOCKED: false; ANALYSIS: MealImageAnalysis }>
   | Readonly<{ STATUS: typeof SNAP_ANALYSIS_STATUS.ERROR; MESSAGE: string }>;
 
 export type UseSnapAnalyzeResult = Readonly<{
@@ -45,6 +46,11 @@ export type SnapAnalyzeErrorResponse = Readonly<{
 export type SnapAnalysisReadoutProps = Readonly<{
   analysisState: SnapAnalysisState;
   photo: SnapPhoto;
+}>;
+
+export type SnapAnalysisUnlockedReadoutProps = Readonly<{
+  analysis: MealImageAnalysis;
+  previewUrl: string;
 }>;
 
 export type SnapAnalysisPaywallProps = Readonly<{

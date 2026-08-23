@@ -2,10 +2,10 @@
 
 import { useCallback } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import { SNAP_ANALYSIS_STATUS } from './constants';
+import { SNAP, SNAP_ANALYSIS_STATUS } from './constants';
 import { snapAnalysisAtom, snapPhotoAtom } from './state';
-import type { UseSnapAnalyzeResult, UseSnapPhotoResult } from './types';
-import { snapPlaceholderAnalysisDelayMs } from './utils';
+import type { SnapAnalyzeErrorResponse, SnapAnalyzeSuccessResponse, UseSnapAnalyzeResult, UseSnapPhotoResult } from './types';
+import { waitForSnapLockedPreviewDelay } from './utils';
 
 export function useSnapPhoto(): UseSnapPhotoResult {
   const photo = useAtomValue(snapPhotoAtom);
@@ -51,11 +51,46 @@ export function useSnapAnalyze(): UseSnapAnalyzeResult {
 
     setAnalysisState({ STATUS: SNAP_ANALYSIS_STATUS.LOADING });
 
-    await new Promise((resolve) => {
-      window.setTimeout(resolve, snapPlaceholderAnalysisDelayMs());
-    });
+    const startedAtMs = Date.now();
 
-    setAnalysisState({ STATUS: SNAP_ANALYSIS_STATUS.SUCCESS });
+    try {
+      const formData = new FormData();
+      formData.append('image', photo.FILE);
+
+      const response = await fetch('/api/snap/analyze', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (response.status === 401) {
+        setAnalysisState({ STATUS: SNAP_ANALYSIS_STATUS.ERROR, MESSAGE: SNAP.SIGN_IN_REQUIRED });
+        return;
+      }
+
+      if (response.status === 403) {
+        await waitForSnapLockedPreviewDelay(startedAtMs);
+        setAnalysisState({ STATUS: SNAP_ANALYSIS_STATUS.SUCCESS, LOCKED: true });
+        return;
+      }
+
+      if (!response.ok) {
+        const body = (await response.json().catch(() => null)) as SnapAnalyzeErrorResponse | null;
+        setAnalysisState({
+          STATUS: SNAP_ANALYSIS_STATUS.ERROR,
+          MESSAGE: body?.error ?? SNAP.ANALYSIS_ERROR,
+        });
+        return;
+      }
+
+      const body = (await response.json()) as SnapAnalyzeSuccessResponse;
+      setAnalysisState({
+        STATUS: SNAP_ANALYSIS_STATUS.SUCCESS,
+        LOCKED: false,
+        ANALYSIS: body.analysis,
+      });
+    } catch {
+      setAnalysisState({ STATUS: SNAP_ANALYSIS_STATUS.ERROR, MESSAGE: SNAP.ANALYSIS_ERROR });
+    }
   }, [photo, setAnalysisState]);
 
   return { analysisState, analyzePhoto, resetAnalysis };
