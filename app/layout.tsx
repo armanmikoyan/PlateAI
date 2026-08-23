@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { Navbar } from '@/app/components/nav-bar';
+import { readSiteUrl } from '@/lib/site/url';
 
 type RootLayoutProps = Readonly<{
   children: ReactNode;
@@ -19,8 +20,17 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: readSiteUrl(),
   title: 'PlateAI',
   description: 'Photo-first nutrition from a snap of your plate.',
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+    },
+  },
   icons: {
     icon: [{ url: '/icons/favicon.svg', type: 'image/svg+xml', sizes: 'any' }],
   },
