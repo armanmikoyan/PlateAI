@@ -28,7 +28,7 @@ export const SITE_FOOTER_PRODUCT_LINKS: readonly SiteFooterProductLinkRow[] = [
   { KEY: 'features', LABEL: 'Features', HREF: '/#features' },
   { KEY: 'use-cases', LABEL: 'Use cases', HREF: '/#use-cases' },
   { KEY: 'feedback', LABEL: 'Wall of love', HREF: '/#feedback' },
-  { KEY: 'pricing', LABEL: 'Pricing', HREF: '/#pricing' },
+  { KEY: 'pricing', LABEL: 'Pricing', HREF: '/pricing' },
   { KEY: 'faq', LABEL: 'FAQ', HREF: '/#faq' },
 ] as const;
 

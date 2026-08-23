@@ -7,7 +7,7 @@ export default function Pricing() {
   return (
     <section
       id="pricing"
-      className="border-edge/60 scroll-mt-28 border-t bg-canvas py-16 sm:py-20 lg:py-24"
+      className="border-edge scroll-mt-28 border-t bg-canvas py-16 sm:py-20 lg:py-24"
       aria-labelledby="pricing-heading"
     >
       <ScrollEnter
@@ -16,7 +16,7 @@ export default function Pricing() {
           { KEY: 'intro', content: <PricingSectionIntro /> },
           {
             KEY: 'grid',
-            content: <PricingTierGrid />,
+            content: <PricingTierGrid variant="preview" />,
             delayClass: 'motion-safe:delay-150',
           },
         ]}

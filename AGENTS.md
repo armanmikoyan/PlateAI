@@ -29,6 +29,8 @@ Do not inline structural types in props or signatures (no `{ children: ReactNode
 
 Put types **immediately after imports** when they only reference imported types. If a type needs `typeof` some value in the same file (for example `VariantProps<typeof buttonVariants>`), declare that type **right above** the component/function that uses it, after the value exists.
 
+**No types or static constants in component files.** Feature `*.tsx` subcomponents (e.g. `pricing-comparison-table.tsx`) must not declare `type`/`interface` or exportable `const` maps, arrays, or copy — put types in **`types.ts`** and static data in **`constants.ts`**. Component files import those siblings; they contain JSX and component logic only. **`app/ui/`** follows the same split when a control needs feature-level copy or props types colocated nearby.
+
 ## Naming
 
 - **Folders:** use **kebab-case** (`meal-plan`, `shopping-list`). Single-word segments are lowercase (`test`, `auth`). Apply under **`app/components/`** (and new route segments under **`app/`** when you add them).
@@ -48,7 +50,7 @@ Feature folders live under **`app/components/<kebab-case-name>/`**. Standard fil
 | **`utils.ts`** | Pure helpers — no Jotai, no `fetch`, no browser-only APIs unless clearly gated. |
 | **`hooks.ts`** | Client hooks (`'use client'`). Compose **`state.ts`** atoms; keep side effects here, not in `utils.ts`. |
 | **`state.ts`** | **Jotai atoms only** (single file). Types for atom values live in **`types.ts`**. |
-| **`<kebab-name>.tsx`** | Subcomponents (e.g. `snap-upload-panel.tsx`). **Import the file directly** — `@/app/components/snap/snap-upload-panel` or `./snap-upload-panel`. |
+| **`<kebab-name>.tsx`** | Subcomponents (e.g. `snap-upload-panel.tsx`). **Import the file directly** — `@/app/components/snap/snap-upload-panel` or `./snap-upload-panel`. **No `type`/`interface` or static `const` data** — use **`types.ts`** and **`constants.ts`**. |
 
 **Do not** add barrel files (`index.ts` that re-exports siblings, or re-export subcomponents through `index.tsx`). **`app/ui/`** has no barrel either — import the concrete file (e.g. `@/app/ui/button`).
 
@@ -68,6 +70,4 @@ App config: **`server/src/config.ts`**, **`server/src/types.ts`**, **`server/src
 
 Do not hardcode user-visible text inside feature components. Import from **`app/components/<feature>/constants.ts`** using the UPPERCASE export(s) defined there. Root layout metadata copy is colocated in **`app/layout.tsx`** next to `export const metadata` (e.g. `SITE_METADATA` with **SCREAMING_SNAKE_CASE** keys — same convention as feature `constants.ts`).
 
-## Documentation
-
-Do not add or recreate `README.md` files unless the user explicitly asks for them.
+## Documentatio
