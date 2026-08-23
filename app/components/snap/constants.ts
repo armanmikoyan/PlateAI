@@ -78,25 +78,17 @@ export const SNAP = {
 } as const;
 
 export const SNAP_LOCKED_PREVIEW = {
-  MEAL_NAME_LABEL: 'Meal name',
-  MEAL_NAME_VALUE: 'Chicken bowl',
   CONFIDENCE_LABEL: 'Confidence',
-  CONFIDENCE_VALUE: 'High confidence',
   NOTES_LABEL: 'Notes',
-  NOTES_VALUE: 'Portions estimated from your photo.',
 } as const;
 
-export const SNAP_LOCKED_CALORIES_VALUE = '520' as const;
-
-export const SNAP_LOCKED_NUTRIENT_VALUES = {
-  PROTEIN: '42',
-  CARBS: '38',
-  FAT: '18',
-  FIBER: '6',
-  SAT_FAT: '4',
-  SUGAR: '8',
-  SODIUM: '640',
-  POTASSIUM: '420',
+/** Decoy values under blur — numeric/text results only, never real analysis data. */
+export const SNAP_LOCKED_DECOY = {
+  MEAL_NAME: '00000000',
+  CONFIDENCE: '000000',
+  NOTES: '0000000000000000000',
+  CALORIES: '0',
+  NUTRIENT: '0',
 } as const;
 
 export const SNAP_CONFIDENCE_LABELS = {

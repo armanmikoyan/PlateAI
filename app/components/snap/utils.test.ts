@@ -74,22 +74,7 @@ describe('snapHeadingCopy', () => {
     const photo = { FILE: new File([], 'plate.jpg'), PREVIEW_URL: 'blob:test' };
 
     expect(
-      snapHeadingCopy(
-        photo,
-        {
-          STATUS: SNAP_ANALYSIS_STATUS.SUCCESS,
-          ANALYSIS: {
-            mealName: 'Chicken bowl',
-            calories: 520,
-            proteinG: 42,
-            carbsG: 38,
-            fatG: 18,
-            confidence: 'high',
-            notes: null,
-          },
-        },
-        DEVICE_TYPE.DESKTOP,
-      ),
+      snapHeadingCopy(photo, { STATUS: SNAP_ANALYSIS_STATUS.SUCCESS }, DEVICE_TYPE.DESKTOP),
     ).toEqual({
       PHASE: SNAP_HEADING_PHASE.SUCCESS,
       TITLE: SNAP.HEADING_LOCKED_TITLE,

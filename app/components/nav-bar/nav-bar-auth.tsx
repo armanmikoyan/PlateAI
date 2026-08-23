@@ -54,17 +54,16 @@ export function NavBarAuth() {
   }, []);
 
   if (!ready) {
-    return <div aria-hidden className="size-9 shrink-0 rounded-full bg-muted/60 sm:size-11" />;
+    return <div aria-hidden className="size-8 shrink-0 rounded-full bg-muted/60 sm:size-9" />;
   }
 
   if (!user) {
     return (
       <Button
         aria-label={NAV_AUTH.SIGN_IN}
-        className="shrink-0 gap-1.5"
+        className="h-8 shrink-0 gap-1.5 px-2.5 text-xs sm:h-9 sm:px-4 sm:text-sm"
         render={<Link href="/login" />}
         nativeButton={false}
-        size="sm"
         variant="outline"
       >
         <LogInIcon data-icon="inline-start" />
@@ -79,19 +78,20 @@ export function NavBarAuth() {
         aria-label={NAV_AUTH.ACCOUNT_MENU}
         render={
           <Button
-            className="size-9 shrink-0 rounded-full p-0 sm:h-11 sm:w-auto sm:gap-2 sm:rounded-full sm:border sm:border-button-outline-border sm:bg-button-outline-surface/40 sm:py-1 sm:pr-3 sm:pl-1 sm:hover:bg-button-outline-hover"
-            size="icon"
+            className="h-8 w-8 shrink-0 rounded-full p-0 sm:h-9 sm:w-auto sm:gap-1.5 sm:rounded-full sm:border sm:border-button-outline-border sm:bg-button-outline-surface/40 sm:py-0 sm:pr-3 sm:pl-0.5 sm:hover:bg-button-outline-hover"
             variant="ghost"
           />
         }
       >
-        <Avatar className="size-8 after:hidden sm:size-10">
-          <AvatarFallback className="bg-surface-overlay text-content text-xs font-semibold sm:text-sm">
+        <Avatar className="size-7 after:hidden sm:size-8">
+          <AvatarFallback className="bg-surface-overlay text-content text-[10px] font-semibold sm:text-xs">
             {initialsForName(user.name)}
           </AvatarFallback>
         </Avatar>
-        <span className="hidden max-w-32 truncate text-sm font-medium sm:inline">{user.name}</span>
-        <ChevronDownIcon className="text-muted-foreground hidden size-4 sm:inline" />
+        <span className="hidden max-w-28 truncate text-xs font-medium sm:inline sm:max-w-32 sm:text-sm">
+          {user.name}
+        </span>
+        <ChevronDownIcon className="text-muted-foreground hidden size-3.5 sm:inline sm:size-4" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-60">
         <DropdownMenuGroup>

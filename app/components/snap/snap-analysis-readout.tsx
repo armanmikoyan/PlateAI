@@ -13,12 +13,12 @@ import {
   SNAP,
   SNAP_ANALYSIS_STATUS,
   SNAP_ANALYSIS_CARD_SHELL,
-  SNAP_LOCKED_PREVIEW,
+  SNAP_LOCKED_DECOY,
   SNAP_PHOTO_CARD_SHELL,
 } from './constants';
 import { SnapAnalysisLockedPreview } from './snap-analysis-locked-preview';
 import { SnapAnalysisUnlockCta } from './snap-analysis-unlock-cta';
-import { SnapLockedValue } from './snap-locked-value';
+import { SnapLockedPlaceholder } from './snap-locked-placeholder';
 import type { SnapAnalysisReadoutProps } from './types';
 import { blobImageLoader } from './utils';
 
@@ -39,7 +39,7 @@ function SnapAnalysisResultHeader({ previewUrl }: Readonly<{ previewUrl: string 
       <div className="min-w-0 flex-1 pt-0.5">
         <Badge variant="ghost">{SNAP.ANALYSIS_DETECTED}</Badge>
         <p className="font-heading mt-1.5 text-base font-semibold tracking-tight sm:text-lg">
-          <SnapLockedValue value={SNAP_LOCKED_PREVIEW.MEAL_NAME_VALUE} />
+          <SnapLockedPlaceholder value={SNAP_LOCKED_DECOY.MEAL_NAME} />
         </p>
       </div>
     </div>

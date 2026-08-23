@@ -25,7 +25,7 @@ export type UseSnapPhotoResult = Readonly<{
 export type SnapAnalysisState =
   | Readonly<{ STATUS: typeof SNAP_ANALYSIS_STATUS.IDLE }>
   | Readonly<{ STATUS: typeof SNAP_ANALYSIS_STATUS.LOADING }>
-  | Readonly<{ STATUS: typeof SNAP_ANALYSIS_STATUS.SUCCESS; ANALYSIS: MealImageAnalysis }>
+  | Readonly<{ STATUS: typeof SNAP_ANALYSIS_STATUS.SUCCESS }>
   | Readonly<{ STATUS: typeof SNAP_ANALYSIS_STATUS.ERROR; MESSAGE: string }>;
 
 export type UseSnapAnalyzeResult = Readonly<{
@@ -52,14 +52,14 @@ export type SnapAnalysisPaywallProps = Readonly<{
   className?: string;
 }>;
 
-export type SnapLockedValueProps = Readonly<{
+export type SnapLockedPlaceholderProps = Readonly<{
   value: string;
   className?: string;
 }>;
 
 export type SnapLockedNutrientTileProps = HeroStatTileChrome &
   Readonly<{
-    value: string;
+    decoyValue?: string;
   }>;
 
 export type SnapPhotoActionsProps = Readonly<{

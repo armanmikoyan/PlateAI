@@ -8,9 +8,10 @@ import {
   HERO_NUTRIENT_METRIC_ROWS,
   type HeroNutrientMetricRow,
   type HeroNutrientTileRowModel,
+  type HeroStatTileChrome,
   type HeroStatTileModel,
 } from '@/app/components/hero/constants';
-import { SNAP, SNAP_ANALYSIS_STATUS, SNAP_CONFIDENCE_LABELS, SNAP_HEADING_PHASE, SNAP_LOCKED_CALORIES_VALUE, SNAP_LOCKED_NUTRIENT_VALUES } from './constants';
+import { SNAP, SNAP_ANALYSIS_STATUS, SNAP_CONFIDENCE_LABELS, SNAP_HEADING_PHASE } from './constants';
 import type { SnapAnalysisState, SnapHeadingCopy, SnapHeadingPhase, SnapPhoto } from './types';
 
 const SNAP_MACRO_ROW_KEYS = new Set<HeroNutrientMetricRow['KEY']>(['PROTEIN', 'CARBS', 'FAT']);
@@ -157,16 +158,10 @@ export function snapPlaceholderAnalysisDelayMs(): number {
   return MIN + Math.random() * (MAX - MIN);
 }
 
-export function snapLockedCaloriesTile(): HeroStatTileModel {
-  return {
-    ...HERO_CALORIES_TILE,
-    VALUE: SNAP_LOCKED_CALORIES_VALUE,
-  };
+export function snapLockedCaloriesTile(): HeroStatTileChrome {
+  return HERO_CALORIES_TILE;
 }
 
-export function snapLockedNutrientTiles(): readonly HeroNutrientTileRowModel[] {
-  return HERO_NUTRIENT_METRIC_ROWS.map((row) => ({
-    ...row,
-    VALUE: SNAP_LOCKED_NUTRIENT_VALUES[row.KEY],
-  }));
+export function snapLockedNutrientTiles(): readonly HeroNutrientMetricRow[] {
+  return HERO_NUTRIENT_METRIC_ROWS;
 }

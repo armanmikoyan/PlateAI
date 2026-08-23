@@ -1,16 +1,17 @@
 import { Card, CardContent } from '@/app/ui/card';
 import { cn } from '@/lib/utils';
 
-import { SnapLockedValue } from './snap-locked-value';
+import { SNAP_LOCKED_DECOY } from './constants';
+import { SnapLockedPlaceholder } from './snap-locked-placeholder';
 import type { SnapLockedNutrientTileProps } from './types';
 
 export function SnapLockedNutrientTile({
   ICON,
   LABEL,
   UNIT,
-  value,
   ICON_CLASS,
   ICON_BG_CLASS,
+  decoyValue = SNAP_LOCKED_DECOY.NUTRIENT,
 }: SnapLockedNutrientTileProps) {
   return (
     <Card size="sm">
@@ -28,10 +29,11 @@ export function SnapLockedNutrientTile({
             {LABEL}
           </p>
           <p className="font-heading text-sm font-semibold tracking-tight tabular-nums sm:text-base">
-            <SnapLockedValue value={value} />
-            <span className="text-muted-foreground ml-1 inline-block font-sans text-[10px] font-normal blur-[4px] sm:text-xs motion-reduce:blur-none">
-              {UNIT}
-            </span>
+            <SnapLockedPlaceholder value={decoyValue} />
+            <SnapLockedPlaceholder
+              value={UNIT}
+              className="text-muted-foreground ml-1 font-sans text-[10px] font-normal sm:text-xs"
+            />
           </p>
         </div>
       </CardContent>

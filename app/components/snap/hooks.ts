@@ -2,7 +2,6 @@
 
 import { useCallback } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import { MEAL_IMAGE_ANALYSIS_TEST_FIXTURE } from '@/lib/ai/constants';
 import { SNAP_ANALYSIS_STATUS } from './constants';
 import { snapAnalysisAtom, snapPhotoAtom } from './state';
 import type { UseSnapAnalyzeResult, UseSnapPhotoResult } from './types';
@@ -56,10 +55,7 @@ export function useSnapAnalyze(): UseSnapAnalyzeResult {
       window.setTimeout(resolve, snapPlaceholderAnalysisDelayMs());
     });
 
-    setAnalysisState({
-      STATUS: SNAP_ANALYSIS_STATUS.SUCCESS,
-      ANALYSIS: MEAL_IMAGE_ANALYSIS_TEST_FIXTURE,
-    });
+    setAnalysisState({ STATUS: SNAP_ANALYSIS_STATUS.SUCCESS });
   }, [photo, setAnalysisState]);
 
   return { analysisState, analyzePhoto, resetAnalysis };

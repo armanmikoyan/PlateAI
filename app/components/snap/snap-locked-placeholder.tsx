@@ -1,15 +1,15 @@
 import { cn } from '@/lib/utils';
 
-import type { SnapLockedValueProps } from './types';
+import type { SnapLockedPlaceholderProps } from './types';
 
-export function SnapLockedValue({ value, className }: SnapLockedValueProps) {
+export function SnapLockedPlaceholder({ value, className }: SnapLockedPlaceholderProps) {
   return (
     <span
       className={cn(
         'inline-block max-w-full truncate blur-[5px] select-none motion-reduce:blur-none',
         className,
       )}
-      aria-hidden="true"
+      aria-hidden
     >
       {value}
     </span>

@@ -2,10 +2,10 @@ import { CheckCircle2 } from 'lucide-react';
 
 import { HERO } from '@/app/components/hero/constants';
 
-import { SNAP, SNAP_LOCKED_PREVIEW } from './constants';
+import { SNAP, SNAP_LOCKED_DECOY, SNAP_LOCKED_PREVIEW } from './constants';
 import { SnapAnalysisPaywall } from './snap-analysis-paywall';
 import { SnapLockedNutrientTile } from './snap-locked-nutrient-tile';
-import { SnapLockedValue } from './snap-locked-value';
+import { SnapLockedPlaceholder } from './snap-locked-placeholder';
 import { snapLockedCaloriesTile, snapLockedNutrientTiles } from './utils';
 
 export function SnapAnalysisLockedPreview() {
@@ -20,7 +20,7 @@ export function SnapAnalysisLockedPreview() {
         </p>
         <p className="mt-1 flex items-center gap-1.5 text-sm">
           <CheckCircle2 className="text-positive size-4 shrink-0" aria-hidden />
-          <SnapLockedValue value={SNAP_LOCKED_PREVIEW.CONFIDENCE_VALUE} />
+          <SnapLockedPlaceholder value={SNAP_LOCKED_DECOY.CONFIDENCE} />
         </p>
       </div>
 
@@ -35,10 +35,10 @@ export function SnapAnalysisLockedPreview() {
 
           <div className="grid min-w-0 grid-cols-2 gap-1.5 *:min-w-0 md:gap-2 @xl/result:grid-cols-4">
             <div className="col-span-2 @xl/result:col-span-4">
-              <SnapLockedNutrientTile {...caloriesTile} value={caloriesTile.VALUE} />
+              <SnapLockedNutrientTile {...caloriesTile} decoyValue={SNAP_LOCKED_DECOY.CALORIES} />
             </div>
             {nutrientTiles.map((row) => (
-              <SnapLockedNutrientTile key={row.KEY} {...row} value={row.VALUE} />
+              <SnapLockedNutrientTile key={row.KEY} {...row} />
             ))}
           </div>
 
@@ -47,7 +47,7 @@ export function SnapAnalysisLockedPreview() {
               {SNAP_LOCKED_PREVIEW.NOTES_LABEL}
             </p>
             <p className="text-muted-foreground mt-1 text-sm/relaxed">
-              <SnapLockedValue value={SNAP_LOCKED_PREVIEW.NOTES_VALUE} />
+              <SnapLockedPlaceholder value={SNAP_LOCKED_DECOY.NOTES} />
             </p>
           </div>
         </div>
