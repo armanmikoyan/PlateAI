@@ -53,7 +53,13 @@ export async function proxyAuthRequest(request: Request, pathSegments: readonly 
     init.body = await request.arrayBuffer();
   }
 
-  const upstream = await fetch(targetUrl, init);
+  let upstream: Response;
+
+  try {
+    upstream = await fetch(targetUrl, init);
+  } catch {
+    return Response.json({ error: 'Auth server unavailable.' }, { status: 502 });
+  }
 
   return new Response(upstream.body, {
     status: upstream.status,
