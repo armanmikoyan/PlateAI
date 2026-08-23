@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useRef, useState, type DragEvent, type MouseEvent, type ReactNode } from 'react';
-import { AlertCircle, Camera, ImageUp, Upload } from 'lucide-react';
+import { useRef, useState, type DragEvent, type MouseEvent, type ReactNode } from 'react';
+import { AlertCircle, Camera, ImageUp, LoaderCircle, Upload } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/app/ui/alert';
 import { Button } from '@/app/ui/button';
 import {
@@ -16,7 +16,7 @@ import { cn } from '@/lib/utils';
 import { DEVICE_TYPE } from '@/lib/device-detection/types';
 import { useDeviceType } from '@/lib/device-detection/use-device-type';
 import { ACCEPTED_IMAGE_ACCEPT, SNAP, SNAP_ANALYSIS_STATUS } from './constants';
-import { useSnapAnalyze, useSnapPhoto } from './hooks';
+import { useSnapAnalyze, useSnapPhoto, useSnapSavedMealLoader } from './hooks';
 import { SnapAnalysisStage, SnapPhotoStage } from './snap-stage';
 import { SnapCameraDialog } from './snap-camera-dialog';
 import { canUseCameraStream, firstAcceptedImageFile } from './utils';
@@ -24,6 +24,7 @@ import { canUseCameraStream, firstAcceptedImageFile } from './utils';
 export function SnapUploadPanel() {
   const { photo, setPhoto } = useSnapPhoto();
   const { analysisState, analyzePhoto } = useSnapAnalyze();
+  const { loadingSavedMeal } = useSnapSavedMealLoader();
   const deviceType = useDeviceType();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
@@ -34,12 +35,6 @@ export function SnapUploadPanel() {
 
   const showAnalysisLayout = Boolean(photo) && analysisState.STATUS !== SNAP_ANALYSIS_STATUS.IDLE;
   const photoActionsDisabled = analysisState.STATUS === SNAP_ANALYSIS_STATUS.LOADING;
-
-  useEffect(() => {
-    return () => {
-      setPhoto(null);
-    };
-  }, [setPhoto]);
 
   function applyFile(file: File | null) {
     if (!file) {
@@ -130,7 +125,14 @@ export function SnapUploadPanel() {
 
   let mainContent: ReactNode;
 
-  if (showAnalysisLayout && photo) {
+  if (loadingSavedMeal && !photo) {
+    mainContent = (
+      <div className="flex min-h-72 flex-1 flex-col items-center justify-center gap-3 sm:min-h-112 lg:min-h-128">
+        <LoaderCircle className="text-muted-foreground size-8 animate-spin" aria-hidden />
+        <p className="text-muted-foreground text-sm">{SNAP.LOADING_SAVED_MEAL}</p>
+      </div>
+    );
+  } else if (showAnalysisLayout && photo) {
     mainContent = (
       <SnapAnalysisStage
         analysisState={analysisState}

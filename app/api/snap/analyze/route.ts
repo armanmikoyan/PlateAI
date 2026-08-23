@@ -3,13 +3,19 @@ import { AiConfigError, AiParseError, AiProviderError } from '@/lib/ai/errors';
 import { imageMimeForAnalysis } from '@/lib/ai/utils';
 import { fetchAuthUser } from '@/lib/auth/me';
 import { isSnapAnalysisLocked } from '@/lib/billing/entitlements';
+import {
+  createPendingMealAnalysis,
+  markMealAnalysisDone,
+} from '@/lib/meal-analyses/client';
 
 type AnalyzeSuccessResponse = Readonly<{
   analysis: Awaited<ReturnType<typeof analyzeMealImage>>;
+  id: string;
 }>;
 
 type AnalyzeLockedResponse = Readonly<{
   locked: true;
+  id: string;
 }>;
 
 type AnalyzeErrorResponse = Readonly<{
@@ -21,14 +27,11 @@ function errorResponse(message: string, status: number) {
 }
 
 export async function POST(request: Request) {
-  const user = await fetchAuthUser(request.headers.get('cookie'));
+  const cookieHeader = request.headers.get('cookie');
+  const user = await fetchAuthUser(cookieHeader);
 
   if (!user) {
     return errorResponse('Sign in required.', 401);
-  }
-
-  if (isSnapAnalysisLocked(user)) {
-    return Response.json({ locked: true } satisfies AnalyzeLockedResponse, { status: 403 });
   }
 
   try {
@@ -40,12 +43,31 @@ export async function POST(request: Request) {
     }
 
     const imageBase64 = Buffer.from(await image.arrayBuffer()).toString('base64');
+    const mimeType = imageMimeForAnalysis(image);
+    const created = await createPendingMealAnalysis(cookieHeader, imageBase64, mimeType);
+
+    if (!created) {
+      return errorResponse('Could not save meal analysis.', 502);
+    }
+
+    const analysisId = created.item.id;
+
+    if (isSnapAnalysisLocked(user)) {
+      return Response.json({ locked: true, id: analysisId } satisfies AnalyzeLockedResponse, { status: 403 });
+    }
+
     const analysis = await analyzeMealImage({
       imageBase64,
-      mimeType: imageMimeForAnalysis(image),
+      mimeType,
     });
 
-    return Response.json({ analysis } satisfies AnalyzeSuccessResponse);
+    const saved = await markMealAnalysisDone(cookieHeader, analysisId, analysis);
+
+    if (!saved) {
+      return errorResponse('Could not save meal analysis.', 502);
+    }
+
+    return Response.json({ analysis, id: analysisId } satisfies AnalyzeSuccessResponse);
   } catch (error) {
     if (error instanceof AiConfigError) {
       return errorResponse('Meal analysis is not configured on this server.', 503);

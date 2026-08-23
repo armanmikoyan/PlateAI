@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ChevronDownIcon, LogInIcon, LogOutIcon } from 'lucide-react';
+import { ChevronDownIcon, HistoryIcon, LogInIcon, LogOutIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 import { NAV_AUTH } from './constants';
@@ -18,13 +18,24 @@ import {
   DropdownMenuTrigger,
 } from '@/app/ui/dropdown-menu';
 import type { AuthMeResponse, AuthUser } from '@/lib/auth/types';
+import { MEAL_ANALYSES_CHANGED_EVENT } from '@/lib/meal-analyses/constants';
+import { pendingMealCount } from '@/app/components/meal-history/utils';
+import { fetchMealHistory } from '@/app/components/meal-history/utils';
 
 export function NavBarAuth() {
   const [user, setUser] = useState<AuthUser | null>(null);
+  const [pendingCount, setPendingCount] = useState(0);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
+
+    async function loadPendingCount() {
+      const history = await fetchMealHistory();
+      if (!cancelled && history) {
+        setPendingCount(pendingMealCount(history.items));
+      }
+    }
 
     async function loadSession() {
       try {
@@ -37,6 +48,8 @@ export function NavBarAuth() {
         if (!cancelled) {
           setUser(payload.user);
         }
+
+        await loadPendingCount();
       } catch {
         // Ignore — treat as signed out.
       } finally {
@@ -48,8 +61,15 @@ export function NavBarAuth() {
 
     void loadSession();
 
+    function handleMealAnalysesChanged() {
+      void loadPendingCount();
+    }
+
+    window.addEventListener(MEAL_ANALYSES_CHANGED_EVENT, handleMealAnalysesChanged);
+
     return () => {
       cancelled = true;
+      window.removeEventListener(MEAL_ANALYSES_CHANGED_EVENT, handleMealAnalysesChanged);
     };
   }, []);
 
@@ -102,6 +122,15 @@ export function NavBarAuth() {
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
+          <DropdownMenuItem className="cursor-pointer" render={<Link href={NAV_AUTH.MEAL_HISTORY_HREF} />} nativeButton={false}>
+            <HistoryIcon />
+            {NAV_AUTH.MEAL_HISTORY}
+            {pendingCount > 0 ? (
+              <span className="text-muted-foreground ml-auto text-xs">
+                {pendingCount} {NAV_AUTH.MEAL_HISTORY_PENDING_LABEL}
+              </span>
+            ) : null}
+          </DropdownMenuItem>
           <DropdownMenuItem
             className="cursor-pointer"
             // Full-page navigation so the auth server can clear the session cookie.

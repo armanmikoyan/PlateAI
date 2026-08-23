@@ -25,18 +25,34 @@ export type UseSnapPhotoResult = Readonly<{
 export type SnapAnalysisState =
   | Readonly<{ STATUS: typeof SNAP_ANALYSIS_STATUS.IDLE }>
   | Readonly<{ STATUS: typeof SNAP_ANALYSIS_STATUS.LOADING }>
-  | Readonly<{ STATUS: typeof SNAP_ANALYSIS_STATUS.SUCCESS; LOCKED: true }>
-  | Readonly<{ STATUS: typeof SNAP_ANALYSIS_STATUS.SUCCESS; LOCKED: false; ANALYSIS: MealImageAnalysis }>
+  | Readonly<{ STATUS: typeof SNAP_ANALYSIS_STATUS.SUCCESS; LOCKED: true; ANALYSIS_ID: string }>
+  | Readonly<{
+      STATUS: typeof SNAP_ANALYSIS_STATUS.SUCCESS;
+      LOCKED: false;
+      ANALYSIS: MealImageAnalysis;
+      ANALYSIS_ID: string;
+    }>
   | Readonly<{ STATUS: typeof SNAP_ANALYSIS_STATUS.ERROR; MESSAGE: string }>;
 
 export type UseSnapAnalyzeResult = Readonly<{
   analysisState: SnapAnalysisState;
   analyzePhoto: () => Promise<void>;
+  completePendingAnalysis: (analysisId: string) => Promise<void>;
   resetAnalysis: () => void;
+}>;
+
+export type UseSnapSavedMealLoaderResult = Readonly<{
+  loadingSavedMeal: boolean;
 }>;
 
 export type SnapAnalyzeSuccessResponse = Readonly<{
   analysis: MealImageAnalysis;
+  id: string;
+}>;
+
+export type SnapAnalyzeLockedResponse = Readonly<{
+  locked: true;
+  id: string;
 }>;
 
 export type SnapAnalyzeErrorResponse = Readonly<{

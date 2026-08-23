@@ -16,7 +16,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  if (request.nextUrl.pathname.startsWith('/api/snap/')) {
+  if (request.nextUrl.pathname.startsWith('/api/snap/') || request.nextUrl.pathname.startsWith('/api/meal-analyses')) {
     return NextResponse.json({ error: 'Sign in required.' }, { status: 401 });
   }
 
@@ -24,5 +24,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/snap/:path*', '/api/snap/:path*'],
+  matcher: ['/snap', '/snap/:path*', '/history', '/history/:path*', '/api/snap/:path*', '/api/meal-analyses/:path*'],
 };

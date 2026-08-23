@@ -186,3 +186,10 @@ export async function waitForSnapLockedPreviewDelay(startedAtMs: number): Promis
     await sleep(remainingMs);
   }
 }
+
+export function fileFromImageBase64(imageBase64: string, mimeType: string, fileName = 'saved-meal'): File {
+  const bytes = Uint8Array.from(atob(imageBase64), (char) => char.charCodeAt(0));
+  const extension = mimeType === 'image/png' ? 'png' : mimeType === 'image/webp' ? 'webp' : 'jpg';
+
+  return new File([bytes], `${fileName}.${extension}`, { type: mimeType });
+}

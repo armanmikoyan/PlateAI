@@ -8,6 +8,8 @@ import { connectDatabase } from '@/db.js';
 import { AUTH_ERRORS, AUTH_ROUTES } from '@/routes/auth/constants.js';
 import { createAuthRouter } from '@/routes/auth/index.js';
 import { configurePassport } from '@/routes/auth/google-oauth.js';
+import { MEAL_ANALYSIS_JSON_LIMIT, MEAL_ANALYSIS_ROUTES } from '@/routes/meal-analyses/constants.js';
+import { createMealAnalysesRouter } from '@/routes/meal-analyses/index.js';
 
 async function main() {
   const config = readServerConfig();
@@ -18,10 +20,11 @@ async function main() {
   const app = express();
 
   app.set('trust proxy', 1);
-  app.use(express.json());
+  app.use(express.json({ limit: MEAL_ANALYSIS_JSON_LIMIT }));
   app.use(passport.initialize());
 
   app.use(AUTH_ROUTES.MOUNT_PATH, createAuthRouter(config));
+  app.use(MEAL_ANALYSIS_ROUTES.MOUNT_PATH, createMealAnalysesRouter(config));
 
   app.use((error: Error, request: express.Request, response: express.Response, next: express.NextFunction) => {
     console.error(error);

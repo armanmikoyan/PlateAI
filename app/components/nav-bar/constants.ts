@@ -25,6 +25,9 @@ export const NAV_AUTH = {
   SIGN_IN: 'Sign in',
   SIGN_OUT: 'Sign out',
   ACCOUNT_MENU: 'Account menu',
+  MEAL_HISTORY: 'Meal analyses',
+  MEAL_HISTORY_HREF: '/history',
+  MEAL_HISTORY_PENDING_LABEL: 'pending',
 } as const;
 
 /** Order matches page flow — used for scroll-spy (last section whose top is above the trigger wins). */

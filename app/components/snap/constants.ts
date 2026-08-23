@@ -49,6 +49,7 @@ export const SNAP = {
     'Live camera needs HTTPS. On this site, tap Choose photo to use your camera instead.',
   ANALYZE: 'Analyze plate',
   ANALYZE_CTA: 'Tap to analyze',
+  LOADING_SAVED_MEAL: 'Loading your saved meal photo…',
   ANALYZING: 'Analyzing your plate…',
   SIGN_IN_REQUIRED: 'Sign in to analyze your photo.',
   ANALYSIS_ERROR: 'Could not analyze that photo. Try again with a clearer shot.',
