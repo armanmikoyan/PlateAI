@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { ChevronDownIcon, HistoryIcon, LogInIcon, LogOutIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-import { NAV_AUTH } from './constants';
+import { NAV_AUTH, NAV_AUTH_ACCOUNT_TRIGGER_SHELL, NAV_AUTH_LOADING_SHELL } from './constants';
 import { initialsForName } from './utils';
 import { Avatar, AvatarFallback } from '@/app/ui/avatar';
 import { Button } from '@/app/ui/button';
@@ -49,7 +49,7 @@ export function NavBarAuth() {
           setUser(payload.user);
         }
 
-        await loadPendingCount();
+        void loadPendingCount();
       } catch {
         // Ignore — treat as signed out.
       } finally {
@@ -74,7 +74,13 @@ export function NavBarAuth() {
   }, []);
 
   if (!ready) {
-    return <div aria-hidden className="size-8 shrink-0 rounded-full bg-muted/60 sm:size-9" />;
+    return (
+      <div aria-hidden className={NAV_AUTH_LOADING_SHELL}>
+        <div className="size-7 shrink-0 rounded-full bg-muted/60 sm:size-8" />
+        <div className="hidden h-4 w-20 max-w-28 rounded bg-muted/60 sm:block sm:max-w-32" />
+        <div className="hidden size-3.5 shrink-0 rounded-sm bg-muted/60 sm:block sm:size-4" />
+      </div>
+    );
   }
 
   if (!user) {
@@ -98,7 +104,7 @@ export function NavBarAuth() {
         aria-label={NAV_AUTH.ACCOUNT_MENU}
         render={
           <Button
-            className="h-8 w-8 shrink-0 rounded-full p-0 sm:h-9 sm:w-auto sm:gap-1.5 sm:rounded-full sm:border sm:border-button-outline-border sm:bg-button-outline-surface/40 sm:py-0 sm:pr-3 sm:pl-0.5 sm:hover:bg-button-outline-hover"
+            className={NAV_AUTH_ACCOUNT_TRIGGER_SHELL}
             variant="ghost"
           />
         }
