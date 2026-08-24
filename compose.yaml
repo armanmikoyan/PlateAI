@@ -20,4 +20,17 @@ services:
       timeout: 5s
       retries: 3
       start_period: 20s
-
+  auth:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+      target: runner
+    ports:
+      - '4000:4000'
+    environment:
+      NODE_ENV: development
+      PORT: 4000
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    init: true
