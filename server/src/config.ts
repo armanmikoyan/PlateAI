@@ -48,5 +48,6 @@ export function readServerConfig(env: NodeJS.ProcessEnv = process.env): ServerCo
       env.GOOGLE_CALLBACK_URL?.trim() ?? 'http://localhost:3000/api/auth/google/callback',
     FRONTEND_URL: env.FRONTEND_URL?.trim() ?? 'http://localhost:3000',
     NODE_ENV: env.NODE_ENV?.trim() ?? 'development',
+    LEMON_SQUEEZY_API_KEY: requiredEnv('LEMON_SQUEEZY_API_KEY', env.LEMON_SQUEEZY_API_KEY),
   };
 }

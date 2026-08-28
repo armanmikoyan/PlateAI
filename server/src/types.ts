@@ -7,4 +7,5 @@ export type ServerConfig = Readonly<{
   GOOGLE_CALLBACK_URL: string;
   FRONTEND_URL: string;
   NODE_ENV: string;
+  LEMON_SQUEEZY_API_KEY: string
 }>;
