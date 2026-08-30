@@ -1,11 +1,10 @@
-import { Activity, Mail } from 'lucide-react';
+import { Mail } from 'lucide-react';
 import Link from 'next/link';
-
 import { Badge } from '@/app/ui/badge';
 import { Button } from '@/app/ui/button';
 import SiGithub from '@icons-pack/react-simple-icons/icons/SiGithub';
 import { Separator } from '@/app/ui/separator';
-
+import Image from 'next/image';
 import {
   SITE_FOOTER_COLUMNS,
   SITE_FOOTER_COMPANY_ITEMS,
@@ -43,19 +42,7 @@ export default function SiteFooter() {
       <div className="layout-page-shell">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-10">
           <div className="lg:col-span-4">
-            <div className="flex items-center gap-2">
-              <Activity
-                className="text-accent-mid size-8 shrink-0"
-                strokeWidth={1.75}
-                aria-hidden
-              />
-              <h2
-                id="site-footer-heading"
-                className="font-heading text-xl font-semibold tracking-tight"
-              >
-                {SITE_FOOTER_MAIN.BRAND}
-              </h2>
-            </div>
+          <Image src='/icons/logo-3.png' width={200} height={100} alt='PlateAI Logo' />
             <p className="text-muted-foreground mt-3 max-w-sm text-sm/relaxed">
               {SITE_FOOTER_MAIN.TAGLINE}
             </p>

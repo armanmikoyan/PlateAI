@@ -1,16 +1,16 @@
 'use client';
 
-import { Activity, Menu } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
-
 import { Button } from '@/app/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/app/ui/sheet';
-
 import { NAV } from './constants';
 import { NavBarAuth } from './nav-bar-auth';
 import { NavBarSectionLinks } from './nav-bar-section-links';
 import { NavBarSnapCta } from './nav-bar-snap-cta';
+
+import Image from 'next/image';
 
 export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -24,15 +24,7 @@ export function Navbar() {
             className="text-content hover:opacity-90 flex min-w-0 items-center gap-2 text-2xl font-medium transition-opacity sm:text-3xl"
             onClick={() => setMenuOpen(false)}
           >
-            <Activity
-              className="text-content motion-safe:animate-pulse size-9 shrink-0 sm:size-10"
-              strokeWidth={2}
-              aria-hidden
-            />
-            <span className="text-content" aria-hidden>
-              {NAV.SEPARATOR}
-            </span>
-            <span className="tracking-tight">{NAV.BRAND}</span>
+            <Image src='/icons/logo-3.png' width={200} height={100} alt='PlateAI Logo' />
           </Link>
         </div>
 
