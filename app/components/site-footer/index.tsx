@@ -42,7 +42,7 @@ export default function SiteFooter() {
       <div className="layout-page-shell">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-10">
           <div className="lg:col-span-4">
-          <Image src='/icons/logo-3.png' width={200} height={100} alt='PlateAI Logo' />
+          <Image src='/icons/logo.png' width={200} height={100} alt='PlateAI Logo' />
             <p className="text-muted-foreground mt-3 max-w-sm text-sm/relaxed">
               {SITE_FOOTER_MAIN.TAGLINE}
             </p>

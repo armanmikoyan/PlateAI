@@ -24,7 +24,7 @@ export function Navbar() {
             className="text-content hover:opacity-90 flex min-w-0 items-center gap-2 text-2xl font-medium transition-opacity sm:text-3xl"
             onClick={() => setMenuOpen(false)}
           >
-            <Image src='/icons/logo-3.png' width={200} height={100} alt='PlateAI Logo' />
+            <Image src='/icons/logo.png' width={200} height={100} alt='PlateAI Logo' />
           </Link>
         </div>
 
