@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next';
 
-import { readSiteUrl } from '@/lib/site/url';
+import { readSiteUrl } from '@/app/utils/site/url';
 
 export default function robots(): MetadataRoute.Robots {
   const siteUrl = readSiteUrl();

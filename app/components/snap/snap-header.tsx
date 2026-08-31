@@ -1,8 +1,8 @@
 'use client';
 
 import { useAtomValue } from 'jotai';
-import { useDeviceType } from '@/lib/device-detection/use-device-type';
-import { cn } from '@/lib/utils';
+import { useDeviceType } from '@/app/utils/device-detection/use-device-type';
+import { cn } from '@/app/utils/cn';
 import { SNAP, SNAP_HEADING_PHASE } from './constants';
 import { snapAnalysisAtom, snapPhotoAtom } from './state';
 import type { SnapHeaderProps } from './types';

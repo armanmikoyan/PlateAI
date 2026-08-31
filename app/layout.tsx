@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { Navbar } from '@/app/components/nav-bar';
-import { readSiteUrl } from '@/lib/site/url';
+import { readSiteUrl } from '@/app/utils/site/url';
 
 type RootLayoutProps = Readonly<{
   children: ReactNode;
@@ -40,6 +40,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html
       lang="en"
+      data-scroll-behavior="smooth"
       className={`${geistSans.variable} ${geistMono.variable} h-full scroll-pt-28 scroll-smooth antialiased motion-reduce:scroll-auto`}
     >
       <body className="flex min-h-full flex-col font-sans" suppressHydrationWarning>

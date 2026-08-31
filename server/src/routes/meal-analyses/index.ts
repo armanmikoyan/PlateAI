@@ -1,37 +1,26 @@
 import { Router } from 'express';
 
-import { MEAL_ANALYSIS_ROUTES } from '@/routes/meal-analyses/constants.js';
+import { requireUser } from '@/middleware/require-user.js';
 import {
+  analyzeMealAnalysis,
   createMealAnalysis,
   deleteMealAnalysis,
   getMealAnalysis,
   listMealAnalyses,
   patchMealAnalysis,
-} from '@/routes/meal-analyses/meal-analyses-controller.js';
-import type { ServerConfig } from '@/types.js';
+} from '@/routes/meal-analyses/controller.js';
+import type { ServerConfig } from '@/config/types.js';
 
 export function createMealAnalysesRouter(config: ServerConfig): Router {
   const router = Router();
+  const authenticated = requireUser(config);
 
-  router.get(MEAL_ANALYSIS_ROUTES.ROOT, (request, response) => {
-    void listMealAnalyses(config, request, response);
-  });
-
-  router.post(MEAL_ANALYSIS_ROUTES.ROOT, (request, response) => {
-    void createMealAnalysis(config, request, response);
-  });
-
-  router.get(MEAL_ANALYSIS_ROUTES.BY_ID, (request, response) => {
-    void getMealAnalysis(config, request, response);
-  });
-
-  router.patch(MEAL_ANALYSIS_ROUTES.BY_ID, (request, response) => {
-    void patchMealAnalysis(config, request, response);
-  });
-
-  router.delete(MEAL_ANALYSIS_ROUTES.BY_ID, (request, response) => {
-    void deleteMealAnalysis(config, request, response);
-  });
+  router.get('/', authenticated, listMealAnalyses);
+  router.post('/', authenticated, createMealAnalysis);
+  router.get('/:id', authenticated, getMealAnalysis);
+  router.patch('/:id', authenticated, patchMealAnalysis);
+  router.delete('/:id', authenticated, deleteMealAnalysis);
+  router.post('/:id/analyze', authenticated, analyzeMealAnalysis);
 
   return router;
 }

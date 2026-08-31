@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 
-import { cn } from '@/lib/utils';
+import { cn } from '@/app/utils/cn';
 import { Badge } from '@/app/ui/badge';
 import {
   Card,

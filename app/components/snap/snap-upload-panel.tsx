@@ -12,9 +12,9 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from '@/app/ui/empty';
-import { cn } from '@/lib/utils';
-import { DEVICE_TYPE } from '@/lib/device-detection/types';
-import { useDeviceType } from '@/lib/device-detection/use-device-type';
+import { cn } from '@/app/utils/cn';
+import { DEVICE_TYPE } from '@/app/utils/device-detection/types';
+import { useDeviceType } from '@/app/utils/device-detection/use-device-type';
 import { ACCEPTED_IMAGE_ACCEPT, SNAP, SNAP_ANALYSIS_STATUS } from './constants';
 import { useSnapAnalyze, useSnapPhoto, useSnapSavedMealLoader } from './hooks';
 import { SnapAnalysisStage, SnapPhotoStage } from './snap-stage';

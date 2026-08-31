@@ -6,7 +6,7 @@ import type { ReactNode } from 'react';
 import { LOGIN } from '@/app/components/login/constants';
 import { LoginPanel } from '@/app/components/login/login-panel';
 import { readLoginRedirectPath } from '@/app/components/login/utils';
-import { getAuthSession } from '@/lib/auth/jwt';
+import { getAuthSession } from '@/app/api/auth/utils';
 
 type LoginPageProps = Readonly<{
   searchParams: Promise<{ error?: string; next?: string }>;

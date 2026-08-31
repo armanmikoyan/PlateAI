@@ -1,7 +1,9 @@
 import type { ReactNode } from 'react';
-import type { MealImageAnalysis } from '@/lib/ai/types';
+import type { MealAnalysisResult } from '@/app/utils/meal-analyses/types';
 import type { HeroStatTileChrome } from '@/app/components/hero/constants';
 import { SNAP_ANALYSIS_STATUS, type SnapHeadingPhase } from './constants';
+
+type MealImageAnalysis = MealAnalysisResult;
 
 export type SnapPhoto = Readonly<{
   FILE: File;

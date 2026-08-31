@@ -1,7 +1,8 @@
 import { ScrollEnter } from '@/app/components/scroll';
+import { SectionIntro } from '@/app/components/section-intro';
 
+import { FAQ_SECTION } from './constants';
 import { FaqList } from './faq-list';
-import { FaqSectionIntro } from './faq-section-intro';
 
 export default function Faq() {
   return (
@@ -17,7 +18,12 @@ export default function Faq() {
             KEY: 'body',
             content: (
               <>
-                <FaqSectionIntro />
+                <SectionIntro
+                  eyebrow={FAQ_SECTION.EYEBROW}
+                  title={FAQ_SECTION.TITLE}
+                  subtitle={FAQ_SECTION.SUBTITLE}
+                  headingId="faq-heading"
+                />
                 <FaqList />
               </>
             ),

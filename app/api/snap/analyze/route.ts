@@ -1,15 +1,8 @@
-import { analyzeMealImage } from '@/lib/ai/analyze-meal-image';
-import { AiConfigError, AiParseError, AiProviderError } from '@/lib/ai/errors';
-import { imageMimeForAnalysis } from '@/lib/ai/utils';
-import { fetchAuthUser } from '@/lib/auth/me';
-import { isSnapAnalysisLocked } from '@/lib/billing/entitlements';
-import {
-  createPendingMealAnalysis,
-  markMealAnalysisDone,
-} from '@/lib/meal-analyses/client';
+import { analyzeMealAnalysis, createPendingMealAnalysis } from '@/app/api/meal-analyses/client';
+import type { MealAnalysisResult } from '@/app/utils/meal-analyses/types';
 
 type AnalyzeSuccessResponse = Readonly<{
-  analysis: Awaited<ReturnType<typeof analyzeMealImage>>;
+  analysis: MealAnalysisResult;
   id: string;
 }>;
 
@@ -22,15 +15,34 @@ type AnalyzeErrorResponse = Readonly<{
   error: string;
 }>;
 
+function imageMimeForAnalysis(file: Pick<File, 'name' | 'type'>): string {
+  const type = file.type.trim().toLowerCase();
+
+  if (type === 'image/jpeg' || type === 'image/png' || type === 'image/webp') {
+    return type;
+  }
+
+  const extension = file.name.split('.').pop()?.toLowerCase();
+
+  if (extension === 'png') {
+    return 'image/png';
+  }
+
+  if (extension === 'webp') {
+    return 'image/webp';
+  }
+
+  return 'image/jpeg';
+}
+
 function errorResponse(message: string, status: number) {
   return Response.json({ error: message } satisfies AnalyzeErrorResponse, { status });
 }
 
 export async function POST(request: Request) {
   const cookieHeader = request.headers.get('cookie');
-  const user = await fetchAuthUser(cookieHeader);
 
-  if (!user) {
+  if (!cookieHeader) {
     return errorResponse('Sign in required.', 401);
   }
 
@@ -51,32 +63,27 @@ export async function POST(request: Request) {
     }
 
     const analysisId = created.item.id;
+    const result = await analyzeMealAnalysis(cookieHeader, analysisId);
 
-    if (isSnapAnalysisLocked(user)) {
-      return Response.json({ locked: true, id: analysisId } satisfies AnalyzeLockedResponse, { status: 403 });
-    }
+    if (!result.ok) {
+      if (result.locked) {
+        return Response.json(
+          { locked: true, id: analysisId } satisfies AnalyzeLockedResponse,
+          { status: 403 },
+        );
+      }
 
-    const analysis = await analyzeMealImage({
-      imageBase64,
-      mimeType,
-    });
-
-    const saved = await markMealAnalysisDone(cookieHeader, analysisId, analysis);
-
-    if (!saved) {
-      return errorResponse('Could not save meal analysis.', 502);
-    }
-
-    return Response.json({ analysis, id: analysisId } satisfies AnalyzeSuccessResponse);
-  } catch (error) {
-    if (error instanceof AiConfigError) {
-      return errorResponse('Meal analysis is not configured on this server.', 503);
-    }
-
-    if (error instanceof AiParseError || error instanceof AiProviderError) {
       return errorResponse('Could not analyze that photo. Try a clearer shot.', 502);
     }
 
+    const analysis = result.item.analysis;
+
+    if (!analysis) {
+      return errorResponse('Could not analyze that photo. Try a clearer shot.', 502);
+    }
+
+    return Response.json({ analysis, id: analysisId } satisfies AnalyzeSuccessResponse);
+  } catch {
     return errorResponse('Something went wrong while analyzing the photo.', 500);
   }
 }

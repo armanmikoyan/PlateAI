@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils';
+import { cn } from '@/app/utils/cn';
 import { HERO_ENTER_MOTION_REDUCE, HERO_ENTER_SHELL_BLOCKS } from './constants';
 import { HeroCta } from './hero-cta';
 import { HeroIntroTypewriter } from './hero-intro-typewriter';

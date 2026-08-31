@@ -15,12 +15,3 @@ export const AUTH_ERRORS = {
   GOOGLE_NO_EMAIL: 'Google account did not return an email address.',
   USER_UPSERT_FAILED: 'Could not create or load user.',
 } as const;
-
-export const AUTH_ROUTES = {
-  MOUNT_PATH: '/auth',
-  GOOGLE: '/google',
-  GOOGLE_CALLBACK: '/google/callback',
-  ME: '/me',
-  LOGOUT: '/logout',
-  HEALTH: '/health',
-} as const;

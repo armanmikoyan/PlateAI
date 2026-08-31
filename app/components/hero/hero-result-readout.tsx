@@ -5,7 +5,7 @@ import { motion, useReducedMotion } from 'motion/react';
 
 import { Badge } from '@/app/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/ui/card';
-import { cn } from '@/lib/utils';
+import { cn } from '@/app/utils/cn';
 
 import { HERO, HERO_ENTER_MOTION_REDUCE, type HeroMealSlide } from './constants';
 import { HeroBlurSwap } from './hero-blur-swap';

@@ -1,30 +1,15 @@
-FROM node:24-alpine AS base
-
-FROM base AS deps
+FROM node:24-alpine AS builder
 WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm ci
-
-FROM base AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
 COPY package.json package-lock.json tsconfig.json ./
+RUN npm ci
 COPY src ./src
 RUN npm run build
 
-FROM base AS runner
+FROM node:24-alpine
 WORKDIR /app
-
 ENV NODE_ENV=production
-
-RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nodejs
-
+COPY --from=builder /app/package.json ./
 COPY --from=builder /app/dist ./dist
-COPY --from=deps /app/node_modules ./node_modules
-COPY package.json ./
-
-USER nodejs
-
+COPY --from=builder /app/node_modules ./node_modules
 EXPOSE 4000
-
 CMD ["node", "dist/index.js"]

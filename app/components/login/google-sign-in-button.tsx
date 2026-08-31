@@ -1,7 +1,7 @@
 import SiGoogle from '@icons-pack/react-simple-icons/icons/SiGoogle';
 
 import { LOGIN } from './constants';
-import { cn } from '@/lib/utils';
+import { cn } from '@/app/utils/cn';
 
 type GoogleSignInButtonProps = Readonly<{
   className?: string;

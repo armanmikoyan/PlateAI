@@ -1,9 +1,5 @@
 import { Schema, model, type InferSchemaType, type Types } from 'mongoose';
-
-import {
-  MEAL_ANALYSIS_CONFIDENCE,
-  MEAL_ANALYSIS_STATUS,
-} from '@/models/meal-analysis-constants.js';
+import { MEAL_ANALYSIS_CONFIDENCE, MEAL_ANALYSIS_STATUS } from '@/routes/meal-analyses/constants.js';
 
 const mealAnalysisResultSchema = new Schema(
   {

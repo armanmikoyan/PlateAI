@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DEVICE_TYPE } from '@/lib/device-detection/types';
+import { DEVICE_TYPE } from '@/app/utils/device-detection/types';
 import { SNAP, SNAP_ANALYSIS_STATUS, SNAP_HEADING_PHASE } from './constants';
 import {
   fileFromJpegDataUrl,

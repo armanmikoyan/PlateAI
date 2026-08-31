@@ -1,5 +1,5 @@
 import { Card, CardContent } from '@/app/ui/card';
-import { cn } from '@/lib/utils';
+import { cn } from '@/app/utils/cn';
 
 import { SNAP_LOCKED_DECOY } from './constants';
 import { SnapLockedPlaceholder } from './snap-locked-placeholder';

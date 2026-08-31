@@ -17,8 +17,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/app/ui/dropdown-menu';
-import type { AuthMeResponse, AuthUser } from '@/lib/auth/types';
-import { MEAL_ANALYSES_CHANGED_EVENT } from '@/lib/meal-analyses/constants';
+import type { AuthMeResponse, AuthUser } from '@/app/api/auth/types';
+import { MEAL_ANALYSES_CHANGED_EVENT } from '@/app/utils/meal-analyses/constants';
 import { pendingMealCount } from '@/app/components/meal-history/utils';
 import { fetchMealHistory } from '@/app/components/meal-history/utils';
 
@@ -140,7 +140,6 @@ export function NavBarAuth() {
           <DropdownMenuItem
             className="cursor-pointer"
             // Full-page navigation so the auth server can clear the session cookie.
-            // eslint-disable-next-line @next/next/no-html-link-for-pages -- not a Next.js route
             render={<a href="/api/auth/logout" />}
             nativeButton={false}
           >

@@ -1,17 +1,13 @@
-import { proxyMealAnalysisRequest } from '@/lib/meal-analyses/session';
+import { listMealAnalyses } from '@/app/api/meal-analyses/client';
+import type { MealAnalysisListResponse } from '@/app/utils/meal-analyses/types';
 
 export async function GET(request: Request): Promise<Response> {
-  return proxyMealAnalysisRequest(request, []);
-}
+  const cookieHeader = request.headers.get('cookie');
+  const data = await listMealAnalyses(cookieHeader);
 
-export async function POST(request: Request): Promise<Response> {
-  return proxyMealAnalysisRequest(request, []);
-}
+  if (!data) {
+    return Response.json({ error: 'Could not load meal analyses.' }, { status: 401 });
+  }
 
-export async function PATCH(request: Request): Promise<Response> {
-  return proxyMealAnalysisRequest(request, []);
-}
-
-export async function DELETE(request: Request): Promise<Response> {
-  return proxyMealAnalysisRequest(request, []);
+  return Response.json(data satisfies MealAnalysisListResponse);
 }

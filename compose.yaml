@@ -13,6 +13,7 @@ services:
       NODE_ENV: development
       PORT: 3000
       HOSTNAME: 0.0.0.0
+      AUTH_SERVER_URL: http://auth:4000
     init: true
     healthcheck:
       test: ['CMD', 'wget', '-q', '--spider', 'http://127.0.0.1:3000/api/health']
@@ -24,7 +25,6 @@ services:
     build:
       context: ./server
       dockerfile: Dockerfile
-      target: runner
     ports:
       - '4000:4000'
     environment:

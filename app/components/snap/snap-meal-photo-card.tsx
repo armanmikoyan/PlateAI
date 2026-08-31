@@ -5,12 +5,10 @@ import Image from 'next/image';
 import { Settings2 } from 'lucide-react';
 import { Button } from '@/app/ui/button';
 import { Card } from '@/app/ui/card';
-import { cn } from '@/lib/utils';
+import { cn } from '@/app/utils/cn';
 import { SNAP, SNAP_PHOTO_CARD_SHELL } from './constants';
 import { SnapPhotoActions } from './snap-photo-actions';
 import type { SnapMealPhotoCardProps } from './types';
-import { blobImageLoader } from './utils';
-
 export function SnapMealPhotoCard({
   previewUrl,
   photoActions,
@@ -54,7 +52,6 @@ export function SnapMealPhotoCard({
           alt={SNAP.PREVIEW_ALT}
           fill
           unoptimized
-          loader={blobImageLoader}
           sizes="(max-width: 1024px) 100vw, 50vw"
           className="object-cover"
         />

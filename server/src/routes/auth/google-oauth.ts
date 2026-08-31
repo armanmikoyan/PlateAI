@@ -1,11 +1,11 @@
 import passport from 'passport';
 import { Strategy as GoogleStrategy, type Profile } from 'passport-google-oauth20';
 
-import { User, type UserDocument } from '@/models/user.js';
 import { AUTH_ERRORS, AUTH_GOOGLE } from '@/routes/auth/constants.js';
-import type { ServerConfig } from '@/types.js';
+import { upsertUserByGoogleProfile } from '@/routes/auth/repository.js';
+import type { ServerConfig } from '@/config/types.js';
 
-function profileToUser(profile: Profile): Pick<UserDocument, 'googleId' | 'email' | 'name' | 'image'> {
+function profileToUser(profile: Profile) {
   const email = profile.emails?.[0]?.value?.trim();
 
   if (!email) {
@@ -28,15 +28,9 @@ export function configurePassport(config: ServerConfig): void {
         clientSecret: config.GOOGLE_CLIENT_SECRET,
         callbackURL: config.GOOGLE_CALLBACK_URL,
       },
-      async (accessToken, refreshToken, profile, done) => {
+      async (_accessToken, _refreshToken, profile, done) => {
         try {
-          const payload = profileToUser(profile);
-          const user =
-            (await User.findOneAndUpdate(
-              { googleId: payload.googleId },
-              payload,
-              { upsert: true, new: true, setDefaultsOnInsert: true },
-            ).exec()) ?? null;
+          const user = await upsertUserByGoogleProfile(profileToUser(profile));
 
           if (!user) {
             done(new Error(AUTH_ERRORS.USER_UPSERT_FAILED));

@@ -2,7 +2,7 @@
 
 import { Card, CardContent } from '@/app/ui/card';
 import { ShimmerButton } from '@/app/ui/shimmer-button';
-import { cn } from '@/lib/utils';
+import { cn } from '@/app/utils/cn';
 import { SNAP, SNAP_PHOTO_CARD_SHELL } from './constants';
 import type { SnapAnalyzeCtaProps } from './types';
 

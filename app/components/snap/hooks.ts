@@ -3,9 +3,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { useSearchParams } from 'next/navigation';
-import { MEAL_ANALYSIS_STATUS } from '@/lib/meal-analyses/constants';
-import { readSnapSavedMealCache, writeSnapSavedMealCache } from '@/lib/meal-analyses/session-cache';
-import type { SnapSavedMealCache } from '@/lib/meal-analyses/types';
+import { MEAL_ANALYSIS_STATUS } from '@/app/utils/meal-analyses/constants';
+import { readSnapSavedMealCache, writeSnapSavedMealCache } from '@/app/utils/meal-analyses/session-cache';
+import type { SnapSavedMealCache } from '@/app/utils/meal-analyses/types';
 import { SNAP, SNAP_ANALYSIS_STATUS } from './constants';
 import { snapAnalysisAtom, snapPhotoAtom, snapResumeAnalysisIdAtom } from './state';
 import type {

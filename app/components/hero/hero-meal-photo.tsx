@@ -11,7 +11,7 @@ import {
   HERO_MEAL_ROTATE_MS,
   type HeroMealSlide,
 } from './constants';
-import { cn } from '@/lib/utils';
+import { cn } from '@/app/utils/cn';
 
 type HeroMealPhotoProps = Readonly<{
   meal: HeroMealSlide;

@@ -1,33 +1,34 @@
 import { Router } from 'express';
 import passport from 'passport';
 
-import { getMe, googleCallback, health, logout } from '@/routes/auth/auth-controller.js';
-import { AUTH_ROUTES } from '@/routes/auth/constants.js';
+import { getMe, googleCallback, health, logout } from '@/routes/auth/controller.js';
 import { googleAuthOptions, googleCallbackAuthOptions } from '@/routes/auth/google-oauth.js';
-import type { ServerConfig } from '@/types.js';
+import { requireUser } from '@/middleware/require-user.js';
+import type { ServerConfig } from '@/config/types.js';
 
 export function createAuthRouter(config: ServerConfig): Router {
   const router = Router();
+  const authenticated = requireUser(config);
 
-  router.get(AUTH_ROUTES.GOOGLE, passport.authenticate('google', googleAuthOptions()));
+  router.get('/google', passport.authenticate('google', googleAuthOptions()));
 
   router.get(
-    AUTH_ROUTES.GOOGLE_CALLBACK,
+    '/google/callback',
     passport.authenticate('google', googleCallbackAuthOptions(config)),
     (request, response, next) => {
       googleCallback(config, request, response, next);
     },
   );
 
-  router.get(AUTH_ROUTES.ME, (request, response) => {
-    getMe(config, request, response);
+  router.get('/me', authenticated, (request, response, next) => {
+    getMe(config, request, response, next);
   });
 
-  router.get(AUTH_ROUTES.LOGOUT, (request, response) => {
+  router.get('/logout', (request, response) => {
     logout(config, response);
   });
 
-  router.get(AUTH_ROUTES.HEALTH, (request, response) => {
+  router.get('/health', (_request, response) => {
     health(response);
   });
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/app/utils/cn';
 import { MARKETING_SCROLL_ENTER_IN, MARKETING_SCROLL_MOTION_REDUCE } from './constants';
 
 export type ScrollEnterRow = Readonly<{

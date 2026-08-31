@@ -1,9 +1,28 @@
 import type { MealAnalysisDocument } from '@/models/meal-analysis.js';
+import { SNAP_ANALYSIS_PLANS, SUBSCRIPTION_STATUS } from '@/routes/meal-analyses/constants.js';
+import type { SubscriptionEntitlementInput } from '@/routes/meal-analyses/constants.js';
 import type {
   MealAnalysisDetail,
   MealAnalysisResultDto,
   MealAnalysisSummary,
 } from '@/routes/meal-analyses/types.js';
+
+export function hasSnapAnalysisAccess(subscription: SubscriptionEntitlementInput): boolean {
+  const { subscriptionPlan, subscriptionStatus } = subscription;
+
+  if (subscriptionPlan === null || subscriptionStatus === null) {
+    return false;
+  }
+
+  return (
+    SNAP_ANALYSIS_PLANS.includes(subscriptionPlan) &&
+    subscriptionStatus === SUBSCRIPTION_STATUS.ACTIVE
+  );
+}
+
+export function isSnapAnalysisLocked(subscription: SubscriptionEntitlementInput): boolean {
+  return !hasSnapAnalysisAccess(subscription);
+}
 
 export function toMealAnalysisResultDto(
   analysis: NonNullable<MealAnalysisDocument['analysis']>,

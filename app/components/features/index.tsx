@@ -1,7 +1,7 @@
 import { IconTextCard } from '@/app/components/icon-text-card';
 import { ScrollEnter } from '@/app/components/scroll';
-import { FEATURE_CARD_ROWS } from './constants';
-import { FeaturesSectionIntro } from './features-section-intro';
+import { SectionIntro } from '@/app/components/section-intro';
+import { FEATURE_CARD_ROWS, FEATURES_SECTION } from './constants';
 
 export default function Features() {
   return (
@@ -17,7 +17,12 @@ export default function Features() {
             KEY: 'body',
             content: (
               <>
-                <FeaturesSectionIntro />
+                <SectionIntro
+                  eyebrow={FEATURES_SECTION.EYEBROW}
+                  title={FEATURES_SECTION.TITLE}
+                  subtitle={FEATURES_SECTION.SUBTITLE}
+                  headingId="features-heading"
+                />
                 <div className="mt-10 grid grid-cols-1 gap-4 sm:mt-12 sm:grid-cols-2 sm:gap-5 lg:gap-6">
                   {FEATURE_CARD_ROWS.map((row) => (
                     <IconTextCard

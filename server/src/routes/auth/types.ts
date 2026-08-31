@@ -1,4 +1,4 @@
-import type { SubscriptionPlan, SubscriptionStatus } from '@/models/subscription-constants.js';
+import type { SubscriptionPlan, SubscriptionStatus } from '@/routes/meal-analyses/constants.js';
 
 export type AuthUser = Readonly<{
   id: string;

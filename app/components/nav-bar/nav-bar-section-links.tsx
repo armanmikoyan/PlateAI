@@ -3,7 +3,7 @@
 import type { MouseEvent } from 'react';
 import { useSyncExternalStore } from 'react';
 
-import { cn } from '@/lib/utils';
+import { cn } from '@/app/utils/cn';
 
 import { NAV_MAIN_SECTION_LINKS } from './constants';
 import type { NavBarSectionLinksProps } from './types';

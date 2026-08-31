@@ -1,4 +1,4 @@
-import type { MealAnalysisSummary } from '@/lib/meal-analyses/types';
+import type { MealAnalysisSummary } from '@/app/utils/meal-analyses/types';
 
 export type MealHistoryRowProps = Readonly<{
   item: MealAnalysisSummary;

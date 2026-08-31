@@ -1,8 +1,8 @@
 import { IconTextCard } from '@/app/components/icon-text-card';
 import { ScrollEnter } from '@/app/components/scroll';
+import { SectionIntro } from '@/app/components/section-intro';
 
-import { USE_CASE_CARD_ROWS } from './constants';
-import { UseCasesSectionIntro } from './use-cases-section-intro';
+import { USE_CASE_CARD_ROWS, USE_CASES_SECTION } from './constants';
 
 export default function UseCases() {
   return (
@@ -18,7 +18,12 @@ export default function UseCases() {
             KEY: 'body',
             content: (
               <>
-                <UseCasesSectionIntro />
+                <SectionIntro
+                  eyebrow={USE_CASES_SECTION.EYEBROW}
+                  title={USE_CASES_SECTION.TITLE}
+                  subtitle={USE_CASES_SECTION.SUBTITLE}
+                  headingId="use-cases-heading"
+                />
                 <div className="mt-10 grid grid-cols-1 gap-4 sm:mt-12 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6">
                   {USE_CASE_CARD_ROWS.map((row) => (
                     <IconTextCard

@@ -1,9 +1,6 @@
-import type { ImageLoaderProps } from 'next/image';
-import type { MealAnalysisConfidence, MealImageAnalysis } from '@/lib/ai/types';
-import { MEAL_IMAGE_ANALYSIS_TEST_DELAY_MS } from '@/lib/ai/constants';
-import { sleep } from '@/lib/ai/utils';
-import type { DeviceType } from '@/lib/device-detection/types';
-import { DEVICE_TYPE } from '@/lib/device-detection/types';
+import type { MealAnalysisConfidence, MealAnalysisResult } from '@/app/utils/meal-analyses/types';
+import type { DeviceType } from '@/app/utils/device-detection/types';
+import { DEVICE_TYPE } from '@/app/utils/device-detection/types';
 import {
   HERO_CALORIES_TILE,
   HERO_NUTRIENT_METRIC_ROWS,
@@ -12,8 +9,16 @@ import {
   type HeroStatTileChrome,
   type HeroStatTileModel,
 } from '@/app/components/hero/constants';
-import { SNAP, SNAP_ANALYSIS_STATUS, SNAP_CONFIDENCE_LABELS, SNAP_HEADING_PHASE } from './constants';
+import {
+  SNAP,
+  SNAP_ANALYSIS_STATUS,
+  SNAP_CONFIDENCE_LABELS,
+  SNAP_HEADING_PHASE,
+  SNAP_LOCKED_PREVIEW_DELAY_MS_PRESET,
+} from './constants';
 import type { SnapAnalysisState, SnapHeadingCopy, SnapHeadingPhase, SnapPhoto } from './types';
+
+type MealImageAnalysis = MealAnalysisResult;
 
 const SNAP_MACRO_ROW_KEYS = new Set<HeroNutrientMetricRow['KEY']>(['PROTEIN', 'CARBS', 'FAT']);
 
@@ -137,10 +142,6 @@ export function firstAcceptedImageFile(files: FileList | null): File | null {
   return files?.item(0) ?? null;
 }
 
-export function blobImageLoader({ src }: ImageLoaderProps): string {
-  return src;
-}
-
 export function canUseCameraStream(): boolean {
   if (typeof window === 'undefined') {
     return false;
@@ -174,8 +175,14 @@ export function snapLockedNutrientTiles(): readonly HeroNutrientMetricRow[] {
 }
 
 export function snapLockedPreviewDelayMs(): number {
-  const { MIN, MAX } = MEAL_IMAGE_ANALYSIS_TEST_DELAY_MS;
+  const { MIN, MAX } = SNAP_LOCKED_PREVIEW_DELAY_MS_PRESET;
   return MIN + Math.floor(Math.random() * (MAX - MIN + 1));
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
 }
 
 export async function waitForSnapLockedPreviewDelay(startedAtMs: number): Promise<void> {

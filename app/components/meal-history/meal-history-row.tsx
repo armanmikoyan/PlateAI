@@ -4,8 +4,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ChevronRight, Clock3, LoaderCircle, Trash2 } from 'lucide-react';
 
-import { MEAL_ANALYSIS_STATUS } from '@/lib/meal-analyses/constants';
-import { writeSnapSavedMealCache } from '@/lib/meal-analyses/session-cache';
+import { MEAL_ANALYSIS_STATUS } from '@/app/utils/meal-analyses/constants';
+import { writeSnapSavedMealCache } from '@/app/utils/meal-analyses/session-cache';
 import { Badge } from '@/app/ui/badge';
 import { Button } from '@/app/ui/button';
 import { Card, CardContent } from '@/app/ui/card';
@@ -14,7 +14,6 @@ import { MEAL_HISTORY } from './constants';
 import type { MealHistoryRowProps } from './types';
 import {
   formatMealHistoryDate,
-  mealHistoryImageLoader,
   mealHistoryImageSrc,
   mealHistoryRowHref,
   mealHistoryRowTitle,
@@ -68,7 +67,6 @@ export function MealHistoryRow({ item, onRemove, removing = false }: MealHistory
               alt={MEAL_HISTORY.MEAL_PREVIEW_ALT}
               fill
               unoptimized
-              loader={mealHistoryImageLoader}
               sizes="80px"
               className="object-cover"
             />

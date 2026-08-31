@@ -4,12 +4,10 @@ import Image from 'next/image';
 import { HeroNutrientTile } from '@/app/components/hero/hero-nutrient-tile';
 import { HERO } from '@/app/components/hero/constants';
 import { Badge } from '@/app/ui/badge';
-import { Card, CardContent } from '@/app/ui/card';
 
 import { SNAP, SNAP_LOCKED_PREVIEW } from './constants';
 import type { SnapAnalysisUnlockedReadoutProps } from './types';
 import {
-  blobImageLoader,
   snapCaloriesTileForAnalysis,
   snapConfidenceLabel,
   snapMacroTilesForAnalysis,
@@ -32,7 +30,6 @@ export function SnapAnalysisUnlockedReadout({
               alt={SNAP.PREVIEW_ALT}
               fill
               unoptimized
-              loader={blobImageLoader}
               sizes="64px"
               className="object-cover"
             />

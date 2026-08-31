@@ -1,11 +1,10 @@
-import { MEAL_ANALYSIS_STATUS, MEAL_ANALYSES_CHANGED_EVENT } from '@/lib/meal-analyses/constants';
-import type { ImageLoaderProps } from 'next/image';
+import { MEAL_ANALYSIS_STATUS, MEAL_ANALYSES_CHANGED_EVENT } from '@/app/utils/meal-analyses/constants';
 
 import type {
   MealAnalysisListResponse,
   MealAnalysisSummary,
   SnapSavedMealCache,
-} from '@/lib/meal-analyses/types';
+} from '@/app/utils/meal-analyses/types';
 
 export function formatMealHistoryDate(isoDate: string): string {
   return new Intl.DateTimeFormat(undefined, {
@@ -36,10 +35,6 @@ export function mealHistoryRowTitle(item: MealAnalysisSummary): string {
 
 export function mealHistoryImageSrc(item: MealAnalysisSummary): string {
   return `data:${item.imageMimeType};base64,${item.imageBase64}`;
-}
-
-export function mealHistoryImageLoader({ src }: ImageLoaderProps): string {
-  return src;
 }
 
 export function mealHistorySnapCachePayload(item: MealAnalysisSummary): SnapSavedMealCache {

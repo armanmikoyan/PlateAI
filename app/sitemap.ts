@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next';
 
-import { readSiteUrl } from '@/lib/site/url';
+import { readSiteUrl } from '@/app/utils/site/url';
 
 const PUBLIC_ROUTES = ['/', '/pricing'] as const;
 

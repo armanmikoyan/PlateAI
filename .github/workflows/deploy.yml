@@ -1,0 +1,102 @@
+name: Deploy
+
+on:
+  workflow_run:
+    workflows: [Build]
+    types: [completed]
+    branches: [main]
+
+jobs:
+  deploy:
+    name: Deploy to AWS EC2
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: ${{ vars.PRODUCTION_URL }}
+    concurrency:
+      group: production-deploy
+      cancel-in-progress: false
+    env:
+      EC2_APP_DIR: plateai
+      PRODUCTION_URL: ${{ vars.PRODUCTION_URL }}
+      NEXT_PUBLIC_SITE_URL: ${{ vars.PRODUCTION_URL }}
+      AI_TEST_MODE: ${{ vars.AI_TEST_MODE }}
+      AI_IMAGE_PROVIDER: ${{ vars.AI_IMAGE_PROVIDER }}
+      AI_IMAGE_MODEL: ${{ vars.AI_IMAGE_MODEL }}
+      AI_PROVIDER_API_KEY: ${{ secrets.AI_PROVIDER_API_KEY }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      FRONTEND_URL: ${{ vars.FRONTEND_URL }}
+      GOOGLE_CALLBACK_URL: ${{ vars.GOOGLE_CALLBACK_URL }}
+      GOOGLE_CLIENT_ID: ${{ vars.GOOGLE_CLIENT_ID }}
+      GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+      MONGODB_URI: ${{ vars.MONGODB_URI }}
+      MONGODB_USERNAME: ${{ vars.MONGODB_USERNAME }}
+      MONGODB_PASSWORD: ${{ secrets.MONGODB_PASSWORD }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Copy compose manifest
+        uses: appleboy/scp-action@v1
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: compose.prod.yaml
+          target: ${{ env.EC2_APP_DIR }}
+
+      - name: Deploy on EC2
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          envs: >-
+            AI_TEST_MODE,AI_IMAGE_PROVIDER,AI_IMAGE_MODEL,AI_PROVIDER_API_KEY,
+            JWT_SECRET,FRONTEND_URL,GOOGLE_CALLBACK_URL,GOOGLE_CLIENT_ID,
+            GOOGLE_CLIENT_SECRET,MONGODB_URI,MONGODB_USERNAME,MONGODB_PASSWORD,
+            EC2_APP_DIR
+          script: |
+            set -euo pipefail
+            cd "$HOME/$EC2_APP_DIR"
+            if ! docker compose version >/dev/null 2>&1; then
+              if command -v docker-compose >/dev/null 2>&1; then
+                compose() { docker-compose "$@"; }
+              else
+                mkdir -p "$HOME/.docker/cli-plugins"
+                curl -fsSL "https://github.com/docker/compose/releases/download/v2.29.7/docker-compose-linux-$(uname -m)" \
+                  -o "$HOME/.docker/cli-plugins/docker-compose"
+                chmod +x "$HOME/.docker/cli-plugins/docker-compose"
+                compose() { docker compose "$@"; }
+              fi
+            else
+              compose() { docker compose "$@"; }
+            fi
+            printf '%s\n' \
+              "DOCKER_IMAGE=armanmikoyan/plateai:latest" \
+              "DOCKER_AUTH_IMAGE=armanmikoyan/plateai-auth:latest" \
+              "JWT_SECRET=${JWT_SECRET}" \
+              "MONGODB_URI=${MONGODB_URI}" \
+              "MONGODB_USERNAME=${MONGODB_USERNAME}" \
+              "MONGODB_PASSWORD=${MONGODB_PASSWORD}" \
+              "GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}" \
+              "GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}" \
+              "GOOGLE_CALLBACK_URL=${GOOGLE_CALLBACK_URL}" \
+              "FRONTEND_URL=${FRONTEND_URL}" \
+              "AI_TEST_MODE=${AI_TEST_MODE}" \
+              "AI_IMAGE_PROVIDER=${AI_IMAGE_PROVIDER}" \
+              "AI_IMAGE_MODEL=${AI_IMAGE_MODEL}" \
+              "AI_PROVIDER_API_KEY=${AI_PROVIDER_API_KEY}" \
+              > .env
+            compose -f compose.prod.yaml down --remove-orphans 2>/dev/null || true
+            for name in plateai plateai-auth mealai; do
+              docker stop "$name" 2>/dev/null || true
+              docker rm "$name" 2>/dev/null || true
+            done
+            compose -f compose.prod.yaml pull
+            compose -f compose.prod.yaml up -d --remove-orphans
+            docker image prune -f
+
+      - name: Deployment summary
+        run: 'echo "Live app: ${{ env.PRODUCTION_URL }}"'

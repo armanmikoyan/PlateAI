@@ -1,0 +1,30 @@
+import { deleteMealAnalysis, getMealAnalysis } from '@/app/api/meal-analyses/client';
+import type { MealAnalysisDetailResponse } from '@/app/utils/meal-analyses/types';
+
+type MealAnalysisRouteContext = Readonly<{
+  params: Promise<{ id: string }>;
+}>;
+
+export async function GET(request: Request, context: MealAnalysisRouteContext): Promise<Response> {
+  const { id } = await context.params;
+  const cookieHeader = request.headers.get('cookie');
+  const data = await getMealAnalysis(cookieHeader, id);
+
+  if (!data) {
+    return Response.json({ error: 'Meal analysis not found.' }, { status: 404 });
+  }
+
+  return Response.json(data satisfies MealAnalysisDetailResponse);
+}
+
+export async function DELETE(request: Request, context: MealAnalysisRouteContext): Promise<Response> {
+  const { id } = await context.params;
+  const cookieHeader = request.headers.get('cookie');
+  const deleted = await deleteMealAnalysis(cookieHeader, id);
+
+  if (!deleted) {
+    return Response.json({ error: 'Meal analysis not found.' }, { status: 404 });
+  }
+
+  return new Response(null, { status: 204 });
+}

@@ -7,7 +7,7 @@ import { LoaderCircle } from 'lucide-react';
 import { buildPricingTierHref } from '@/app/components/pricing/utils';
 import { Badge } from '@/app/ui/badge';
 import { Card, CardContent } from '@/app/ui/card';
-import { cn } from '@/lib/utils';
+import { cn } from '@/app/utils/cn';
 
 import {
   SNAP,
@@ -21,7 +21,6 @@ import { SnapAnalysisUnlockCta } from './snap-analysis-unlock-cta';
 import { SnapAnalysisUnlockedReadout } from './snap-analysis-unlocked-readout';
 import { SnapLockedPlaceholder } from './snap-locked-placeholder';
 import type { SnapAnalysisReadoutProps } from './types';
-import { blobImageLoader } from './utils';
 
 function SnapAnalysisLockedHeader({ previewUrl }: Readonly<{ previewUrl: string }>) {
   return (
@@ -32,7 +31,6 @@ function SnapAnalysisLockedHeader({ previewUrl }: Readonly<{ previewUrl: string 
           alt={SNAP.PREVIEW_ALT}
           fill
           unoptimized
-          loader={blobImageLoader}
           sizes="64px"
           className="object-cover"
         />

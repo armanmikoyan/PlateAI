@@ -58,10 +58,6 @@ export const SNAP = {
   CONFIDENCE_LOW: 'Low confidence',
   CONFIDENCE_MEDIUM: 'Medium confidence',
   CONFIDENCE_HIGH: 'High confidence',
-  MACRO_CALORIES: 'Calories',
-  MACRO_PROTEIN: 'Protein',
-  MACRO_CARBS: 'Carbs',
-  MACRO_FAT: 'Fat',
   HEADING_PHOTO_READY_TITLE: 'Photo ready',
   HEADING_PHOTO_READY_SUBTITLE: 'Tap Analyze plate to estimate calories and macros.',
   HEADING_LOADING_TITLE: 'Analyzing your plate',
@@ -102,6 +98,11 @@ export const SNAP_CONFIDENCE_LABELS = {
 export const SNAP_CAMERA_BACK = 'environment' as const;
 export const SNAP_CAMERA_FRONT = 'user' as const;
 export const SNAP_CAMERA_CAPTURE_FILE = 'plate.jpg' as const;
+
+export const SNAP_LOCKED_PREVIEW_DELAY_MS_PRESET = {
+  MIN: 3000,
+  MAX: 4000,
+} as const;
 
 export const SNAP_PHOTO_CARD_SHELL =
   'relative h-72 w-full gap-0 overflow-hidden py-0 sm:h-80 lg:h-128' as const;

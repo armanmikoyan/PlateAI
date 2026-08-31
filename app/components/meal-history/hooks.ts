@@ -2,8 +2,8 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
-import { clearSnapSavedMealCache } from '@/lib/meal-analyses/session-cache';
-import type { MealAnalysisSummary } from '@/lib/meal-analyses/types';
+import { clearSnapSavedMealCache } from '@/app/utils/meal-analyses/session-cache';
+import type { MealAnalysisSummary } from '@/app/utils/meal-analyses/types';
 
 import { MEAL_HISTORY } from './constants';
 import type { UseMealHistoryResult } from './types';

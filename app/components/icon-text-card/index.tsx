@@ -1,7 +1,7 @@
 import type { LucideIcon } from 'lucide-react';
 
 import { Card, CardDescription, CardHeader, CardTitle } from '@/app/ui/card';
-import { cn } from '@/lib/utils';
+import { cn } from '@/app/utils/cn';
 
 type IconTextCardProps = Readonly<{
   body: string;

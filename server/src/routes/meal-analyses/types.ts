@@ -1,4 +1,4 @@
-import type { MealAnalysisConfidence, MealAnalysisStatus } from '@/models/meal-analysis-constants.js';
+import type { MealAnalysisConfidence, MealAnalysisStatus } from '@/routes/meal-analyses/constants.js';
 
 export type MealAnalysisResultDto = Readonly<{
   mealName: string;
@@ -9,6 +9,8 @@ export type MealAnalysisResultDto = Readonly<{
   confidence: MealAnalysisConfidence;
   notes: string | null;
 }>;
+
+export type MealAnalysisResult = MealAnalysisResultDto;
 
 export type MealAnalysisSummary = Readonly<{
   id: string;
@@ -37,6 +39,15 @@ export type CreateMealAnalysisResponse = Readonly<{
 
 export type UpdateMealAnalysisResponse = Readonly<{
   item: MealAnalysisSummary;
+}>;
+
+export type AnalyzeMealAnalysisResponse = Readonly<{
+  item: MealAnalysisDetail;
+}>;
+
+export type MealAnalysisLockedResponse = Readonly<{
+  error: string;
+  locked: true;
 }>;
 
 export type CreateMealAnalysisBody = Readonly<{
