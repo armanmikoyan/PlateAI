@@ -8,9 +8,9 @@ import tseslint from 'typescript-eslint';
 export default defineConfig([
   ...nextVitals,
   ...nextTs,
-  globalIgnores(['.next/**', 'out/**', 'build/**', 'next-env.d.ts', 'server/**']),
+  globalIgnores(['.next/**', 'out/**', 'build/**', 'next-env.d.ts']),
   {
-    files: ['app/**/*.{ts,tsx}', 'lib/**/*.ts'],
+    files: ['app/**/*.{ts,tsx}'],
     plugins: { 'check-file': checkFile },
     rules: {
       'check-file/folder-naming-convention': [

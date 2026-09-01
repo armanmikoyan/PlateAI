@@ -1,0 +1,76 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DOCKER_IMAGE: armanmikoyan/plateai
+  DOCKER_AUTH_IMAGE: armanmikoyan/plateai-auth
+
+jobs:
+  check:
+    name: ${{ matrix.app }} check
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - app: plateUI
+            workspace: '@plate/plate-ui'
+            test: test:ui
+          - app: plateServer
+            workspace: '@plate/plate-server'
+            test: test:server
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run lint --workspace ${{ matrix.workspace }}
+      - run: npm run ${{ matrix.test }}
+
+  build:
+    name: Build and push images
+    if: github.ref == 'refs/heads/main'
+    needs: check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push plateUI image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: apps/plateUI/Dockerfile
+          target: runner
+          push: true
+          build-args: |
+            NEXT_PUBLIC_SITE_URL=${{ vars.PRODUCTION_URL }}
+          tags: |
+            ${{ env.DOCKER_IMAGE }}:latest
+            ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
+
+      - name: Build and push plateServer image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: apps/plateServer/Dockerfile
+          push: true
+          tags: |
+            ${{ env.DOCKER_AUTH_IMAGE }}:latest
+            ${{ env.DOCKER_AUTH_IMAGE }}:${{ github.sha }}

@@ -2,49 +2,34 @@
   "name": "plateai",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "npm@11.17.0",
+  "engines": {
+    "node": ">=24"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
-    "dev": "next dev --hostname 0.0.0.0",
-    "dev:server": "npm run dev --prefix server",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint",
-    "lint:server": "npm run lint --prefix server",
+    "dev": "npm run dev --workspace @plate/plate-ui",
+    "dev:server": "npm run dev --workspace @plate/plate-server",
+    "build": "npm run build --workspace @plate/plate-ui",
+    "build:server": "npm run build --workspace @plate/plate-server",
+    "lint": "npm run lint --workspace @plate/plate-ui",
+    "lint:server": "npm run lint --workspace @plate/plate-server",
     "test": "vitest run",
-    "test:server": "npm run test --prefix server",
-    "typecheck": "tsc --noEmit",
+    "test:ui": "vitest run --project plateUI",
+    "test:server": "vitest run --project plateServer",
+    "typecheck": "npm run typecheck --workspace @plate/plate-ui",
+    "typecheck:server": "npm run typecheck --workspace @plate/plate-server",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
-  "dependencies": {
-    "@base-ui/react": "^1.6.0",
-    "@icons-pack/react-simple-icons": "^13.15.1",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
-    "jose": "^6.2.10",
-    "jotai": "^2.20.1",
-    "lucide-react": "^1.21.0",
-    "motion": "^13.1.1",
-    "next": "16.2.9",
-    "react": "19.2.4",
-    "react-dom": "19.2.4",
-    "react-webcam": "^7.2.0",
-    "shadcn": "^4.11.0",
-    "tailwind-merge": "^3.6.0",
-    "tw-animate-css": "^1.4.0"
-  },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.2.9",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-check-file": "^3.3.1",
     "prettier": "^3.8.4",
-    "tailwindcss": "^4",
     "typescript": "^5",
-    "typescript-eslint": "^8.61.1",
     "vitest": "^4.1.11"
   }
 }

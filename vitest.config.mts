@@ -6,15 +6,34 @@ import { defineConfig } from 'vitest/config';
 const rootDir = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
-  resolve: {
-    alias: {
-      '@': rootDir,
-    },
-  },
   test: {
-    environment: 'node',
-    include: ['app/**/*.test.ts', 'lib/**/*.test.ts'],
+    projects: [
+      {
+        root: rootDir,
+        resolve: {
+          alias: {
+            '@': path.join(rootDir, 'apps/plateUI'),
+          },
+        },
+        test: {
+          name: 'plateUI',
+          environment: 'node',
+          include: ['apps/plateUI/app/**/*.test.ts'],
+        },
+      },
+      {
+        root: rootDir,
+        resolve: {
+          alias: {
+            '@': path.join(rootDir, 'apps/plateServer/src'),
+          },
+        },
+        test: {
+          name: 'plateServer',
+          environment: 'node',
+          include: ['apps/plateServer/src/**/*.test.ts'],
+        },
+      },
+    ],
   },
 });
-
-
