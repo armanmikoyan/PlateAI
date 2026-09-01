@@ -1,6 +1,5 @@
 import passport from 'passport';
 import { Strategy as GoogleStrategy, type Profile } from 'passport-google-oauth20';
-
 import { AUTH_ERRORS, AUTH_GOOGLE } from '@/routes/auth/constants.js';
 import { upsertUserByGoogleProfile } from '@/routes/auth/repository.js';
 import type { ServerConfig } from '@/config/types.js';
@@ -28,7 +27,7 @@ export function configurePassport(config: ServerConfig): void {
         clientSecret: config.GOOGLE_CLIENT_SECRET,
         callbackURL: config.GOOGLE_CALLBACK_URL,
       },
-      async (_accessToken, _refreshToken, profile, done) => {
+      async (accessToken, refreshToken, profile, done) => {
         try {
           const user = await upsertUserByGoogleProfile(profileToUser(profile));
 

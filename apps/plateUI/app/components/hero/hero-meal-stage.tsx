@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-
 import { HERO_ENTER_GRID_SHELL, HERO_MEAL_ROTATE_MS, HERO_MEAL_SLIDES } from './constants';
 import { HeroBetweenCardsArrow } from './hero-between-cards-arrow';
 import HeroResultReadout from './hero-result-readout';

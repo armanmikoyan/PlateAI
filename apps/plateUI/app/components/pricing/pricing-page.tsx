@@ -1,6 +1,5 @@
 import SiteFooter from '@/app/components/site-footer';
 import { ScrollEnter } from '@/app/components/scroll';
-
 import { PricingComparisonTable } from './pricing-comparison-table';
 import { PricingFixedCta } from './pricing-fixed-cta';
 import { PricingPageIntro } from './pricing-page-intro';

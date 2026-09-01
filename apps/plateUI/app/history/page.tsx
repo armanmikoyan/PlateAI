@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
+import { headers } from 'next/headers';
 import type { ReactNode } from 'react';
-
+import { fetchAuthUser } from '@/app/api/auth/utils';
 import { MEAL_HISTORY } from '@/app/components/meal-history/constants';
 import MealHistory from '@/app/components/meal-history';
 
@@ -9,17 +10,22 @@ export const metadata: Metadata = {
   description: MEAL_HISTORY.SUBTITLE,
 };
 
-export default function Page(): ReactNode {
+type HistoryRouteProps = Readonly<{
+  searchParams: Promise<{ checkout?: string }>;
+}>;
+
+export default async function Page({ searchParams }: HistoryRouteProps): Promise<ReactNode> {
+  const params = await searchParams;
+  const user = await fetchAuthUser((await headers()).get('cookie'));
+
   return (
     <section className="border-edge/60 flex flex-1 flex-col border-b bg-canvas py-8 sm:py-10 lg:py-12">
       <div className="layout-page-shell flex flex-1 flex-col gap-6">
         <header className="max-w-2xl">
-          <h1 className="font-heading text-3xl font-semibold tracking-tight sm:text-4xl">
-            {MEAL_HISTORY.TITLE}
-          </h1>
+          <h1 className="font-heading text-3xl font-semibold tracking-tight sm:text-4xl">{MEAL_HISTORY.TITLE}</h1>
           <p className="text-muted-foreground mt-2 text-base leading-relaxed">{MEAL_HISTORY.SUBTITLE}</p>
         </header>
-        <MealHistory />
+        <MealHistory justPurchased={params.checkout === 'success'} user={user} />
       </div>
     </section>
   );

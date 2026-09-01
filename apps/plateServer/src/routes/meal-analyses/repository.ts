@@ -1,7 +1,5 @@
 import { Types } from 'mongoose';
-
 import { MEAL_ANALYSIS_STATUS } from '@/routes/meal-analyses/constants.js';
-
 import { MealAnalysis, type MealAnalysisDocument } from '@/models/meal-analysis.js';
 import type { UpdateMealAnalysisBody } from '@/routes/meal-analyses/types.js';
 

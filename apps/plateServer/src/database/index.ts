@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-
 import type { ServerConfig } from '@/config/types.js';
 
 export async function connectDatabase(config: ServerConfig): Promise<void> {

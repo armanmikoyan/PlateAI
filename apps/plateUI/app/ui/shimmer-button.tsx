@@ -1,5 +1,4 @@
 import React, { type ComponentPropsWithoutRef, type CSSProperties } from 'react';
-
 import { cn } from '@/app/utils/cn';
 
 export interface ShimmerButtonProps extends ComponentPropsWithoutRef<'button'> {

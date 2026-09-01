@@ -1,5 +1,5 @@
 import { MEAL_ANALYSIS_STATUS, MEAL_ANALYSES_CHANGED_EVENT } from '@/app/utils/meal-analyses/constants';
-
+import { SUBSCRIPTION_PLAN } from '@/app/api/auth/constants';
 import type {
   MealAnalysisListResponse,
   MealAnalysisSummary,
@@ -11,6 +11,16 @@ export function formatMealHistoryDate(isoDate: string): string {
     dateStyle: 'medium',
     timeStyle: 'short',
   }).format(new Date(isoDate));
+}
+
+export function formatPlanDate(isoDate: string): string {
+  return new Intl.DateTimeFormat(undefined, {
+    dateStyle: 'medium',
+  }).format(new Date(isoDate));
+}
+
+export function isPaidPlan(plan: string | null): boolean {
+  return plan === SUBSCRIPTION_PLAN.PLUS || plan === SUBSCRIPTION_PLAN.PRO;
 }
 
 export function pendingMealCount(items: readonly MealAnalysisSummary[]): number {

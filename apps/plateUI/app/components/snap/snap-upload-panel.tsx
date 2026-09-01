@@ -147,7 +147,7 @@ export function SnapUploadPanel() {
         photo={photo}
         photoActions={photoActions}
         onAnalyze={() => {
-          void analyzePhoto();
+          analyzePhoto();
         }}
       />
     );

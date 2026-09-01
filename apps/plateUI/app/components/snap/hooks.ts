@@ -178,7 +178,7 @@ export function useSnapSavedMealLoader(): UseSnapSavedMealLoaderResult {
       }
     }
 
-    void loadSavedMeal();
+    loadSavedMeal();
 
     return () => {
       cancelled = true;

@@ -1,5 +1,4 @@
 import { type ComponentPropsWithoutRef, type ReactNode } from 'react';
-
 import { cn } from '@/app/utils/cn';
 
 type MarqueeProps = ComponentPropsWithoutRef<'div'> & {

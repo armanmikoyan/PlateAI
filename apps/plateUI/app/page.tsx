@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react';
-
 import Faq from '@/app/components/faq';
 import FeedbackMarquee from '@/app/components/feedback-marquee';
 import Features from '@/app/components/features';

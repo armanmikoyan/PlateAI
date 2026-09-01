@@ -22,3 +22,9 @@ export type PricingTierCardDetailProps = Readonly<{
 }>;
 
 export type UsePricingSelectTier = (tierId: string) => void;
+
+export type UsePricingPurchase = Readonly<{
+  purchase: (tier: PricingTierRow) => Promise<void>;
+  isPurchasing: boolean;
+  error: string | null;
+}>;

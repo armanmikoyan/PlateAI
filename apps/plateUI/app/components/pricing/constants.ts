@@ -3,7 +3,9 @@ export const PRICING_SECTION = {
   TITLE: 'Plans that scale with how you eat',
   SUBTITLE:
     'Start on Basic, move to Plus when you want smarter macros and lists, or Pro when you are feeding a household.',
-  CHECKOUT_NOTE: 'Checkout coming soon',
+  CHECKOUT_NOTE: 'Payments are handled securely by Lemon Squeezy.',
+  CHECKOUT_ERROR: 'Could not start checkout. Please try again.',
+  FREE_PLAN_CTA: 'Basic is free — pick a paid plan to upgrade.',
   VIEW_DETAILS: 'View plan details',
   SHOW_DETAILS_HINT: 'Tap for more details',
 } as const;
@@ -35,12 +37,7 @@ export const PRICING_TIERS = [
     PERIOD: 'forever',
     CTA: 'Start on Basic',
     HIGHLIGHT: false,
-    FEATURES: [
-      'Daily calorie target',
-      'Manual meal entries',
-      '7-day history',
-      'Email support',
-    ],
+    FEATURES: ['Daily calorie target', 'Manual meal entries', '7-day history', 'Email support'],
     DETAIL_BODY:
       'Basic is the free way to try PlateAI without a card. Log what you eat, watch your day total, and build the habit before you upgrade.',
     IDEAL_FOR: 'Solo eaters testing the workflow or keeping a simple calorie log.',

@@ -29,12 +29,12 @@ plateai/
 ├── packages/           # shared TS packages (types, utils, domain libs)
 ├── tsconfig.base.json  # shared TS options (apps extend via "extends")
 ├── vitest.config.mts   # vitest workspaces: plateUI + plateServer projects
-├── prettier.config.mjs # shared formatter config
+├── .oxfmtrc.json       # oxfmt formatter config
 ```
 
 **Package manager:** npm (do not hand-edit `package-lock.json`). `packageManager` + `engines` are pinned in the root `package.json`.
 
-**Shared config at root:** `tsconfig.base.json` (common TS options; each app `extends` it and overrides), `vitest.config.mts` (per-app `projects` with `name` + `@` alias), `prettier.config.mjs`. **ESLint and `tsconfig.json` stay per-app** (Next needs DOM/JSX/bundler resolution + `next` plugin; the server needs `NodeNext` + ESM emit).
+**Shared config at root:** `tsconfig.base.json` (common TS options; each app `extends` it and overrides), `vitest.config.mts` (per-app `projects` with `name` + `@` alias), `.oxfmtrc.json`, `.oxlintrc.json`. **`tsconfig.json` stays per-app** (Next needs DOM/JSX/bundler resolution + `next` plugin; the server needs `NodeNext` + ESM emit).
 
 **Root scripts** (from `package.json`):
 | Command | Action |
@@ -42,11 +42,11 @@ plateai/
 | `npm run dev` | Next.js dev (plateUI) |
 | `npm run dev:server` | Server dev (tsx watch) |
 | `npm run build` / `build:server` | Workspace builds |
-| `npm run lint` / `lint:server` | Per-app lint |
+| `npm run lint` / `lint:server` | Per-app oxlint (root `.oxlintrc.json`) |
 | `npm run test` | All vitest projects |
 | `npm run test:ui` / `test:server` | Single vitest project |
 | `npm run typecheck` / `typecheck:server` | Per-app tsc |
-| `npm run format` / `format:check` | Prettier over everything |
+| `npm run format` / `format:check` | oxfmt over everything |
 
 **Env files** live per-app: `apps/plateUI/.env.local` (from `apps/plateUI/.env.example`), `apps/plateServer/.env` (from `apps/plateServer/.env.example`). `JWT_SECRET` must match across both.
 
@@ -63,7 +63,7 @@ Put types **immediately after imports** when they only reference imported types.
 - **Folders:** use **kebab-case** (`meal-plan`, `shopping-list`). Single-word segments are lowercase (`test`, `auth`). Apply under `app/components/`, the server's `src/routes/`, and future `packages/*` entries.
 - **Constants** (copy and other static values in `constants.ts`, plus root `siteMetadata` in `layout.tsx`): use **UPPERCASE** — `export const FEATURE = { TITLE: '…', BODY: '…' } as const` with **SCREAMING_SNAKE_CASE** keys, or top-level `export const PAGE_TITLE = '…' as const`. Do not use camelCase keys for exported copy objects.
 
-ESLint enforces **kebab-case** folders under `app/components/` (`check-file/folder-naming-convention`) and **UPPER_CASE** names in `app/components/**/constants.ts` (`@typescript-eslint/naming-convention`).
+oxlint enforces **kebab-case** folders under `app/components/` (`check-file/folder-naming-convention`) via the root `.oxlintrc.json`. Per-app `lint` scripts run `oxlint -c ../../.oxlintrc.json`.
 
 ## plateUI (Next.js app)
 
@@ -108,6 +108,8 @@ Entry `apps/plateServer/src/index.ts`. Source layout:
 Route features follow the same file pattern as app features — `index.ts` (router only), `constants.ts` (copy/static, **UPPERCASE**), `types.ts` (route/config/response types), `utils.ts` (pure helpers, co-located unit tests `utils.test.ts`), plus feature `controller.ts` / `service.ts` / `repository.ts` when it needs them (e.g. `auth/`):
 
 - **`index.ts` is the router only** — import siblings via **`@/`** (e.g. `@/routes/auth/google-oauth.js`), no re-exports, no `../` across folders.
+- **`controller.ts` / `service.ts` / `repository.ts` each hold only their own layer.** Controllers contain route-handler wiring only — validate/forward, delegate to `service.ts`, respond. No helpers (crypto, parsing, mapping) — those go in `utils.ts`. Services hold business logic that calls `repository.ts`; repositories hold Mongoose/data access only. No cross-layer logic (e.g. no DB queries in controllers, no HTTP in repositories).
+- **Types live only in `types.ts`** — never `type`/`interface` in `constants.ts` (consts stay **UPPERCASE** copy/static only). Pure helpers live in `utils.ts` with co-located `utils.test.ts`.
 - ESM imports use **`.js`** extensions.
 - `ai/` lives under `routes/meal-analyses/ai/` and holds the provider abstraction (`create-provider.ts`, `errors.ts`, `parse-analysis.ts`, `providers/gemini.ts`, `providers/openai.ts`).
 

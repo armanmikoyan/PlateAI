@@ -2,11 +2,9 @@
 
 import { CheckCircle2 } from 'lucide-react';
 import { motion, useReducedMotion } from 'motion/react';
-
 import { Badge } from '@/app/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/ui/card';
 import { cn } from '@/app/utils/cn';
-
 import { HERO, HERO_ENTER_MOTION_REDUCE, type HeroMealSlide } from './constants';
 import { HeroBlurSwap } from './hero-blur-swap';
 import { HeroMealPhoto } from './hero-meal-photo';
@@ -36,7 +34,7 @@ export default function HeroResultReadout({ meal }: HeroResultReadoutProps) {
           <CardHeader>
             <div className="flex min-w-0 items-start gap-3">
               <span className="relative size-14 shrink-0 overflow-hidden rounded-lg sm:size-16">
-                <HeroMealPhoto meal={meal} sizes="64px" />
+                <HeroMealPhoto meal={meal} sizes="64px" loading="eager" />
               </span>
               <div className="min-w-0 flex-1">
                 <Badge variant="ghost">{HERO.MOCK_MEAL_LINE}</Badge>

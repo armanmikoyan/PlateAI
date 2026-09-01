@@ -1,5 +1,4 @@
 import type { LucideIcon } from 'lucide-react';
-
 import { Card, CardDescription, CardHeader, CardTitle } from '@/app/ui/card';
 import { cn } from '@/app/utils/cn';
 

@@ -105,7 +105,7 @@ export function SnapCameraDialog({
           ) : null}
         </div>
         <DialogFooter>
-          <Button type="button" onClick={() => void handleCapture()} disabled={Boolean(error)}>
+          <Button type="button" onClick={() => handleCapture()} disabled={Boolean(error)}>
             <Camera data-icon="inline-start" />
             {SNAP.CAMERA_CAPTURE}
           </Button>

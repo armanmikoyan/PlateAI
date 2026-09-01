@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-
 import { DEVICE_TYPE } from './types';
 import { detectDeviceType } from './utils';
 

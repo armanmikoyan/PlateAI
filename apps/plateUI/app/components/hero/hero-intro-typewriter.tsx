@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { cn } from '@/app/utils/cn';
-
 import {
   type HeroIntroLineKey,
   HERO_INTRO_CARET_ECHO_DELAY_CLASS,

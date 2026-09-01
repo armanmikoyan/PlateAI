@@ -2,7 +2,6 @@
 
 import type { ComponentProps } from 'react';
 import { Dialog as SheetPrimitive } from '@base-ui/react/dialog';
-
 import { cn } from '@/app/utils/cn';
 import { Button } from '@/app/ui/button';
 import { XIcon } from 'lucide-react';

@@ -1,10 +1,8 @@
 import { CheckCircle2 } from 'lucide-react';
 import Image from 'next/image';
-
 import { HeroNutrientTile } from '@/app/components/hero/hero-nutrient-tile';
 import { HERO } from '@/app/components/hero/constants';
 import { Badge } from '@/app/ui/badge';
-
 import { SNAP, SNAP_LOCKED_PREVIEW } from './constants';
 import type { SnapAnalysisUnlockedReadoutProps } from './types';
 import {

@@ -1,10 +1,9 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-
+import type { AuthMeResponse } from '@/app/api/auth/types';
 import { clearSnapSavedMealCache } from '@/app/utils/meal-analyses/session-cache';
 import type { MealAnalysisSummary } from '@/app/utils/meal-analyses/types';
-
 import { MEAL_HISTORY } from './constants';
 import type { UseMealHistoryResult } from './types';
 import {
@@ -14,7 +13,34 @@ import {
   pendingMealCount,
 } from './utils';
 
-export function useMealHistory(): UseMealHistoryResult {
+const PLAN_SYNC_MAX_ATTEMPTS = 10;
+const PLAN_SYNC_RETRY_MS = 1000;
+
+async function waitForRecordedPlan(): Promise<boolean> {
+  for (let attempt = 0; attempt < PLAN_SYNC_MAX_ATTEMPTS; attempt += 1) {
+    try {
+      const response = await fetch('/api/auth/me', { cache: 'no-store' });
+
+      if (response.ok) {
+        const payload = (await response.json()) as AuthMeResponse;
+
+        if (payload.user.subscriptionPlan !== null && payload.user.subscriptionStatus !== null) {
+          return true;
+        }
+      }
+    } catch {
+      // Retry.
+    }
+
+    if (attempt < PLAN_SYNC_MAX_ATTEMPTS - 1) {
+      await new Promise((resolve) => setTimeout(resolve, PLAN_SYNC_RETRY_MS));
+    }
+  }
+
+  return false;
+}
+
+export function useMealHistory(justPurchased = false): UseMealHistoryResult {
   const [items, setItems] = useState<readonly MealAnalysisSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -41,6 +67,15 @@ export function useMealHistory(): UseMealHistoryResult {
     let cancelled = false;
 
     async function loadMealHistory() {
+      if (justPurchased) {
+        const recorded = await waitForRecordedPlan();
+        await fetch('/api/auth/refresh', { method: 'GET' });
+
+        if (!recorded) {
+          setError(MEAL_HISTORY.PLAN_SYNC_ERROR);
+        }
+      }
+
       const payload = await fetchMealHistory();
 
       if (cancelled) {
@@ -58,12 +93,12 @@ export function useMealHistory(): UseMealHistoryResult {
       setLoading(false);
     }
 
-    void loadMealHistory();
+    loadMealHistory();
 
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [justPurchased]);
 
   const removeMeal = useCallback(async (mealId: string) => {
     setRemovingMealId(mealId);

@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-
 import {
   FEEDBACK_MARQUEE_ROW_A_QUOTES,
   FEEDBACK_MARQUEE_ROW_B_QUOTES,

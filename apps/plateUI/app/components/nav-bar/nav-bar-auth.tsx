@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { ChevronDownIcon, HistoryIcon, LogInIcon, LogOutIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
-
 import { NAV_AUTH, NAV_AUTH_ACCOUNT_TRIGGER_SHELL, NAV_AUTH_LOADING_SHELL } from './constants';
 import { initialsForName } from './utils';
 import { Avatar, AvatarFallback } from '@/app/ui/avatar';
@@ -49,7 +48,7 @@ export function NavBarAuth() {
           setUser(payload.user);
         }
 
-        void loadPendingCount();
+        loadPendingCount();
       } catch {
         // Ignore — treat as signed out.
       } finally {
@@ -59,10 +58,10 @@ export function NavBarAuth() {
       }
     }
 
-    void loadSession();
+    loadSession();
 
     function handleMealAnalysesChanged() {
-      void loadPendingCount();
+      loadPendingCount();
     }
 
     window.addEventListener(MEAL_ANALYSES_CHANGED_EVENT, handleMealAnalysesChanged);
@@ -140,6 +139,7 @@ export function NavBarAuth() {
           <DropdownMenuItem
             className="cursor-pointer"
             // Full-page navigation so the auth server can clear the session cookie.
+            // oxlint-disable-next-line nextjs/no-html-link-for-pages
             render={<a href="/api/auth/logout" />}
             nativeButton={false}
           >

@@ -1,0 +1,80 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": [
+    "nextjs",
+    "typescript",
+    "unicorn"
+  ],
+  "categories": {
+    "correctness": "off"
+  },
+  "env": {
+    "builtin": true
+  },
+  "ignorePatterns": [
+    "**/node_modules/**",
+    "**/.next/**",
+    "**/out/**",
+    "**/build/**",
+    "**/dist/**",
+    "**/next-env.d.ts"
+  ],
+  "rules": {
+    "no-unused-vars": "warn",
+    "no-unused-expressions": "warn",
+    "no-var": "error",
+    "prefer-const": "error",
+    "typescript/no-explicit-any": "error",
+    "typescript/no-require-imports": "error",
+    "typescript/no-namespace": "error",
+    "typescript/ban-ts-comment": "error"
+  },
+  "overrides": [
+    {
+      "files": [
+        "apps/plateUI/**/*.{js,jsx,mjs,ts,tsx,mts,cts}"
+      ],
+      "plugins": [
+        "react",
+        "jsx-a11y"
+      ],
+      "rules": {
+        "no-unused-vars": "warn",
+        "react/rules-of-hooks": "error",
+        "react/exhaustive-deps": "warn",
+        "react/jsx-key": "error",
+        "react/jsx-no-duplicate-props": "error",
+        "jsx-a11y/alt-text": "warn",
+        "jsx-a11y/aria-props": "warn",
+        "nextjs/no-img-element": "warn",
+        "nextjs/no-sync-scripts": "error",
+        "nextjs/no-html-link-for-pages": "error"
+      }
+    },
+    {
+      "files": [
+        "apps/plateUI/app/**/*.{ts,tsx}"
+      ],
+      "rules": {
+        "check-file/folder-naming-convention": [
+          "error",
+          {
+            "**/app/components/**": "KEBAB_CASE"
+          },
+          {
+            "ignoreWords": [
+              "app",
+              "apps",
+              "components",
+              "plateUI",
+              "plateServer"
+            ]
+          }
+        ]
+      },
+      "jsPlugins": [
+        "eslint-plugin-check-file"
+      ]
+    }
+  ]
+}

@@ -3,7 +3,6 @@
 import { Card, CardContent } from '@/app/ui/card';
 import { NumberTicker } from '@/app/ui/number-ticker';
 import { cn } from '@/app/utils/cn';
-
 import type { HeroStatTileModel } from './constants';
 
 export type HeroNutrientTileProps = HeroStatTileModel;

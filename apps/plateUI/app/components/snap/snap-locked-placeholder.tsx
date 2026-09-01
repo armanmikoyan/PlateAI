@@ -1,5 +1,4 @@
 import { cn } from '@/app/utils/cn';
-
 import type { SnapLockedPlaceholderProps } from './types';
 
 export function SnapLockedPlaceholder({ value, className }: SnapLockedPlaceholderProps) {

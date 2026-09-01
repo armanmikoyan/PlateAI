@@ -1,5 +1,4 @@
 import { Suspense } from 'react';
-
 import { SnapHeader } from './snap-header';
 import { SnapUploadPanel } from './snap-upload-panel';
 

@@ -6,7 +6,7 @@ AI-powered food companion: snap a photo of a meal, get a full analysis of nutrie
 
 - **Frontend:** Next.js (App Router, Turbopack), React 19, TypeScript, Tailwind CSS v4, Base UI / shadcn-style components, Jotai state, Motion animations
 - **Backend:** Express 4, TypeScript (ESM, NodeNext), MongoDB + Mongoose, Passport (Google OAuth), JWT sessions, OpenAI / Gemini providers (multi-provider AI abstraction)
-- **Tooling:** npm workspaces, Vitest (shared test runner), Prettier, per-app ESLint, Docker, GitHub Actions (lint / test / build / deploy)
+- **Tooling:** npm workspaces, Vitest (shared test runner), oxfmt (formatter), the oxlint linter (single root config), Docker, GitHub Actions (lint / test / build / deploy)
 
 ## Monorepo layout
 
@@ -18,7 +18,8 @@ plateai/
 ├── packages/           # shared TS packages (types, utils, domain libs) — empty for now
 ├── tsconfig.base.json  # shared TS options
 ├── vitest.config.mts   # vitest projects: plateUI + plateServer
-└── prettier.config.mjs # shared formatter config
+├── .oxfmtrc.json       # oxfmt formatter config
+└── .oxlintrc.json      # oxlint config (single, with per-app overrides)
 ```
 
 npm workspaces at the root; all commands run from the root.
@@ -60,11 +61,11 @@ docker compose up
 | `npm run dev` | Next.js dev (plateUI) |
 | `npm run dev:server` | Server dev (tsx watch) |
 | `npm run build` / `build:server` | Workspace builds |
-| `npm run lint` / `lint:server` | Per-app lint |
+| `npm run lint` / `lint:server` | Per-app oxlint (root `.oxlintrc.json`) |
 | `npm run test` | All vitest projects |
 | `npm run test:ui` / `test:server` | Single vitest project |
 | `npm run typecheck` / `typecheck:server` | Per-app tsc |
-| `npm run format` / `format:check` | Prettier over everything |
+| `npm run format` / `format:check` | oxfmt over everything |
 
 ## CI/CD
 

@@ -1,5 +1,4 @@
 import type { MouseEvent } from 'react';
-
 import {
   NAV_MAIN_SECTION_LINKS,
   NAV_SCROLL_SPY_HEADER_OFFSET_PX,

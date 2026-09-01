@@ -1,5 +1,4 @@
 import type { ComponentProps } from 'react';
-
 import { cn } from '@/app/utils/cn';
 
 type CardSize = 'default' | 'sm';

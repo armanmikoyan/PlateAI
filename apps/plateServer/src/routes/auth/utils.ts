@@ -1,11 +1,7 @@
 import { SignJWT, jwtVerify } from 'jose';
-
 import { AUTH } from '@/routes/auth/constants.js';
 import type { AuthUser } from '@/routes/auth/types.js';
-import {
-  SUBSCRIPTION_PLAN,
-  SUBSCRIPTION_STATUS,
-} from '@/routes/meal-analyses/constants.js';
+import { SUBSCRIPTION_PLAN, SUBSCRIPTION_STATUS } from '@/routes/meal-analyses/constants.js';
 import type { SubscriptionPlan, SubscriptionStatus } from '@/routes/meal-analyses/constants.js';
 import type { ServerConfig } from '@/config/types.js';
 
@@ -13,15 +9,13 @@ const SUBSCRIPTION_PLAN_VALUES: readonly SubscriptionPlan[] = Object.values(SUBS
 const SUBSCRIPTION_STATUS_VALUES: readonly SubscriptionStatus[] = Object.values(SUBSCRIPTION_STATUS);
 
 function nullableSubscriptionPlan(value: unknown): SubscriptionPlan | null {
-  return typeof value === 'string' &&
-    (SUBSCRIPTION_PLAN_VALUES as readonly string[]).includes(value)
+  return typeof value === 'string' && (SUBSCRIPTION_PLAN_VALUES as readonly string[]).includes(value)
     ? (value as SubscriptionPlan)
     : null;
 }
 
 function nullableSubscriptionStatus(value: unknown): SubscriptionStatus | null {
-  return typeof value === 'string' &&
-    (SUBSCRIPTION_STATUS_VALUES as readonly string[]).includes(value)
+  return typeof value === 'string' && (SUBSCRIPTION_STATUS_VALUES as readonly string[]).includes(value)
     ? (value as SubscriptionStatus)
     : null;
 }
@@ -47,6 +41,8 @@ export async function signAuthToken(config: ServerConfig, user: AuthUser): Promi
     image: user.image,
     subscriptionPlan: user.subscriptionPlan,
     subscriptionStatus: user.subscriptionStatus,
+    subscriptionRenewsAt: user.subscriptionRenewsAt,
+    subscriptionEndsAt: user.subscriptionEndsAt,
   })
     .setProtectedHeader({ alg: AUTH.JWT_ALG })
     .setSubject(user.id)
@@ -70,6 +66,8 @@ export async function verifyAuthToken(config: ServerConfig, token: string): Prom
       image: typeof payload.image === 'string' ? payload.image : null,
       subscriptionPlan: nullableSubscriptionPlan(payload.subscriptionPlan),
       subscriptionStatus: nullableSubscriptionStatus(payload.subscriptionStatus),
+      subscriptionRenewsAt: typeof payload.subscriptionRenewsAt === 'string' ? payload.subscriptionRenewsAt : null,
+      subscriptionEndsAt: typeof payload.subscriptionEndsAt === 'string' ? payload.subscriptionEndsAt : null,
     };
   } catch {
     return null;

@@ -16,7 +16,10 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  if (request.nextUrl.pathname.startsWith('/api/snap/') || request.nextUrl.pathname.startsWith('/api/meal-analyses')) {
+  if (
+    request.nextUrl.pathname.startsWith('/api/snap/') ||
+    request.nextUrl.pathname.startsWith('/api/meal-analyses')
+  ) {
     return NextResponse.json({ error: 'Sign in required.' }, { status: 401 });
   }
 
@@ -24,5 +27,12 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/snap', '/snap/:path*', '/history', '/history/:path*', '/api/snap/:path*', '/api/meal-analyses/:path*'],
+  matcher: [
+    '/snap',
+    '/snap/:path*',
+    '/history',
+    '/history/:path*',
+    '/api/snap/:path*',
+    '/api/meal-analyses/:path*',
+  ],
 };

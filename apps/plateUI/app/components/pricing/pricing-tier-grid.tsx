@@ -1,7 +1,6 @@
 'use client';
 
 import { useRef } from 'react';
-
 import { PRICING_PAGE, PRICING_TIERS } from './constants';
 import { usePricingActiveTierId, usePricingTierShellMinHeight } from './hooks';
 import { PricingTierCard } from './pricing-tier-card';

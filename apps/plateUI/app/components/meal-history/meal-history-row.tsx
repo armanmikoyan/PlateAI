@@ -3,13 +3,11 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { ChevronRight, Clock3, LoaderCircle, Trash2 } from 'lucide-react';
-
 import { MEAL_ANALYSIS_STATUS } from '@/app/utils/meal-analyses/constants';
 import { writeSnapSavedMealCache } from '@/app/utils/meal-analyses/session-cache';
 import { Badge } from '@/app/ui/badge';
 import { Button } from '@/app/ui/button';
 import { Card, CardContent } from '@/app/ui/card';
-
 import { MEAL_HISTORY } from './constants';
 import type { MealHistoryRowProps } from './types';
 import {
@@ -102,7 +100,7 @@ export function MealHistoryRow({ item, onRemove, removing = false }: MealHistory
               aria-label={MEAL_HISTORY.REMOVE_PENDING_ARIA}
               disabled={removing}
               onClick={() => {
-                void onRemove(item.id);
+                onRemove(item.id);
               }}
             >
               {removing ? (

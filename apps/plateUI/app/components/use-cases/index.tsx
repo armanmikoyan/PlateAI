@@ -1,7 +1,6 @@
 import { IconTextCard } from '@/app/components/icon-text-card';
 import { ScrollEnter } from '@/app/components/scroll';
 import { SectionIntro } from '@/app/components/section-intro';
-
 import { USE_CASE_CARD_ROWS, USE_CASES_SECTION } from './constants';
 
 export default function UseCases() {

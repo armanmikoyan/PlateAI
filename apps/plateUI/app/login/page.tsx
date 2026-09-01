@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import type { ReactNode } from 'react';
-
 import { LOGIN } from '@/app/components/login/constants';
 import { LoginPanel } from '@/app/components/login/login-panel';
 import { readLoginRedirectPath } from '@/app/components/login/utils';

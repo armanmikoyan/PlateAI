@@ -3,9 +3,7 @@
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
 import { useSetAtom } from 'jotai';
-
 import { scrollBehavior } from '@/app/components/nav-bar/utils';
-
 import { PRICING_PAGE } from './constants';
 import { pricingSelectedTierIdAtom } from './state';
 import {

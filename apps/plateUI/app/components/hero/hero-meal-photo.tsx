@@ -3,7 +3,6 @@
 import { useEffect } from 'react';
 import { AnimatePresence, motion, useAnimationControls, useReducedMotion } from 'motion/react';
 import Image from 'next/image';
-
 import {
   HERO_MEAL_KEN_BURNS_FROM,
   HERO_MEAL_KEN_BURNS_TO,
@@ -17,6 +16,7 @@ type HeroMealPhotoProps = Readonly<{
   meal: HeroMealSlide;
   sizes: string;
   priority?: boolean;
+  loading?: 'lazy' | 'eager';
   kenBurns?: boolean;
   showCycleProgress?: boolean;
 }>;
@@ -25,15 +25,16 @@ type HeroKenBurnsLayerProps = Readonly<{
   meal: HeroMealSlide;
   sizes: string;
   priority: boolean;
+  loading?: 'lazy' | 'eager';
   rotateS: number;
 }>;
 
-function HeroKenBurnsLayer({ meal, sizes, priority, rotateS }: HeroKenBurnsLayerProps) {
+function HeroKenBurnsLayer({ meal, sizes, priority, loading, rotateS }: HeroKenBurnsLayerProps) {
   const controls = useAnimationControls();
 
   useEffect(() => {
     controls.set({ scale: HERO_MEAL_KEN_BURNS_FROM });
-    void controls.start({
+    controls.start({
       scale: HERO_MEAL_KEN_BURNS_TO,
       transition: { duration: rotateS, ease: 'linear' },
     });
@@ -46,6 +47,7 @@ function HeroKenBurnsLayer({ meal, sizes, priority, rotateS }: HeroKenBurnsLayer
         alt={meal.IMAGE_ALT}
         fill
         priority={priority}
+        loading={priority ? undefined : loading}
         sizes={sizes}
         className={cn('object-cover', meal.IMAGE_OBJECT_CLASS)}
       />
@@ -57,6 +59,7 @@ export function HeroMealPhoto({
   meal,
   sizes,
   priority = false,
+  loading,
   kenBurns = false,
   showCycleProgress = false,
 }: HeroMealPhotoProps) {
@@ -80,13 +83,20 @@ export function HeroMealPhoto({
           transition={crossfade}
         >
           {useKenBurns ? (
-            <HeroKenBurnsLayer meal={meal} priority={priority} rotateS={rotateS} sizes={sizes} />
+            <HeroKenBurnsLayer
+              meal={meal}
+              priority={priority}
+              loading={loading}
+              rotateS={rotateS}
+              sizes={sizes}
+            />
           ) : (
             <Image
               src={meal.IMAGE_SRC}
               alt={meal.IMAGE_ALT}
               fill
               priority={priority}
+              loading={priority ? undefined : loading}
               sizes={sizes}
               className={cn('object-cover', meal.IMAGE_OBJECT_CLASS)}
             />

@@ -3,12 +3,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { LoaderCircle } from 'lucide-react';
-
 import { buildPricingTierHref } from '@/app/components/pricing/utils';
 import { Badge } from '@/app/ui/badge';
 import { Card, CardContent } from '@/app/ui/card';
 import { cn } from '@/app/utils/cn';
-
 import {
   SNAP,
   SNAP_ANALYSIS_STATUS,

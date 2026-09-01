@@ -2,7 +2,6 @@
 
 import type { ReactNode } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
-
 import { HERO_MEAL_COPY_SWAP_S } from './constants';
 
 type HeroBlurSwapProps = Readonly<{

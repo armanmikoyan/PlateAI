@@ -1,5 +1,4 @@
 import 'dotenv/config';
-
 import { readServerConfig } from '@/config/index.js';
 import { connectDatabase } from '@/database/index.js';
 import { createApp } from '@/app/index.js';

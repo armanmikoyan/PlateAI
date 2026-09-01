@@ -1,6 +1,5 @@
 import { ScrollEnter } from '@/app/components/scroll';
 import { SectionIntro } from '@/app/components/section-intro';
-
 import { FAQ_SECTION } from './constants';
 import { FaqList } from './faq-list';
 

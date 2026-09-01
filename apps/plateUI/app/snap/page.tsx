@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
-
 import Snap from '@/app/components/snap';
 
 export const metadata: Metadata = {

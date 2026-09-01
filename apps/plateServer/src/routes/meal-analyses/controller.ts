@@ -1,5 +1,4 @@
 import type { NextFunction, Request, Response } from 'express';
-
 import { MEAL_ANALYSIS_STATUS } from '@/routes/meal-analyses/constants.js';
 import { isSnapAnalysisLocked } from '@/routes/meal-analyses/utils.js';
 import { analyzeMealImage } from '@/routes/meal-analyses/ai/analyze-meal-image.js';

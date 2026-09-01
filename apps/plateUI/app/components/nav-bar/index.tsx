@@ -9,7 +9,6 @@ import { NAV } from './constants';
 import { NavBarAuth } from './nav-bar-auth';
 import { NavBarSectionLinks } from './nav-bar-section-links';
 import { NavBarSnapCta } from './nav-bar-snap-cta';
-
 import Image from 'next/image';
 
 export function Navbar() {

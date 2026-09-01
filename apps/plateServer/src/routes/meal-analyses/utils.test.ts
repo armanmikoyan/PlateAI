@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-
 import { hasSnapAnalysisAccess, isSnapAnalysisLocked } from './utils.js';
 import { SUBSCRIPTION_PLAN, SUBSCRIPTION_STATUS } from './constants.js';
 

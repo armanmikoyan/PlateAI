@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, type ComponentPropsWithoutRef } from 'react';
 import { useMotionValue, useReducedMotion, useSpring } from 'motion/react';
-
 import { cn } from '@/app/utils/cn';
 
 type NumberTickerProps = ComponentPropsWithoutRef<'span'> &

@@ -1,7 +1,5 @@
 import { Lock } from 'lucide-react';
-
 import { cn } from '@/app/utils/cn';
-
 import { SNAP } from './constants';
 
 type SnapAnalysisUnlockCtaProps = Readonly<{

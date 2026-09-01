@@ -1,5 +1,4 @@
 import { AlertCircleIcon } from 'lucide-react';
-
 import { GoogleSignInButton } from './google-sign-in-button';
 import { LOGIN } from './constants';
 import { Alert, AlertDescription } from '@/app/ui/alert';

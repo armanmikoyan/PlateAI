@@ -2,7 +2,6 @@
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/app/ui/accordion';
 import { Card, CardContent } from '@/app/ui/card';
-
 import { FAQ_ITEMS } from './constants';
 
 export function FaqList() {

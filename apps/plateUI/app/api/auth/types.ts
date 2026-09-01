@@ -7,6 +7,8 @@ export type AuthUser = Readonly<{
   image: string | null;
   subscriptionPlan: SubscriptionPlan | null;
   subscriptionStatus: SubscriptionStatus | null;
+  subscriptionRenewsAt: string | null;
+  subscriptionEndsAt: string | null;
 }>;
 
 export type AuthMeResponse = Readonly<{

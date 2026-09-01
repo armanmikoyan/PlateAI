@@ -1,10 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-
 import { Card } from '@/app/ui/card';
 import { cn } from '@/app/utils/cn';
-
 import { HERO, HERO_ENTER_MOTION_REDUCE, HERO_MEAL_SLIDES, type HeroMealSlide } from './constants';
 import { HeroMealPhoto } from './hero-meal-photo';
 

@@ -1,8 +1,6 @@
 import { ArrowRight, Camera } from 'lucide-react';
 import Form from 'next/form';
-
 import { ShimmerButton } from '@/app/ui/shimmer-button';
-
 import { HERO } from './constants';
 
 export function HeroCta() {

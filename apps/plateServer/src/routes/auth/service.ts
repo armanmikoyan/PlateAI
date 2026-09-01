@@ -11,10 +11,24 @@ export function toAuthUser(user: UserDocument): AuthUser {
     image: user.image ?? null,
     subscriptionPlan: user.subscriptionPlan ?? null,
     subscriptionStatus: user.subscriptionStatus ?? null,
+    subscriptionRenewsAt: user.subscriptionRenewsAt ?? null,
+    subscriptionEndsAt: user.subscriptionEndsAt ?? null,
   };
 }
 
 export async function createLoginSession(
+  config: ServerConfig,
+  user: UserDocument,
+): Promise<{ token: string; cookieOptions: ReturnType<typeof authCookieOptions> }> {
+  const token = await signAuthToken(config, toAuthUser(user));
+
+  return {
+    token,
+    cookieOptions: authCookieOptions(config),
+  };
+}
+
+export async function refreshLoginSession(
   config: ServerConfig,
   user: UserDocument,
 ): Promise<{ token: string; cookieOptions: ReturnType<typeof authCookieOptions> }> {

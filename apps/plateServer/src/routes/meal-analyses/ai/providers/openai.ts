@@ -1,5 +1,4 @@
 import OpenAI from 'openai';
-
 import { MEAL_IMAGE_ANALYSIS_PROMPT } from '@/routes/meal-analyses/ai/constants.js';
 import { AiProviderError } from '@/routes/meal-analyses/ai/errors.js';
 import { parseMealImageAnalysis } from '@/routes/meal-analyses/ai/parse-analysis.js';

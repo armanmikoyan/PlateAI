@@ -1,5 +1,4 @@
 import { Marquee } from '@/app/ui/marquee';
-
 import type { FeedbackMarqueeQuoteRow } from './constants';
 import { FeedbackMarqueeQuoteChip } from './feedback-marquee-quote-chip';
 

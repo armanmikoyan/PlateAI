@@ -1,7 +1,5 @@
 import { CheckCircle2 } from 'lucide-react';
-
 import { HERO } from '@/app/components/hero/constants';
-
 import { SNAP, SNAP_LOCKED_DECOY, SNAP_LOCKED_PREVIEW } from './constants';
 import { SnapAnalysisPaywall } from './snap-analysis-paywall';
 import { SnapLockedNutrientTile } from './snap-locked-nutrient-tile';
