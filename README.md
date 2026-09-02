@@ -30,6 +30,24 @@ npm workspaces at the root; all commands run from the root.
 
 `packages/plate-billing` (`@plate/plate-billing`) is the single source of truth for plans, prices, and payments. It exposes a generic, provider-agnostic `BillingProvider` interface (`createCheckout`, `verifyWebhookSignature`, `parseWebhook`) so switching payment providers (e.g. Lemon Squeezy today, Stripe later) never touches the server or UI. The server's `checkout` route only handles HTTP and DB writes; all Lemon Squeezy logic lives in the package. Both apps depend on `@plate/plate-billing` (the UI for plan/status contracts, the server for the provider). The package exposes **subpath entries only** (no root barrel): `@plate/plate-billing/constants`, `@plate/plate-billing/types`, `@plate/plate-billing/utils`, and `@plate/plate-billing/provider`.
 
+## Auth & sessions
+
+Auth uses Google OAuth for identity, then issues its own tokens backed by a DB session so sessions can be **revoked** and **rotated**:
+
+- **Access token** (`plateai.access`) — short-lived HS256 JWT (15 min) with `sub` (userId) and `sid` (sessionId) claims. Sent with every request; the server validates it against the live DB session.
+- **Refresh token** (`plateai.refresh`) — opaque 32-byte value (30 days). Only its SHA-256 hash is stored in the `Session` model, so it can be revoked. Rotated on every refresh (the old hash is invalidated and replaced).
+- Both are **httpOnly** cookies with `sameSite=lax`, `secure` in production.
+
+Sessions live in MongoDB (`Session` model: `userId`, `refreshTokenHash`, `expiresAt`, `lastUsedAt`, `userAgent`, `ipAddress`, `revokedAt`) and can be revoked server-side (logout, compromise, admin).
+
+The frontend never decodes JWTs client-side — every auth check calls the server through the UI `/api/auth/*` proxy:
+
+- `/api/auth/me` — validates the access token against the DB session and returns the fresh user (subscription data is always loaded from the DB, never from stale JWT claims).
+- `/api/auth/refresh` — rotates the refresh token and mints a new access token (used for silent refresh).
+- `/api/auth/logout` — revokes the session and clears both cookies.
+
+On a 401 from `/auth/me`, the navbar silently calls `/auth/refresh` and retries; if refresh fails it clears the session and shows signed-out. `JWT_SECRET` must match across both apps.
+
 ## Getting started
 
 **Prerequisites:** Node 24 (pinned via `engines`), npm (pinned via `packageManager`), MongoDB for the auth server.

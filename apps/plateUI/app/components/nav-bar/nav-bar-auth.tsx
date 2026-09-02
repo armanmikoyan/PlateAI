@@ -36,10 +36,25 @@ export function NavBarAuth() {
       }
     }
 
+    async function clearSession() {
+      try {
+        await fetch('/api/auth/logout', { cache: 'no-store' });
+      } catch {
+        // Best-effort cleanup.
+      }
+    }
+
     async function loadSession() {
       try {
-        const response = await fetch('/api/auth/me', { cache: 'no-store' });
+        let response = await fetch('/api/auth/me', { cache: 'no-store' });
+
+        if (response.status === 401) {
+          await fetch('/api/auth/refresh', { cache: 'no-store' });
+          response = await fetch('/api/auth/me', { cache: 'no-store' });
+        }
+
         if (!response.ok) {
+          await clearSession();
           return;
         }
 
@@ -50,7 +65,7 @@ export function NavBarAuth() {
 
         loadPendingCount();
       } catch {
-        // Ignore — treat as signed out.
+        await clearSession();
       } finally {
         if (!cancelled) {
           setReady(true);

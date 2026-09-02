@@ -116,7 +116,7 @@ Route features follow the same file pattern as app features — `index.ts` (rout
 
 Dev: `npm run dev:server` (tsx watch).
 
-**`AUTH.COOKIE_NAME`** in `apps/plateServer/src/routes/auth/constants.ts` must match **`apps/plateUI/app/api/auth/constants.ts`**.
+**`AUTH.ACCESS_COOKIE_NAME`** (`plateai.access`) and **`AUTH.REFRESH_COOKIE_NAME`** (`plateai.refresh`) in `apps/plateServer/src/routes/auth/constants.ts` must match **`apps/plateUI/app/api/auth/constants.ts`**.
 
 ## packages/ (shared code)
 

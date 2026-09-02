@@ -1,39 +1,11 @@
-import { jwtVerify } from 'jose';
-import { SUBSCRIPTION_PLAN, SUBSCRIPTION_STATUS } from '@plate/plate-billing/constants';
-import type { SubscriptionPlan, SubscriptionStatus } from '@plate/plate-billing/types';
 import { AUTH } from '@/app/api/auth/constants';
 import type { AuthMeResponse, AuthUser } from '@/app/api/auth/types';
-
-export function readJwtSecret(env: NodeJS.ProcessEnv = process.env): string {
-  const secret = env.JWT_SECRET?.trim();
-
-  if (!secret) {
-    throw new Error('JWT_SECRET is required.');
-  }
-
-  return secret;
-}
 
 export function readPlateServerUrl(env: NodeJS.ProcessEnv = process.env): string {
   return env.PLATE_SERVER_URL?.trim() || 'http://127.0.0.1:4000';
 }
 
-const SUBSCRIPTION_PLAN_VALUES: readonly SubscriptionPlan[] = Object.values(SUBSCRIPTION_PLAN);
-const SUBSCRIPTION_STATUS_VALUES: readonly SubscriptionStatus[] = Object.values(SUBSCRIPTION_STATUS);
-
-function nullableSubscriptionPlan(value: unknown): SubscriptionPlan | null {
-  return typeof value === 'string' && (SUBSCRIPTION_PLAN_VALUES as readonly string[]).includes(value)
-    ? (value as SubscriptionPlan)
-    : null;
-}
-
-function nullableSubscriptionStatus(value: unknown): SubscriptionStatus | null {
-  return typeof value === 'string' && (SUBSCRIPTION_STATUS_VALUES as readonly string[]).includes(value)
-    ? (value as SubscriptionStatus)
-    : null;
-}
-
-function readAuthTokenFromCookieHeader(cookieHeader: string | null): string | null {
+function readCookie(cookieHeader: string | null, name: string): string | null {
   if (!cookieHeader) {
     return null;
   }
@@ -46,58 +18,20 @@ function readAuthTokenFromCookieHeader(cookieHeader: string | null): string | nu
       continue;
     }
 
-    const name = trimmed.slice(0, separatorIndex);
-    const value = trimmed.slice(separatorIndex + 1);
-
-    if (name === AUTH.COOKIE_NAME) {
-      return decodeURIComponent(value);
+    if (trimmed.slice(0, separatorIndex) === name) {
+      return decodeURIComponent(trimmed.slice(separatorIndex + 1));
     }
   }
 
   return null;
 }
 
-export async function verifyAuthToken(token: string): Promise<AuthUser | null> {
-  try {
-    const secret = new TextEncoder().encode(readJwtSecret());
-    const { payload } = await jwtVerify(token, secret);
-
-    if (
-      typeof payload.sub !== 'string' ||
-      typeof payload.email !== 'string' ||
-      typeof payload.name !== 'string'
-    ) {
-      return null;
-    }
-
-    return {
-      id: payload.sub,
-      email: payload.email,
-      name: payload.name,
-      image: typeof payload.image === 'string' ? payload.image : null,
-      subscriptionPlan: nullableSubscriptionPlan(payload.subscriptionPlan),
-      subscriptionStatus: nullableSubscriptionStatus(payload.subscriptionStatus),
-      subscriptionRenewsAt:
-        typeof payload.subscriptionRenewsAt === 'string' ? payload.subscriptionRenewsAt : null,
-      subscriptionEndsAt: typeof payload.subscriptionEndsAt === 'string' ? payload.subscriptionEndsAt : null,
-    };
-  } catch {
-    return null;
-  }
+export function readAccessTokenFromCookieHeader(cookieHeader: string | null): string | null {
+  return readCookie(cookieHeader, AUTH.ACCESS_COOKIE_NAME);
 }
 
-export async function getAuthSession(cookieHeader: string | null): Promise<AuthUser | null> {
-  try {
-    const token = readAuthTokenFromCookieHeader(cookieHeader);
-
-    if (!token) {
-      return null;
-    }
-
-    return verifyAuthToken(token);
-  } catch {
-    return null;
-  }
+export function readRefreshTokenFromCookieHeader(cookieHeader: string | null): string | null {
+  return readCookie(cookieHeader, AUTH.REFRESH_COOKIE_NAME);
 }
 
 export async function fetchAuthUser(cookieHeader: string | null): Promise<AuthUser | null> {
@@ -120,6 +54,10 @@ export async function fetchAuthUser(cookieHeader: string | null): Promise<AuthUs
   } catch {
     return null;
   }
+}
+
+export function getAuthSession(cookieHeader: string | null): Promise<AuthUser | null> {
+  return fetchAuthUser(cookieHeader);
 }
 
 function upstreamResponseHeaders(upstream: Response): Headers {

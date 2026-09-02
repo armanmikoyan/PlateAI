@@ -1,85 +1,14 @@
+import { createHash, randomBytes } from 'node:crypto';
 import { SignJWT, jwtVerify } from 'jose';
-import { SUBSCRIPTION_PLAN, SUBSCRIPTION_STATUS } from '@plate/plate-billing/constants';
-import type { SubscriptionPlan, SubscriptionStatus } from '@plate/plate-billing/types';
 import { AUTH } from '@/routes/auth/constants.js';
-import type { AuthUser } from '@/routes/auth/types.js';
+import type { AccessTokenClaims } from '@/routes/auth/types.js';
 import type { ServerConfig } from '@/config/types.js';
-
-const SUBSCRIPTION_PLAN_VALUES: readonly SubscriptionPlan[] = Object.values(SUBSCRIPTION_PLAN);
-const SUBSCRIPTION_STATUS_VALUES: readonly SubscriptionStatus[] = Object.values(SUBSCRIPTION_STATUS);
-
-function nullableSubscriptionPlan(value: unknown): SubscriptionPlan | null {
-  return typeof value === 'string' && (SUBSCRIPTION_PLAN_VALUES as readonly string[]).includes(value)
-    ? (value as SubscriptionPlan)
-    : null;
-}
-
-function nullableSubscriptionStatus(value: unknown): SubscriptionStatus | null {
-  return typeof value === 'string' && (SUBSCRIPTION_STATUS_VALUES as readonly string[]).includes(value)
-    ? (value as SubscriptionStatus)
-    : null;
-}
 
 function secretKey(config: ServerConfig): Uint8Array {
   return new TextEncoder().encode(config.JWT_SECRET);
 }
 
-export function authCookieOptions(config: ServerConfig) {
-  return {
-    httpOnly: true,
-    secure: config.NODE_ENV === 'production',
-    sameSite: 'lax' as const,
-    maxAge: AUTH.COOKIE_MAX_AGE_MS,
-    path: '/',
-  };
-}
-
-export async function signAuthToken(config: ServerConfig, user: AuthUser): Promise<string> {
-  return new SignJWT({
-    email: user.email,
-    name: user.name,
-    image: user.image,
-    subscriptionPlan: user.subscriptionPlan,
-    subscriptionStatus: user.subscriptionStatus,
-    subscriptionRenewsAt: user.subscriptionRenewsAt,
-    subscriptionEndsAt: user.subscriptionEndsAt,
-  })
-    .setProtectedHeader({ alg: AUTH.JWT_ALG })
-    .setSubject(user.id)
-    .setIssuedAt()
-    .setExpirationTime(AUTH.JWT_EXPIRY)
-    .sign(secretKey(config));
-}
-
-export async function verifyAuthToken(config: ServerConfig, token: string): Promise<AuthUser | null> {
-  try {
-    const { payload } = await jwtVerify(token, secretKey(config));
-
-    if (
-      typeof payload.sub !== 'string' ||
-      typeof payload.email !== 'string' ||
-      typeof payload.name !== 'string'
-    ) {
-      return null;
-    }
-
-    return {
-      id: payload.sub,
-      email: payload.email,
-      name: payload.name,
-      image: typeof payload.image === 'string' ? payload.image : null,
-      subscriptionPlan: nullableSubscriptionPlan(payload.subscriptionPlan),
-      subscriptionStatus: nullableSubscriptionStatus(payload.subscriptionStatus),
-      subscriptionRenewsAt:
-        typeof payload.subscriptionRenewsAt === 'string' ? payload.subscriptionRenewsAt : null,
-      subscriptionEndsAt: typeof payload.subscriptionEndsAt === 'string' ? payload.subscriptionEndsAt : null,
-    };
-  } catch {
-    return null;
-  }
-}
-
-export function readAuthTokenFromCookies(cookieHeader: string | undefined): string | null {
+function readCookie(cookieHeader: string | undefined, name: string): string | null {
   if (!cookieHeader) {
     return null;
   }
@@ -92,13 +21,86 @@ export function readAuthTokenFromCookies(cookieHeader: string | undefined): stri
       continue;
     }
 
-    const name = trimmed.slice(0, separatorIndex);
-    const value = trimmed.slice(separatorIndex + 1);
-
-    if (name === AUTH.COOKIE_NAME) {
-      return decodeURIComponent(value);
+    if (trimmed.slice(0, separatorIndex) === name) {
+      return decodeURIComponent(trimmed.slice(separatorIndex + 1));
     }
   }
 
   return null;
+}
+
+export function readAccessTokenFromCookies(cookieHeader: string | undefined): string | null {
+  return readCookie(cookieHeader, AUTH.ACCESS_COOKIE_NAME);
+}
+
+export function readRefreshTokenFromCookies(cookieHeader: string | undefined): string | null {
+  return readCookie(cookieHeader, AUTH.REFRESH_COOKIE_NAME);
+}
+
+export function accessCookieOptions(config: ServerConfig) {
+  return {
+    httpOnly: true,
+    secure: config.NODE_ENV === 'production',
+    sameSite: 'lax' as const,
+    maxAge: AUTH.ACCESS_TOKEN_TTL_MS,
+    path: '/',
+  };
+}
+
+export function refreshCookieOptions(config: ServerConfig) {
+  return {
+    httpOnly: true,
+    secure: config.NODE_ENV === 'production',
+    sameSite: 'lax' as const,
+    maxAge: AUTH.REFRESH_TOKEN_TTL_MS,
+    path: '/',
+  };
+}
+
+export async function signAccessToken(
+  config: ServerConfig,
+  userId: string,
+  sessionId: string,
+  user: { email: string; name: string },
+): Promise<string> {
+  return new SignJWT({
+    email: user.email,
+    name: user.name,
+    sid: sessionId,
+  })
+    .setProtectedHeader({ alg: AUTH.JWT_ALG })
+    .setSubject(userId)
+    .setIssuedAt()
+    .setExpirationTime(`${AUTH.ACCESS_TOKEN_TTL_MS / 1000}s`)
+    .sign(secretKey(config));
+}
+
+export async function verifyAccessToken(
+  config: ServerConfig,
+  token: string,
+): Promise<AccessTokenClaims | null> {
+  try {
+    const { payload } = await jwtVerify(token, secretKey(config));
+
+    if (typeof payload.sub !== 'string' || typeof payload.sid !== 'string') {
+      return null;
+    }
+
+    return {
+      sub: payload.sub,
+      sid: payload.sid,
+      email: typeof payload.email === 'string' ? payload.email : undefined,
+      name: typeof payload.name === 'string' ? payload.name : undefined,
+    };
+  } catch {
+    return null;
+  }
+}
+
+export function generateRefreshToken(): string {
+  return randomBytes(AUTH.REFRESH_TOKEN_BYTES).toString('base64url');
+}
+
+export function hashRefreshToken(token: string): string {
+  return createHash(AUTH.REFRESH_HASH_ALG).update(token).digest('hex');
 }

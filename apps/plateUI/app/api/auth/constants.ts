@@ -1,3 +1,4 @@
 export const AUTH = {
-  COOKIE_NAME: 'plateai.token',
+  ACCESS_COOKIE_NAME: 'plateai.access',
+  REFRESH_COOKIE_NAME: 'plateai.refresh',
 } as const;

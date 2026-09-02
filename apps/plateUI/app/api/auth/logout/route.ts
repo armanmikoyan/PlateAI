@@ -1,8 +1,5 @@
-import { cookies } from 'next/headers';
-import { AUTH } from '@/app/api/auth/constants';
-import { readSiteUrl } from '@/app/utils/site/url';
+import { proxyToApiServer } from '@/app/api/auth/utils';
 
-export async function GET(): Promise<Response> {
-  (await cookies()).delete(AUTH.COOKIE_NAME);
-  return Response.redirect(new URL('/', readSiteUrl()));
+export function GET(request: Request): Promise<Response> {
+  return proxyToApiServer(request, '/auth/logout');
 }

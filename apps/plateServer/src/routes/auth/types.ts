@@ -18,3 +18,15 @@ export type AuthMeResponse = Readonly<{
 export type AuthErrorResponse = Readonly<{
   error: string;
 }>;
+
+export type SessionTokens = Readonly<{
+  accessToken: string;
+  refreshToken: string;
+}>;
+
+export type AccessTokenClaims = Readonly<{
+  sub: string;
+  sid: string;
+  email?: string;
+  name?: string;
+}>;
