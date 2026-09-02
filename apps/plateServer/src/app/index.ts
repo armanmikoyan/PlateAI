@@ -6,6 +6,7 @@ import { createAuthRouter } from '@/routes/auth/index.js';
 import { configurePassport } from '@/routes/auth/google-oauth.js';
 import { createCheckoutSessionRouter, createCheckoutWebhookRouter } from '@/routes/checkout/index.js';
 import { toBillingProviderConfig } from '@/routes/checkout/utils.js';
+import { createHealthRouter } from '@/routes/health/index.js';
 import { createMealAnalysesRouter } from '@/routes/meal-analyses/index.js';
 import type { ServerConfig } from '@/config/types.js';
 
@@ -21,10 +22,7 @@ export function createApp(config: ServerConfig): express.Express {
   app.use('/webhook', express.raw({ type: 'application/json' }));
   app.use(express.json());
 
-  app.get('/health', (request, response) => {
-    void request;
-    response.status(200).json({ status: 'ok' });
-  });
+  app.use('/health', createHealthRouter());
 
   app.use(passport.initialize());
   app.use('/auth', createAuthRouter(config));
