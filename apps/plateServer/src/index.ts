@@ -11,7 +11,7 @@ async function main() {
   const app = createApp(config);
 
   app.listen(config.PORT, '0.0.0.0', () => {
-    console.log(`Auth server listening on http://0.0.0.0:${config.PORT}`);
+    console.log(`Plate Server is running on http://0.0.0.0:${config.PORT}`);
   });
 }
 

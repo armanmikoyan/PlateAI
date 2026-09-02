@@ -1,4 +1,4 @@
-import { readAuthServerUrl } from '@/app/api/auth/utils';
+import { readPlateServerUrl } from '@/app/api/auth/utils';
 import type { CheckoutSessionResponse } from '@plate/plate-billing/types';
 
 type CreateCheckoutSessionResult = { ok: true; url: string } | { ok: false; status: number };
@@ -12,7 +12,7 @@ async function createCheckoutSession(
   }
 
   try {
-    const response = await fetch(`${readAuthServerUrl()}/checkout/session`, {
+    const response = await fetch(`${readPlateServerUrl()}/checkout/session`, {
       method: 'POST',
       headers: {
         cookie: cookieHeader,

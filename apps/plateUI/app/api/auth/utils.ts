@@ -14,8 +14,8 @@ export function readJwtSecret(env: NodeJS.ProcessEnv = process.env): string {
   return secret;
 }
 
-export function readAuthServerUrl(env: NodeJS.ProcessEnv = process.env): string {
-  return env.AUTH_SERVER_URL?.trim() || 'http://127.0.0.1:4000';
+export function readPlateServerUrl(env: NodeJS.ProcessEnv = process.env): string {
+  return env.PLATE_SERVER_URL?.trim() || 'http://127.0.0.1:4000';
 }
 
 const SUBSCRIPTION_PLAN_VALUES: readonly SubscriptionPlan[] = Object.values(SUBSCRIPTION_PLAN);
@@ -106,7 +106,7 @@ export async function fetchAuthUser(cookieHeader: string | null): Promise<AuthUs
   }
 
   try {
-    const response = await fetch(`${readAuthServerUrl()}/auth/me`, {
+    const response = await fetch(`${readPlateServerUrl()}/auth/me`, {
       headers: { cookie: cookieHeader },
       cache: 'no-store',
     });
@@ -147,9 +147,9 @@ function upstreamResponseHeaders(upstream: Response): Headers {
   return headers;
 }
 
-export async function proxyToAuthServer(request: Request, upstreamPath: string): Promise<Response> {
+export async function proxyToApiServer(request: Request, upstreamPath: string): Promise<Response> {
   const requestUrl = new URL(request.url);
-  const targetUrl = `${readAuthServerUrl()}${upstreamPath}${requestUrl.search}`;
+  const targetUrl = `${readPlateServerUrl()}${upstreamPath}${requestUrl.search}`;
 
   const headers = new Headers();
   const cookie = request.headers.get('cookie');

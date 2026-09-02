@@ -21,6 +21,11 @@ export function createApp(config: ServerConfig): express.Express {
   app.use('/webhook', express.raw({ type: 'application/json' }));
   app.use(express.json());
 
+  app.get('/health', (request, response) => {
+    void request;
+    response.status(200).json({ status: 'ok' });
+  });
+
   app.use(passport.initialize());
   app.use('/auth', createAuthRouter(config));
   app.use('/meal-analyses', createMealAnalysesRouter(config));

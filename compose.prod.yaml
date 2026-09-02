@@ -32,13 +32,32 @@ services:
     environment:
       NODE_ENV: production
       JWT_SECRET: ${JWT_SECRET}
-      AUTH_SERVER_URL: http://plate-server:4000
+      PLATE_SERVER_URL: http://plate-server:4000
       AI_TEST_MODE: ${AI_TEST_MODE}
       AI_IMAGE_PROVIDER: ${AI_IMAGE_PROVIDER}
       AI_IMAGE_MODEL: ${AI_IMAGE_MODEL}
       AI_PROVIDER_API_KEY: ${AI_PROVIDER_API_KEY}
     depends_on:
       - plate-server
+    networks:
+      - plateai-net
+
+  nginx:
+    image: nginx:alpine
+    container_name: plateai-nginx
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./deploy/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./deploy/nginx/plateai.conf:/etc/nginx/conf.d/plateai.conf:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - ./certbot/www:/var/www/certbot
+    command: /bin/sh -c "rm -f /etc/nginx/conf.d/default.conf && exec nginx -g 'daemon off;'"
+    depends_on:
+      - plate-server
+      - plate-ui
     networks:
       - plateai-net
 

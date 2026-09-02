@@ -1,4 +1,4 @@
-import { readAuthServerUrl } from '@/app/api/auth/utils';
+import { readPlateServerUrl } from '@/app/api/auth/utils';
 import type {
   AnalyzeMealAnalysisResponse,
   AnalyzeResult,
@@ -38,7 +38,7 @@ async function mealAnalysisRequest<T>({
   };
 
   try {
-    const response = await fetch(`${readAuthServerUrl()}/meal-analyses${path}`, init);
+    const response = await fetch(`${readPlateServerUrl()}/meal-analyses${path}`, init);
 
     if (!response.ok) {
       return { ok: false, status: response.status };
