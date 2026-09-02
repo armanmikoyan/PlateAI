@@ -1,5 +1,5 @@
 import { readAuthServerUrl } from '@/app/api/auth/utils';
-import type { CheckoutSessionResponse } from '@plate/plate-billing';
+import type { CheckoutSessionResponse } from '@plate/plate-billing/types';
 
 type CreateCheckoutSessionResult = { ok: true; url: string } | { ok: false; status: number };
 

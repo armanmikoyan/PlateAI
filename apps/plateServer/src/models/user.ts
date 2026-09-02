@@ -1,5 +1,5 @@
 import { Schema, model, type InferSchemaType, type Types } from 'mongoose';
-import { SUBSCRIPTION_PLAN, SUBSCRIPTION_STATUS } from '@plate/plate-billing';
+import { SUBSCRIPTION_PLAN, SUBSCRIPTION_STATUS } from '@plate/plate-billing/constants';
 
 const userSchema = new Schema(
   {
@@ -17,9 +17,9 @@ const userSchema = new Schema(
       enum: Object.values(SUBSCRIPTION_STATUS),
       default: null,
     },
-    lemonCustomerId: { type: String, default: null },
-    lemonOrderId: { type: String, default: null },
-    lemonSubscriptionId: { type: String, default: null },
+    billingCustomerId: { type: String, default: null },
+    billingOrderId: { type: String, default: null },
+    billingSubscriptionId: { type: String, default: null },
     subscriptionRenewsAt: { type: String, default: null },
     subscriptionEndsAt: { type: String, default: null },
   },

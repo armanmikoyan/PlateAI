@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { isPaidPlan } from '@plate/plate-billing';
+import { isPaidPlan } from '@plate/plate-billing/utils';
 import { cn } from '@/app/utils/cn';
 import { Badge } from '@/app/ui/badge';
 import {

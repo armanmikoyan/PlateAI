@@ -21,6 +21,7 @@
     "test": "npm run build:packages && vitest run",
     "test:ui": "npm run build:packages && vitest run --project plateUI",
     "test:server": "npm run build:packages && vitest run --project plateServer",
+    "test:billing": "npm run build:packages && vitest run --project plate-billing",
     "typecheck": "npm run build:packages && npm run typecheck --workspace @plate/plate-ui",
     "typecheck:server": "npm run build:packages && npm run typecheck --workspace @plate/plate-server",
     "format": "oxfmt --write .",

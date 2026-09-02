@@ -1,4 +1,4 @@
-import { isActivePaidPlan } from '@plate/plate-billing';
+import { isActivePaidPlan } from '@plate/plate-billing/utils';
 import type { MealAnalysisDocument } from '@/models/meal-analysis.js';
 import type { SubscriptionEntitlementInput } from '@/routes/meal-analyses/constants.js';
 import type {

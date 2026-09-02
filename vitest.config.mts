@@ -33,6 +33,19 @@ export default defineConfig({
           include: ['apps/plateServer/src/**/*.test.ts'],
         },
       },
+      {
+        root: rootDir,
+        resolve: {
+          alias: {
+            '@': path.join(rootDir, 'packages/plate-billing/src'),
+          },
+        },
+        test: {
+          name: 'plate-billing',
+          environment: 'node',
+          include: ['packages/plate-billing/src/**/*.test.ts'],
+        },
+      },
     ],
   },
 });

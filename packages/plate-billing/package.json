@@ -1,24 +1,46 @@
 {
   "name": "@plate/plate-billing",
   "version": "0.1.0",
-  "description": "Shared plan, price, and payment contracts for PlateAI apps",
+  "description": "Provider-agnostic billing and payment contracts and logic for PlateAI apps",
   "private": true,
   "type": "module",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
   "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "default": "./dist/index.js"
+    "./constants": {
+      "types": "./dist/constants.d.ts",
+      "import": "./dist/constants.js",
+      "default": "./dist/constants.js"
+    },
+    "./types": {
+      "types": "./dist/types.d.ts",
+      "import": "./dist/types.js",
+      "default": "./dist/types.js"
+    },
+    "./utils": {
+      "types": "./dist/utils.d.ts",
+      "import": "./dist/utils.js",
+      "default": "./dist/utils.js"
+    },
+    "./provider": {
+      "types": "./dist/billing-provider.d.ts",
+      "import": "./dist/billing-provider.js",
+      "default": "./dist/billing-provider.js"
     }
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc -p tsconfig.json && tsc-alias -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "lint": "oxlint -c ../../.oxlintrc.json src"
+    "lint": "oxlint -c ../../.oxlintrc.json src",
+    "test": "vitest run --project plate-billing"
+  },
+  "dependencies": {
+    "@lemonsqueezy/lemonsqueezy.js": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "tsc-alias": "^1.8.16",
+    "vitest": "^4.1.11"
   }
 }

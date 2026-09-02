@@ -110,6 +110,7 @@ Route features follow the same file pattern as app features — `index.ts` (rout
 - **`index.ts` is the router only** — import siblings via **`@/`** (e.g. `@/routes/auth/google-oauth.js`), no re-exports, no `../` across folders.
 - **`controller.ts` / `service.ts` / `repository.ts` each hold only their own layer.** Controllers contain route-handler wiring only — validate/forward, delegate to `service.ts`, respond. No helpers (crypto, parsing, mapping) — those go in `utils.ts`. Services hold business logic that calls `repository.ts`; repositories hold Mongoose/data access only. No cross-layer logic (e.g. no DB queries in controllers, no HTTP in repositories).
 - **Types live only in `types.ts`** — never `type`/`interface` in `constants.ts` (consts stay **UPPERCASE** copy/static only). Pure helpers live in `utils.ts` with co-located `utils.test.ts`.
+- **Body parsing is app-level, not router-level.** `createApp` mounts `express.json()` once for all routes and `express.raw({ type: 'application/json' })` scoped to `/webhook` (before the JSON parser) so webhook signatures can read the raw body. Routers must not add `express.json()` / `express.raw()`.
 - ESM imports use **`.js`** extensions.
 - `ai/` lives under `routes/meal-analyses/ai/` and holds the provider abstraction (`create-provider.ts`, `errors.ts`, `parse-analysis.ts`, `providers/gemini.ts`, `providers/openai.ts`).
 
@@ -119,7 +120,17 @@ Dev: `npm run dev:server` (tsx watch).
 
 ## packages/ (shared code)
 
-Shared, non-app-specific TS packages that both apps can consume. Keep them framework-agnostic (no Next or Express imports). Each gets `package.json` + `tsconfig.json` extending `../../tsconfig.base.json`. Add to the root `workspaces` glob via the `packages/*` pattern (already configured) — no other wiring needed. Empty for now; do not create `packages/index.ts` barrels.
+Shared, non-app-specific TS packages that both apps can consume. Keep them framework-agnostic (no Next or Express imports). Each gets `package.json` + `tsconfig.json` extending `../../tsconfig.base.json`. Add to the root `workspaces` glob via the `packages/*` pattern (already configured) — no other wiring needed. Do not create `packages/index.ts` barrels.
+
+### `plate-billing` (`@plate/plate-billing`)
+
+The single source of truth for plans, prices, and payments; both apps depend on it (`"@plate/plate-billing": "*"`). It is **provider-agnostic**: it exposes a generic `BillingProvider` interface (`createCheckout`, `verifyWebhookSignature`, `parseWebhook`) plus plan/status contracts, and implements that interface for **Lemon Squeezy** internally. Swap the provider and the server/UI stay unchanged.
+
+- **Public surface only, no barrel / no re-exports.** The package exposes **subpath entries** instead of one `index.ts` barrel: `@plate/plate-billing/constants` (`SUBSCRIPTION_PLAN`, `SUBSCRIPTION_STATUS`), `@plate/plate-billing/types` (generic types incl. `SubscriptionPlan`/`SubscriptionStatus`, `CreateCheckoutInput`, `CheckoutResult`, `WebhookResult`, `WebhookParseResult`, `CheckoutSessionResponse`), `@plate/plate-billing/utils` (`isPaidPlan`, `isActivePaidPlan`), `@plate/plate-billing/provider` (`createBillingProvider`, `BillingProviderConfig`). Consumers import from the concrete subpath; there is no `.` root entry.
+- **Lemon Squeezy is internal** under `src/lemonsqueezy/` (`constants.ts`, `types.ts`, `utils.ts`, `provider.ts`). No `LemonSqueezy*` types leak to the package consumers.
+- **`@/` aliases + `tsc-alias`**: the package uses `@/*` → `./src/*` (NodeNext) exactly like `apps/plateServer`, and its `build` runs `tsc && tsc-alias` to rewrite `@/` into relative `.js` in `dist`. Never import across package folders with `../`.
+- **Owns its SDK dependency.** `@lemonsqueezy/lemonsqueezy.js` is declared in the package's `package.json`, not in `apps/plateServer`.
+- The server keeps all HTTP (`checkout/controller.ts`) and DB (`checkout/repository.ts`) concerns; the package does the payment logic. `checkout/utils.ts` maps `ServerConfig` → `BillingProviderConfig` and generic `WebhookResult` → the persistence update. User billing columns are **provider-agnostic** (`billingCustomerId`, `billingOrderId`, `billingSubscriptionId`) — never Lemon-named.
 
 ## Copy / UI strings
 

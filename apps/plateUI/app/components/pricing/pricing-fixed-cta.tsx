@@ -1,6 +1,6 @@
 'use client';
 
-import { isPaidPlan } from '@plate/plate-billing';
+import { isPaidPlan } from '@plate/plate-billing/utils';
 import { ShimmerButton } from '@/app/ui/shimmer-button';
 import { PRICING_PAGE, PRICING_SECTION } from './constants';
 import { usePricingActiveTierId, usePricingPurchase } from './hooks';

@@ -1,5 +1,5 @@
-import { SUBSCRIPTION_PLAN, SUBSCRIPTION_STATUS } from '@plate/plate-billing';
-import type { SubscriptionPlan, SubscriptionStatus } from '@plate/plate-billing';
+import { SUBSCRIPTION_PLAN, SUBSCRIPTION_STATUS } from '@plate/plate-billing/constants';
+import type { SubscriptionPlan, SubscriptionStatus } from '@plate/plate-billing/types';
 
 export const MEAL_HISTORY = {
   TITLE: 'Meal analyses',

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { SUBSCRIPTION_PLAN, SUBSCRIPTION_STATUS } from '@plate/plate-billing';
+import { SUBSCRIPTION_PLAN, SUBSCRIPTION_STATUS } from '@plate/plate-billing/constants';
 import { hasSnapAnalysisAccess, isSnapAnalysisLocked } from './utils.js';
 
 describe('snap analysis entitlements', () => {

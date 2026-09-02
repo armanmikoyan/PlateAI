@@ -1,5 +1,5 @@
 import type { UpdateQuery } from 'mongoose';
-import type { SubscriptionPlan, SubscriptionStatus } from '@plate/plate-billing';
+import type { SubscriptionPlan, SubscriptionStatus } from '@plate/plate-billing/types';
 import type { UserDocument } from '@/models/user.js';
 import { User } from '@/models/user.js';
 
@@ -10,9 +10,9 @@ export async function findUserById(id: string): Promise<UserDocument | null> {
 export type ApplySubscriptionUpdate = Readonly<{
   subscriptionPlan?: SubscriptionPlan;
   subscriptionStatus?: SubscriptionStatus;
-  lemonCustomerId?: string;
-  lemonOrderId?: string;
-  lemonSubscriptionId?: string;
+  billingCustomerId?: string;
+  billingOrderId?: string;
+  billingSubscriptionId?: string;
   subscriptionRenewsAt?: string | null;
   subscriptionEndsAt?: string | null;
 }>;

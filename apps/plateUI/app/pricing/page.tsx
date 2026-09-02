@@ -3,7 +3,7 @@ import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import type { ReactNode } from 'react';
 import { Suspense } from 'react';
-import { isActivePaidPlan } from '@plate/plate-billing';
+import { isActivePaidPlan } from '@plate/plate-billing/utils';
 import { fetchAuthUser } from '@/app/api/auth/utils';
 import { PRICING_PAGE } from '@/app/components/pricing/constants';
 import PricingPage from '@/app/components/pricing/pricing-page';

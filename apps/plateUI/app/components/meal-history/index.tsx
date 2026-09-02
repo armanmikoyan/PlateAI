@@ -2,7 +2,8 @@
 
 import Link from 'next/link';
 import { LoaderCircle } from 'lucide-react';
-import { isPaidPlan, SUBSCRIPTION_STATUS } from '@plate/plate-billing';
+import { isPaidPlan } from '@plate/plate-billing/utils';
+import { SUBSCRIPTION_STATUS } from '@plate/plate-billing/constants';
 import { Badge } from '@/app/ui/badge';
 import { Button } from '@/app/ui/button';
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from '@/app/ui/empty';

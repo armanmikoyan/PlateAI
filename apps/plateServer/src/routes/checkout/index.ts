@@ -1,26 +1,24 @@
 import { Router } from 'express';
-import express from 'express';
 import { requireUser } from '@/middleware/require-user.js';
-import { createCheckoutSession, handleWebhook } from '@/routes/checkout/controller.js';
+import { createCheckoutSessionHandler, createWebhookHandler } from '@/routes/checkout/controller.js';
+import type { BillingProvider } from '@plate/plate-billing/types';
 import type { ServerConfig } from '@/config/types.js';
 
-export function createCheckoutSessionRouter(config: ServerConfig): Router {
+export function createCheckoutSessionRouter(config: ServerConfig, billing: BillingProvider): Router {
   const router = Router();
   const authenticated = requireUser(config);
+  const handle = createCheckoutSessionHandler(billing, config);
 
-  router.post('/session', express.json(), authenticated, (request, response, next) => {
-    createCheckoutSession(config, request, response, next);
-  });
+  router.post('/session', authenticated, handle);
 
   return router;
 }
 
-export function createCheckoutWebhookRouter(config: ServerConfig): Router {
+export function createCheckoutWebhookRouter(billing: BillingProvider): Router {
   const router = Router();
+  const handle = createWebhookHandler(billing);
 
-  router.post('/', express.raw({ type: 'application/json' }), (request, response, next) => {
-    handleWebhook(config, request, response, next);
-  });
+  router.post('/', handle);
 
   return router;
 }

@@ -1,6 +1,6 @@
 import { jwtVerify } from 'jose';
-import { SUBSCRIPTION_PLAN, SUBSCRIPTION_STATUS } from '@plate/plate-billing';
-import type { SubscriptionPlan, SubscriptionStatus } from '@plate/plate-billing';
+import { SUBSCRIPTION_PLAN, SUBSCRIPTION_STATUS } from '@plate/plate-billing/constants';
+import type { SubscriptionPlan, SubscriptionStatus } from '@plate/plate-billing/types';
 import { AUTH } from '@/app/api/auth/constants';
 import type { AuthMeResponse, AuthUser } from '@/app/api/auth/types';
 

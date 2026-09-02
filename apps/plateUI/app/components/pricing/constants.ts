@@ -1,4 +1,4 @@
-import { SUBSCRIPTION_PLAN } from '@plate/plate-billing';
+import { SUBSCRIPTION_PLAN } from '@plate/plate-billing/constants';
 
 export const PRICING_SECTION = {
   EYEBROW: 'Pricing',

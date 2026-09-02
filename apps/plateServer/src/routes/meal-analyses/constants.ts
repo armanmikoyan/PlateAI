@@ -14,7 +14,7 @@ export const MEAL_ANALYSIS_CONFIDENCE = {
 
 export type MealAnalysisConfidence = (typeof MEAL_ANALYSIS_CONFIDENCE)[keyof typeof MEAL_ANALYSIS_CONFIDENCE];
 
-import type { SubscriptionPlan, SubscriptionStatus } from '@plate/plate-billing';
+import type { SubscriptionPlan, SubscriptionStatus } from '@plate/plate-billing/types';
 
 export const MEAL_ANALYSIS_ERRORS = {
   NOT_SIGNED_IN: 'Not signed in.',
