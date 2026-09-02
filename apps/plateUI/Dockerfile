@@ -5,7 +5,6 @@ FROM base AS deps
 RUN apk add --no-cache libc6-compat
 COPY package.json package-lock.json ./
 COPY apps/plateUI/package.json apps/plateUI/package.json
-COPY apps/plateServer/package.json apps/plateServer/package.json
 COPY packages/plate-billing/package.json packages/plate-billing/package.json
 COPY apps/plateUI/tsconfig.json apps/plateUI/tsconfig.json
 COPY tsconfig.base.json tsconfig.base.json

@@ -1,5 +1,6 @@
 services:
-  web:
+  plate-ui:
+    container_name: plateai-ui
     build:
       context: .
       dockerfile: apps/plateUI/Dockerfile
@@ -13,10 +14,10 @@ services:
       NODE_ENV: development
       PORT: 3000
       HOSTNAME: 0.0.0.0
-      AUTH_SERVER_URL: http://auth:4000
+      AUTH_SERVER_URL: http://plate-server:4000
     init: true
     depends_on:
-      - auth
+      - plate-server
     healthcheck:
       test: ['CMD', 'wget', '-q', '--spider', 'http://127.0.0.1:3000/api/health']
       interval: 360s
@@ -24,7 +25,8 @@ services:
       retries: 3
       start_period: 20s
 
-  auth:
+  plate-server:
+    container_name: plateai-server
     build:
       context: .
       dockerfile: apps/plateServer/Dockerfile

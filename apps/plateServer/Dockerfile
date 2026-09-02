@@ -2,7 +2,6 @@ FROM node:24-alpine AS deps
 WORKDIR /app
 RUN apk add --no-cache libc6-compat
 COPY package.json package-lock.json ./
-COPY apps/plateUI/package.json apps/plateUI/package.json
 COPY apps/plateServer/package.json apps/plateServer/package.json
 COPY packages/plate-billing/package.json packages/plate-billing/package.json
 COPY apps/plateServer/tsconfig.json apps/plateServer/tsconfig.json

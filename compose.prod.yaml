@@ -1,7 +1,7 @@
 services:
-  auth:
+  plate-server:
     image: ${DOCKER_AUTH_IMAGE}
-    container_name: plateai-auth
+    container_name: plateai-server
     restart: unless-stopped
     environment:
       PORT: 4000
@@ -23,22 +23,22 @@ services:
     networks:
       - plateai-net
 
-  web:
+  plate-ui:
     image: ${DOCKER_IMAGE}
-    container_name: plateai
+    container_name: plateai-ui
     restart: unless-stopped
     ports:
       - '3000:3000'
     environment:
       NODE_ENV: production
       JWT_SECRET: ${JWT_SECRET}
-      AUTH_SERVER_URL: http://plateai-auth:4000
+      AUTH_SERVER_URL: http://plate-server:4000
       AI_TEST_MODE: ${AI_TEST_MODE}
       AI_IMAGE_PROVIDER: ${AI_IMAGE_PROVIDER}
       AI_IMAGE_MODEL: ${AI_IMAGE_MODEL}
       AI_PROVIDER_API_KEY: ${AI_PROVIDER_API_KEY}
     depends_on:
-      - auth
+      - plate-server
     networks:
       - plateai-net
 
