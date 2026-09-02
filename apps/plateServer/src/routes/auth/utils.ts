@@ -1,8 +1,8 @@
 import { SignJWT, jwtVerify } from 'jose';
+import { SUBSCRIPTION_PLAN, SUBSCRIPTION_STATUS } from '@plate/plate-billing';
+import type { SubscriptionPlan, SubscriptionStatus } from '@plate/plate-billing';
 import { AUTH } from '@/routes/auth/constants.js';
 import type { AuthUser } from '@/routes/auth/types.js';
-import { SUBSCRIPTION_PLAN, SUBSCRIPTION_STATUS } from '@/routes/meal-analyses/constants.js';
-import type { SubscriptionPlan, SubscriptionStatus } from '@/routes/meal-analyses/constants.js';
 import type { ServerConfig } from '@/config/types.js';
 
 const SUBSCRIPTION_PLAN_VALUES: readonly SubscriptionPlan[] = Object.values(SUBSCRIPTION_PLAN);
@@ -55,7 +55,11 @@ export async function verifyAuthToken(config: ServerConfig, token: string): Prom
   try {
     const { payload } = await jwtVerify(token, secretKey(config));
 
-    if (typeof payload.sub !== 'string' || typeof payload.email !== 'string' || typeof payload.name !== 'string') {
+    if (
+      typeof payload.sub !== 'string' ||
+      typeof payload.email !== 'string' ||
+      typeof payload.name !== 'string'
+    ) {
       return null;
     }
 
@@ -66,7 +70,8 @@ export async function verifyAuthToken(config: ServerConfig, token: string): Prom
       image: typeof payload.image === 'string' ? payload.image : null,
       subscriptionPlan: nullableSubscriptionPlan(payload.subscriptionPlan),
       subscriptionStatus: nullableSubscriptionStatus(payload.subscriptionStatus),
-      subscriptionRenewsAt: typeof payload.subscriptionRenewsAt === 'string' ? payload.subscriptionRenewsAt : null,
+      subscriptionRenewsAt:
+        typeof payload.subscriptionRenewsAt === 'string' ? payload.subscriptionRenewsAt : null,
       subscriptionEndsAt: typeof payload.subscriptionEndsAt === 'string' ? payload.subscriptionEndsAt : null,
     };
   } catch {

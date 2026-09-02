@@ -1,9 +1,18 @@
 'use client';
 
 import Link from 'next/link';
+import { isPaidPlan } from '@plate/plate-billing';
 import { cn } from '@/app/utils/cn';
 import { Badge } from '@/app/ui/badge';
-import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/app/ui/card';
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/app/ui/card';
 import { ShimmerButton } from '@/app/ui/shimmer-button';
 import { PRICING_PAGE, PRICING_SECTION } from './constants';
 import { usePricingPurchase, usePricingSelectTier } from './hooks';
@@ -62,7 +71,9 @@ export function PricingTierCard({
           <PricingTierFeatureList lines={tier.FEATURES} />
         </div>
         {variant === 'detail' && !isSelected ? (
-          <p className="text-content-muted mt-4 text-center text-sm font-medium">{PRICING_SECTION.SHOW_DETAILS_HINT}</p>
+          <p className="text-content-muted mt-4 text-center text-sm font-medium">
+            {PRICING_SECTION.SHOW_DETAILS_HINT}
+          </p>
         ) : null}
       </CardContent>
     </>
@@ -126,7 +137,7 @@ export function PricingTierCard({
       </button>
       {isSelected ? (
         <div className="flex flex-col gap-3 px-(--card-spacing) pb-(--card-spacing)">
-          {['plus', 'pro'].includes(tier.ID) ? (
+          {isPaidPlan(tier.ID) ? (
             <>
               <ShimmerButton
                 type="button"

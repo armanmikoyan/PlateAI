@@ -1,9 +1,9 @@
 import { createCheckout, lemonSqueezySetup } from '@lemonsqueezy/lemonsqueezy.js';
+import { SUBSCRIPTION_PLAN, SUBSCRIPTION_STATUS } from '@plate/plate-billing';
+import type { SubscriptionPlan } from '@plate/plate-billing';
 import { LEMON_SQUEEZY_WEBHOOK_EVENTS } from '@/routes/checkout/constants.js';
 import type { LemonSqueezyWebhookPayload } from '@/routes/checkout/types.js';
 import type { ServerConfig } from '@/config/types.js';
-import { SUBSCRIPTION_PLAN, SUBSCRIPTION_STATUS } from '@/routes/meal-analyses/constants.js';
-import type { SubscriptionPlan } from '@/routes/meal-analyses/constants.js';
 import {
   buildVariantPlanMap,
   readSubscriptionDates,
@@ -19,9 +19,14 @@ type CreateCheckoutInput = Readonly<{
   plan: SubscriptionPlan;
 }>;
 
-export async function createLemonCheckout(config: ServerConfig, input: CreateCheckoutInput): Promise<string | null> {
+export async function createLemonCheckout(
+  config: ServerConfig,
+  input: CreateCheckoutInput,
+): Promise<string | null> {
   const variantId =
-    input.plan === SUBSCRIPTION_PLAN.PLUS ? config.LEMON_SQUEEZY_VARIANT_ID_PLUS : config.LEMON_SQUEEZY_VARIANT_ID_PRO;
+    input.plan === SUBSCRIPTION_PLAN.PLUS
+      ? config.LEMON_SQUEEZY_VARIANT_ID_PLUS
+      : config.LEMON_SQUEEZY_VARIANT_ID_PRO;
 
   lemonSqueezySetup({ apiKey: config.LEMON_SQUEEZY_API_KEY });
 
@@ -47,7 +52,10 @@ export async function createLemonCheckout(config: ServerConfig, input: CreateChe
   return checkout.data.data.attributes.url;
 }
 
-export async function handleWebhookEvent(config: ServerConfig, payload: LemonSqueezyWebhookPayload): Promise<boolean> {
+export async function handleWebhookEvent(
+  config: ServerConfig,
+  payload: LemonSqueezyWebhookPayload,
+): Promise<boolean> {
   if (payload.data.attributes.test_mode !== config.LEMON_SQUEEZY_TEST_MODE) {
     return false;
   }

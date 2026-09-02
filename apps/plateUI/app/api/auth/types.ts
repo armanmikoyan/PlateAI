@@ -1,4 +1,4 @@
-import type { SubscriptionPlan, SubscriptionStatus } from '@/app/api/auth/constants';
+import type { SubscriptionPlan, SubscriptionStatus } from '@plate/plate-billing';
 
 export type AuthUser = Readonly<{
   id: string;

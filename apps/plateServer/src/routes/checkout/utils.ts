@@ -1,11 +1,15 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
+import { SUBSCRIPTION_PLAN, SUBSCRIPTION_STATUS } from '@plate/plate-billing';
+import type { SubscriptionPlan, SubscriptionStatus } from '@plate/plate-billing';
 import { LEMON_SQUEEZY_SUBSCRIPTION_STATUS } from '@/routes/checkout/constants.js';
 import type { LemonSqueezySubscriptionStatus } from '@/routes/checkout/types.js';
 import type { LemonSqueezyWebhookPayload, LemonSqueezyVariantPlanMap } from '@/routes/checkout/types.js';
-import { SUBSCRIPTION_PLAN, SUBSCRIPTION_STATUS } from '@/routes/meal-analyses/constants.js';
-import type { SubscriptionPlan, SubscriptionStatus } from '@/routes/meal-analyses/constants.js';
 
-export function verifyWebhookSignature(secret: string, signatureHeader: string | undefined, rawBody: Buffer): boolean {
+export function verifyWebhookSignature(
+  secret: string,
+  signatureHeader: string | undefined,
+  rawBody: Buffer,
+): boolean {
   if (!signatureHeader) {
     return false;
   }
@@ -86,7 +90,9 @@ export function readSubscriptionDates(payload: LemonSqueezyWebhookPayload): Read
   };
 }
 
-export function toSubscriptionStatus(status: LemonSqueezySubscriptionStatus | null): SubscriptionStatus | null {
+export function toSubscriptionStatus(
+  status: LemonSqueezySubscriptionStatus | null,
+): SubscriptionStatus | null {
   switch (status) {
     case LEMON_SQUEEZY_SUBSCRIPTION_STATUS.ACTIVE:
       return SUBSCRIPTION_STATUS.ACTIVE;
@@ -97,10 +103,6 @@ export function toSubscriptionStatus(status: LemonSqueezySubscriptionStatus | nu
     default:
       return null;
   }
-}
-
-export function isPurchasablePlan(plan: string): plan is SubscriptionPlan {
-  return plan === SUBSCRIPTION_PLAN.PLUS || plan === SUBSCRIPTION_PLAN.PRO;
 }
 
 export function resolvePlanFromVariantId(

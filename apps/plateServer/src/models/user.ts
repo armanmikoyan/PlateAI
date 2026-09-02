@@ -1,5 +1,5 @@
 import { Schema, model, type InferSchemaType, type Types } from 'mongoose';
-import { SUBSCRIPTION_PLAN, SUBSCRIPTION_STATUS } from '@/routes/meal-analyses/constants.js';
+import { SUBSCRIPTION_PLAN, SUBSCRIPTION_STATUS } from '@plate/plate-billing';
 
 const userSchema = new Schema(
   {

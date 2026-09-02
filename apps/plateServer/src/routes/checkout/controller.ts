@@ -1,8 +1,9 @@
 import type { NextFunction, Request, Response } from 'express';
+import { isPaidPlan } from '@plate/plate-billing';
+import type { CheckoutSessionResponse } from '@plate/plate-billing';
 import { CHECKOUT_ERRORS } from '@/routes/checkout/constants.js';
 import { createLemonCheckout, handleWebhookEvent } from '@/routes/checkout/service.js';
-import { isWebhookPayload, isPurchasablePlan, verifyWebhookSignature } from '@/routes/checkout/utils.js';
-import type { CheckoutSessionResponse } from '@/routes/checkout/types.js';
+import { isWebhookPayload, verifyWebhookSignature } from '@/routes/checkout/utils.js';
 import type { ServerConfig } from '@/config/types.js';
 
 export async function createCheckoutSession(
@@ -21,7 +22,7 @@ export async function createCheckoutSession(
 
     const plan = (request.body as { plan?: unknown } | undefined)?.plan;
 
-    if (typeof plan !== 'string' || !isPurchasablePlan(plan)) {
+    if (typeof plan !== 'string' || !isPaidPlan(plan)) {
       response.status(400).json({ error: CHECKOUT_ERRORS.PLAN_NOT_PURCHASABLE });
       return;
     }
@@ -53,7 +54,11 @@ export async function handleWebhook(
   try {
     const rawBody = (request.body as Buffer | undefined) ?? Buffer.alloc(0);
     const signature = request.header('x-signature');
-    const isValid = verifyWebhookSignature(config.LEMON_SQUEEZY_WEBHOOK_SECRET, signature ?? undefined, rawBody);
+    const isValid = verifyWebhookSignature(
+      config.LEMON_SQUEEZY_WEBHOOK_SECRET,
+      signature ?? undefined,
+      rawBody,
+    );
 
     if (!isValid) {
       response.status(401).json({ error: CHECKOUT_ERRORS.INVALID_SIGNATURE });

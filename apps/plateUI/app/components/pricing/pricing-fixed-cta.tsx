@@ -1,5 +1,6 @@
 'use client';
 
+import { isPaidPlan } from '@plate/plate-billing';
 import { ShimmerButton } from '@/app/ui/shimmer-button';
 import { PRICING_PAGE, PRICING_SECTION } from './constants';
 import { usePricingActiveTierId, usePricingPurchase } from './hooks';
@@ -9,7 +10,7 @@ export function PricingFixedCta() {
   const activeTierId = usePricingActiveTierId();
   const activeTier = getPricingTierById(activeTierId);
   const { purchase, isPurchasing, error } = usePricingPurchase();
-  const isFreeTier = activeTier.ID === 'basic';
+  const isFreeTier = !isPaidPlan(activeTier.ID);
   const ctaLabel = isFreeTier ? PRICING_SECTION.FREE_PLAN_CTA : buildPricingPurchaseCtaLabel(activeTier);
 
   return (

@@ -6,6 +6,7 @@ RUN apk add --no-cache libc6-compat
 COPY package.json package-lock.json ./
 COPY apps/plateUI/package.json apps/plateUI/package.json
 COPY apps/plateServer/package.json apps/plateServer/package.json
+COPY packages/plate-billing/package.json packages/plate-billing/package.json
 COPY apps/plateUI/tsconfig.json apps/plateUI/tsconfig.json
 COPY tsconfig.base.json tsconfig.base.json
 RUN npm ci
@@ -17,7 +18,7 @@ COPY . .
 ARG NEXT_PUBLIC_SITE_URL
 ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
 ENV NEXT_TELEMETRY_DISABLED=1
-RUN npm run build --workspace @plate/plate-ui
+RUN npm run build
 
 FROM base AS dev
 WORKDIR /app
@@ -25,7 +26,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 EXPOSE 3000
-CMD ["npm", "run", "dev", "--workspace", "@plate/plate-ui"]
+CMD ["npm", "run", "dev"]
 
 FROM base AS runner
 WORKDIR /app

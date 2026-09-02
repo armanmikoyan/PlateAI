@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
+import { SUBSCRIPTION_PLAN, SUBSCRIPTION_STATUS } from '@plate/plate-billing';
 import { hasSnapAnalysisAccess, isSnapAnalysisLocked } from './utils.js';
-import { SUBSCRIPTION_PLAN, SUBSCRIPTION_STATUS } from './constants.js';
 
 describe('snap analysis entitlements', () => {
   it('grants access to active plus and pro plans', () => {

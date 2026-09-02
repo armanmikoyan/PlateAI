@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { LoaderCircle } from 'lucide-react';
-import { SUBSCRIPTION_STATUS } from '@/app/api/auth/constants';
+import { isPaidPlan, SUBSCRIPTION_STATUS } from '@plate/plate-billing';
 import { Badge } from '@/app/ui/badge';
 import { Button } from '@/app/ui/button';
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from '@/app/ui/empty';
@@ -10,14 +10,17 @@ import { MEAL_HISTORY, MEAL_HISTORY_PLAN_LABELS, MEAL_HISTORY_STATUS_LABELS } fr
 import { useMealHistory } from './hooks';
 import { MealHistoryRow } from './meal-history-row';
 import type { MealHistoryProps } from './types';
-import { formatPlanDate, isPaidPlan, isPendingMealHistoryItem } from './utils';
+import { formatPlanDate, isPendingMealHistoryItem } from './utils';
 
 export default function MealHistory({ user, justPurchased = false }: MealHistoryProps) {
   const { items, loading, error, removingMealId, removeMeal } = useMealHistory(justPurchased);
 
   const planLabel =
-    user?.subscriptionPlan != null ? MEAL_HISTORY_PLAN_LABELS[user.subscriptionPlan] : MEAL_HISTORY_PLAN_LABELS.basic;
-  const statusLabel = user?.subscriptionStatus != null ? MEAL_HISTORY_STATUS_LABELS[user.subscriptionStatus] : null;
+    user?.subscriptionPlan != null
+      ? MEAL_HISTORY_PLAN_LABELS[user.subscriptionPlan]
+      : MEAL_HISTORY_PLAN_LABELS.basic;
+  const statusLabel =
+    user?.subscriptionStatus != null ? MEAL_HISTORY_STATUS_LABELS[user.subscriptionStatus] : null;
   const paid = user?.subscriptionPlan != null && isPaidPlan(user.subscriptionPlan);
   const planDate = paid
     ? user.subscriptionStatus === SUBSCRIPTION_STATUS.CANCELLED
@@ -43,7 +46,12 @@ export default function MealHistory({ user, justPurchased = false }: MealHistory
           </span>
         ) : null
       ) : (
-        <Button nativeButton={false} variant="outline" size="sm" render={<Link href={MEAL_HISTORY.PLAN_CTA_HREF} />}>
+        <Button
+          nativeButton={false}
+          variant="outline"
+          size="sm"
+          render={<Link href={MEAL_HISTORY.PLAN_CTA_HREF} />}
+        >
           {MEAL_HISTORY.PLAN_CTA}
         </Button>
       )}

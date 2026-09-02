@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { createHmac } from 'node:crypto';
+import { isPaidPlan, SUBSCRIPTION_PLAN, SUBSCRIPTION_STATUS } from '@plate/plate-billing';
 import {
   buildVariantPlanMap,
-  isPurchasablePlan,
   isWebhookPayload,
   readSubscriptionDates,
   resolvePlanFromVariantId,
@@ -10,7 +10,6 @@ import {
   verifyWebhookSignature,
 } from './utils.js';
 import type { LemonSqueezySubscriptionStatus } from './types.js';
-import { SUBSCRIPTION_PLAN, SUBSCRIPTION_STATUS } from '@/routes/meal-analyses/constants.js';
 
 describe('verifyWebhookSignature', () => {
   const secret = 'signing-secret';
@@ -40,15 +39,15 @@ describe('buildVariantPlanMap', () => {
   });
 });
 
-describe('isPurchasablePlan', () => {
+describe('isPaidPlan', () => {
   it('accepts plus and pro', () => {
-    expect(isPurchasablePlan(SUBSCRIPTION_PLAN.PLUS)).toBe(true);
-    expect(isPurchasablePlan(SUBSCRIPTION_PLAN.PRO)).toBe(true);
+    expect(isPaidPlan(SUBSCRIPTION_PLAN.PLUS)).toBe(true);
+    expect(isPaidPlan(SUBSCRIPTION_PLAN.PRO)).toBe(true);
   });
 
   it('rejects basic and unknown plans', () => {
-    expect(isPurchasablePlan(SUBSCRIPTION_PLAN.BASIC)).toBe(false);
-    expect(isPurchasablePlan('lifetime')).toBe(false);
+    expect(isPaidPlan(SUBSCRIPTION_PLAN.BASIC)).toBe(false);
+    expect(isPaidPlan('lifetime')).toBe(false);
   });
 });
 

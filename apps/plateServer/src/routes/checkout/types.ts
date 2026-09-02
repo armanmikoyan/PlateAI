@@ -1,4 +1,4 @@
-import type { SubscriptionPlan } from '@/routes/meal-analyses/constants.js';
+import type { SubscriptionPlan } from '@plate/plate-billing';
 
 export type LemonSqueezyWebhookEvent =
   | 'order_created'
@@ -13,14 +13,6 @@ export type LemonSqueezySubscriptionStatus = 'active' | 'cancelled' | 'expired';
 
 export type CheckoutSessionBody = Readonly<{
   plan: SubscriptionPlan;
-}>;
-
-export type CheckoutSessionResponse = Readonly<{
-  url: string;
-}>;
-
-export type CheckoutErrorResponse = Readonly<{
-  error: string;
 }>;
 
 export type LemonSqueezyCheckoutCustom = Readonly<{

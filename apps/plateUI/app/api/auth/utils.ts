@@ -1,6 +1,7 @@
 import { jwtVerify } from 'jose';
-import { AUTH, SUBSCRIPTION_PLAN, SUBSCRIPTION_STATUS } from '@/app/api/auth/constants';
-import type { SubscriptionPlan, SubscriptionStatus } from '@/app/api/auth/constants';
+import { SUBSCRIPTION_PLAN, SUBSCRIPTION_STATUS } from '@plate/plate-billing';
+import type { SubscriptionPlan, SubscriptionStatus } from '@plate/plate-billing';
+import { AUTH } from '@/app/api/auth/constants';
 import type { AuthMeResponse, AuthUser } from '@/app/api/auth/types';
 
 export function readJwtSecret(env: NodeJS.ProcessEnv = process.env): string {
@@ -61,7 +62,11 @@ export async function verifyAuthToken(token: string): Promise<AuthUser | null> {
     const secret = new TextEncoder().encode(readJwtSecret());
     const { payload } = await jwtVerify(token, secret);
 
-    if (typeof payload.sub !== 'string' || typeof payload.email !== 'string' || typeof payload.name !== 'string') {
+    if (
+      typeof payload.sub !== 'string' ||
+      typeof payload.email !== 'string' ||
+      typeof payload.name !== 'string'
+    ) {
       return null;
     }
 
@@ -72,7 +77,8 @@ export async function verifyAuthToken(token: string): Promise<AuthUser | null> {
       image: typeof payload.image === 'string' ? payload.image : null,
       subscriptionPlan: nullableSubscriptionPlan(payload.subscriptionPlan),
       subscriptionStatus: nullableSubscriptionStatus(payload.subscriptionStatus),
-      subscriptionRenewsAt: typeof payload.subscriptionRenewsAt === 'string' ? payload.subscriptionRenewsAt : null,
+      subscriptionRenewsAt:
+        typeof payload.subscriptionRenewsAt === 'string' ? payload.subscriptionRenewsAt : null,
       subscriptionEndsAt: typeof payload.subscriptionEndsAt === 'string' ? payload.subscriptionEndsAt : null,
     };
   } catch {
@@ -92,13 +98,6 @@ export async function getAuthSession(cookieHeader: string | null): Promise<AuthU
   } catch {
     return null;
   }
-}
-
-export function hasActivePaidPlan(user: AuthUser): boolean {
-  const isPaidPlan =
-    user.subscriptionPlan === SUBSCRIPTION_PLAN.PLUS || user.subscriptionPlan === SUBSCRIPTION_PLAN.PRO;
-
-  return isPaidPlan && user.subscriptionStatus === SUBSCRIPTION_STATUS.ACTIVE;
 }
 
 export async function fetchAuthUser(cookieHeader: string | null): Promise<AuthUser | null> {

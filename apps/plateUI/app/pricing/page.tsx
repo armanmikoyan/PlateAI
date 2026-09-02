@@ -3,7 +3,8 @@ import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import type { ReactNode } from 'react';
 import { Suspense } from 'react';
-import { fetchAuthUser, hasActivePaidPlan } from '@/app/api/auth/utils';
+import { isActivePaidPlan } from '@plate/plate-billing';
+import { fetchAuthUser } from '@/app/api/auth/utils';
 import { PRICING_PAGE } from '@/app/components/pricing/constants';
 import PricingPage from '@/app/components/pricing/pricing-page';
 
@@ -15,7 +16,7 @@ export const metadata: Metadata = {
 export default async function Page(): Promise<ReactNode> {
   const user = await fetchAuthUser((await headers()).get('cookie'));
 
-  if (user && hasActivePaidPlan(user)) {
+  if (user && isActivePaidPlan(user.subscriptionPlan, user.subscriptionStatus)) {
     redirect('/history');
   }
 

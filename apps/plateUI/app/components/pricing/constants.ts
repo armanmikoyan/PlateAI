@@ -1,3 +1,5 @@
+import { SUBSCRIPTION_PLAN } from '@plate/plate-billing';
+
 export const PRICING_SECTION = {
   EYEBROW: 'Pricing',
   TITLE: 'Plans that scale with how you eat',
@@ -19,7 +21,7 @@ export const PRICING_PAGE = {
     'All plans include calorie targets and manual logging. Paid tiers unlock photo capture, macros, and smarter lists.',
   IDEAL_FOR_LABEL: 'Best for',
   PLANS_SECTION_ID: 'pricing-plans',
-  DEFAULT_TIER_ID: 'plus',
+  DEFAULT_TIER_ID: SUBSCRIPTION_PLAN.PLUS,
   SCROLL_PLAN_FLAG: 'pricing-scroll-plan',
   FIXED_CTA_PURCHASE: 'Purchase',
   FIXED_CTA_SHIMMER_BACKGROUND:
@@ -29,7 +31,7 @@ export const PRICING_PAGE = {
 
 export const PRICING_TIERS = [
   {
-    ID: 'basic',
+    ID: SUBSCRIPTION_PLAN.BASIC,
     NAME: 'Basic',
     BADGE: '',
     TAGLINE: 'Log meals and see calories without paying.',
@@ -56,7 +58,7 @@ export const PRICING_TIERS = [
     },
   },
   {
-    ID: 'plus',
+    ID: SUBSCRIPTION_PLAN.PLUS,
     NAME: 'Plus',
     BADGE: 'Most popular',
     TAGLINE: 'Photo-based logging, macros, and a real shopping list.',
@@ -90,7 +92,7 @@ export const PRICING_TIERS = [
     },
   },
   {
-    ID: 'pro',
+    ID: SUBSCRIPTION_PLAN.PRO,
     NAME: 'Pro',
     BADGE: '',
     TAGLINE: 'Households, shared plans, and exports for power users.',

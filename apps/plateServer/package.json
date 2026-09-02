@@ -14,6 +14,7 @@
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "@lemonsqueezy/lemonsqueezy.js": "^4.0.0",
+    "@plate/plate-billing": "*",
     "dotenv": "^16.6.1",
     "express": "^4.21.2",
     "jose": "^6.1.0",

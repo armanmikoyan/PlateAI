@@ -1,23 +1,23 @@
+import { isActivePaidPlan } from '@plate/plate-billing';
 import type { MealAnalysisDocument } from '@/models/meal-analysis.js';
-import { SNAP_ANALYSIS_PLANS, SUBSCRIPTION_STATUS } from '@/routes/meal-analyses/constants.js';
 import type { SubscriptionEntitlementInput } from '@/routes/meal-analyses/constants.js';
-import type { MealAnalysisDetail, MealAnalysisResultDto, MealAnalysisSummary } from '@/routes/meal-analyses/types.js';
+import type {
+  MealAnalysisDetail,
+  MealAnalysisResultDto,
+  MealAnalysisSummary,
+} from '@/routes/meal-analyses/types.js';
 
 export function hasSnapAnalysisAccess(subscription: SubscriptionEntitlementInput): boolean {
-  const { subscriptionPlan, subscriptionStatus } = subscription;
-
-  if (subscriptionPlan === null || subscriptionStatus === null) {
-    return false;
-  }
-
-  return SNAP_ANALYSIS_PLANS.includes(subscriptionPlan) && subscriptionStatus === SUBSCRIPTION_STATUS.ACTIVE;
+  return isActivePaidPlan(subscription.subscriptionPlan, subscription.subscriptionStatus);
 }
 
 export function isSnapAnalysisLocked(subscription: SubscriptionEntitlementInput): boolean {
   return !hasSnapAnalysisAccess(subscription);
 }
 
-export function toMealAnalysisResultDto(analysis: NonNullable<MealAnalysisDocument['analysis']>): MealAnalysisResultDto {
+export function toMealAnalysisResultDto(
+  analysis: NonNullable<MealAnalysisDocument['analysis']>,
+): MealAnalysisResultDto {
   return {
     mealName: analysis.mealName,
     calories: analysis.calories,
@@ -64,7 +64,9 @@ export function isMealAnalysisResultDto(value: unknown): value is MealAnalysisRe
   );
 }
 
-export function parseCreateMealAnalysisBody(body: unknown): { imageBase64: string; imageMimeType: string } | null {
+export function parseCreateMealAnalysisBody(
+  body: unknown,
+): { imageBase64: string; imageMimeType: string } | null {
   if (!body || typeof body !== 'object') {
     return null;
   }

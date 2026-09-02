@@ -12,8 +12,9 @@ export const MEAL_ANALYSIS_CONFIDENCE = {
   HIGH: 'high',
 } as const;
 
-export type MealAnalysisConfidence =
-  (typeof MEAL_ANALYSIS_CONFIDENCE)[keyof typeof MEAL_ANALYSIS_CONFIDENCE];
+export type MealAnalysisConfidence = (typeof MEAL_ANALYSIS_CONFIDENCE)[keyof typeof MEAL_ANALYSIS_CONFIDENCE];
+
+import type { SubscriptionPlan, SubscriptionStatus } from '@plate/plate-billing';
 
 export const MEAL_ANALYSIS_ERRORS = {
   NOT_SIGNED_IN: 'Not signed in.',
@@ -26,28 +27,6 @@ export const MEAL_ANALYSIS_ERRORS = {
   AI_FAILED: 'Could not analyze that photo. Try a clearer shot.',
   AI_UNKNOWN: 'Something went wrong while analyzing the photo.',
 } as const;
-
-export const SUBSCRIPTION_PLAN = {
-  BASIC: 'basic',
-  PLUS: 'plus',
-  PRO: 'pro',
-} as const;
-
-export type SubscriptionPlan = (typeof SUBSCRIPTION_PLAN)[keyof typeof SUBSCRIPTION_PLAN];
-
-export const SUBSCRIPTION_STATUS = {
-  ACTIVE: 'active',
-  CANCELLED: 'cancelled',
-  EXPIRED: 'expired',
-} as const;
-
-export type SubscriptionStatus = (typeof SUBSCRIPTION_STATUS)[keyof typeof SUBSCRIPTION_STATUS];
-
-/** Plans that unlock photo-based snap analysis (Basic is manual logging only). */
-export const SNAP_ANALYSIS_PLANS: readonly SubscriptionPlan[] = [
-  SUBSCRIPTION_PLAN.PLUS,
-  SUBSCRIPTION_PLAN.PRO,
-] as const;
 
 export type UserSubscription = Readonly<{
   PLAN: SubscriptionPlan | null;
