@@ -1,11 +1,11 @@
 import type { LucideIcon } from 'lucide-react';
-import { Briefcase, Flame, Scale } from 'lucide-react';
+import { Briefcase, Dumbbell, UtensilsCrossed } from 'lucide-react';
 
 export const USE_CASES_SECTION = {
   EYEBROW: 'Use cases',
   TITLE: 'Built for how people actually eat',
   SUBTITLE:
-    'Whether you are dialing in macros, managing a busy week, or feeding more than one appetite—PlateAI stays out of the way until you need it.',
+    'Whether you are tracking macros, living out of a suitcase, or feeding a household—PlateAI stays out of the way until you need it.',
 } as const;
 
 export type UseCaseCardRow = Readonly<{
@@ -19,23 +19,23 @@ export type UseCaseCardRow = Readonly<{
 export const USE_CASE_CARD_ROWS: readonly UseCaseCardRow[] = [
   {
     KEY: 'recomp',
-    ICON: Flame,
+    ICON: Dumbbell,
     TITLE: 'Cut or bulk without the spreadsheet',
-    BODY: 'Same-day totals show what is left after lunch so dinner stays inside the plan—without re-logging yesterday.',
+    BODY: 'See what is left after every meal so dinner stays inside the plan. Adjust one entry and watch the rest of the day rebalance.',
     ICON_SHELL: 'bg-macro-protein/10 text-macro-protein ring-1 ring-macro-protein/18',
   },
   {
     KEY: 'busy',
     ICON: Briefcase,
     TITLE: 'Busy weeks, honest logs',
-    BODY: 'Photo-first capture when you do not have a food scale nearby keeps streaks alive on travel days and late shifts.',
+    BODY: 'Photo-first capture keeps streaks alive on travel days, late shifts, and meals where a food scale is not an option.',
     ICON_SHELL: 'bg-accent/12 text-accent-mid ring-1 ring-accent/22',
   },
   {
-    KEY: 'balance',
-    ICON: Scale,
-    TITLE: 'Flexible structure',
-    BODY: 'Targets stay guidance, not guilt—adjust one meal and see the rest of the day rebalance in one readout.',
+    KEY: 'household',
+    ICON: UtensilsCrossed,
+    TITLE: 'Household meal planning',
+    BODY: 'Cook once, log for everyone. Separate profiles and shared targets mean one plan works for the whole table.',
     ICON_SHELL: 'bg-macro-fat-strong/12 text-macro-fat-strong ring-1 ring-macro-fat-strong/20',
   },
 ] as const;

@@ -1,4 +1,4 @@
-import { IconTextCard } from '@/app/components/icon-text-card';
+import { FeatureCard } from '@/app/components/feature-card';
 import { ScrollEnter } from '@/app/components/scroll';
 import { SectionIntro } from '@/app/components/section-intro';
 import { FEATURE_CARD_ROWS, FEATURES_SECTION } from './constants';
@@ -14,28 +14,31 @@ export default function Features() {
         className="layout-page-shell"
         rows={[
           {
-            KEY: 'body',
+            KEY: 'heading',
             content: (
-              <>
-                <SectionIntro
-                  eyebrow={FEATURES_SECTION.EYEBROW}
-                  title={FEATURES_SECTION.TITLE}
-                  subtitle={FEATURES_SECTION.SUBTITLE}
-                  headingId="features-heading"
-                />
-                <div className="mt-10 grid grid-cols-1 gap-4 sm:mt-12 sm:grid-cols-2 sm:gap-5 lg:gap-6">
-                  {FEATURE_CARD_ROWS.map((row) => (
-                    <IconTextCard
-                      key={row.KEY}
-                      body={row.BODY}
-                      icon={row.ICON}
-                      iconShell={row.ICON_SHELL}
-                      layout="vertical"
-                      title={row.TITLE}
-                    />
-                  ))}
-                </div>
-              </>
+              <SectionIntro
+                eyebrow={FEATURES_SECTION.EYEBROW}
+                title={FEATURES_SECTION.TITLE}
+                subtitle={FEATURES_SECTION.SUBTITLE}
+                headingId="features-heading"
+              />
+            ),
+          },
+          {
+            KEY: 'cards',
+            delayClass: 'motion-safe:delay-100',
+            content: (
+              <div className="mt-10 grid grid-cols-1 gap-4 sm:mt-12 sm:grid-cols-2 sm:gap-5 lg:gap-6">
+                {FEATURE_CARD_ROWS.map((row) => (
+                  <FeatureCard
+                    key={row.KEY}
+                    body={row.BODY}
+                    icon={row.ICON}
+                    iconShell={row.ICON_SHELL}
+                    title={row.TITLE}
+                  />
+                ))}
+              </div>
             ),
           },
         ]}
