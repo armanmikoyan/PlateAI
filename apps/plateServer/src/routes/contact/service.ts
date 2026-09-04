@@ -16,7 +16,7 @@ export async function sendContactMessage(config: EmailConfig, body: ContactMessa
 
     await transporter.sendMail({
       from: `PlateAI <${config.EMAIL_USER}>`,
-      to: config.EMAIL_TO,
+      to: config.EMAIL_USER,
       replyTo: body.email,
       subject: 'New PlateAI contact request',
       text: `From: ${body.email}\n\n${body.message}`,

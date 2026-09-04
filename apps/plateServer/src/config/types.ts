@@ -3,7 +3,6 @@ export type EmailConfig = Readonly<{
   EMAIL_PORT: number;
   EMAIL_USER: string;
   EMAIL_PASS: string;
-  EMAIL_TO: string;
 }>;
 
 export type ServerConfig = Readonly<{
@@ -25,5 +24,4 @@ export type ServerConfig = Readonly<{
   EMAIL_PORT: number;
   EMAIL_USER: string;
   EMAIL_PASS: string;
-  EMAIL_TO: string;
 }>;

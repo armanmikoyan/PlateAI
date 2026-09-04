@@ -66,6 +66,5 @@ export function readServerConfig(env: NodeJS.ProcessEnv = process.env): ServerCo
     EMAIL_PORT: Number.parseInt(env.EMAIL_PORT?.trim() ?? '465', 10),
     EMAIL_USER: requiredEnv('EMAIL_USER', env.EMAIL_USER),
     EMAIL_PASS: requiredEnv('EMAIL_PASS', env.EMAIL_PASS),
-    EMAIL_TO: requiredEnv('EMAIL_TO', env.EMAIL_TO),
   };
 }
