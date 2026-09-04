@@ -1,3 +1,5 @@
+import type { SiteFooterCompanyItemRow, SiteFooterProductLinkRow } from './types';
+
 export const SITE_FOOTER_MAIN = {
   BRAND: 'PlateAI',
   TAGLINE: 'Photo-first logging that keeps pace with your day.',
@@ -16,12 +18,6 @@ export const SITE_FOOTER_COLUMNS = {
   SOON: 'soon',
 } as const;
 
-export type SiteFooterProductLinkRow = Readonly<{
-  KEY: string;
-  LABEL: string;
-  HREF: string;
-}>;
-
 export const SITE_FOOTER_PRODUCT_LINKS: readonly SiteFooterProductLinkRow[] = [
   { KEY: 'snap', LABEL: 'Snap a plate', HREF: '/snap' },
   { KEY: 'how', LABEL: 'How it works', HREF: '/#how-it-works' },
@@ -32,16 +28,9 @@ export const SITE_FOOTER_PRODUCT_LINKS: readonly SiteFooterProductLinkRow[] = [
   { KEY: 'faq', LABEL: 'FAQ', HREF: '/#faq' },
 ] as const;
 
-export type SiteFooterCompanyItemRow = Readonly<{
-  KEY: string;
-  LABEL: string;
-  /** When omitted, the item is shown as “coming soon” (no route yet). */
-  HREF?: string;
-}>;
-
 export const SITE_FOOTER_COMPANY_ITEMS: readonly SiteFooterCompanyItemRow[] = [
-  { KEY: 'privacy', LABEL: 'Privacy' },
-  { KEY: 'terms', LABEL: 'Terms' },
+  { KEY: 'privacy', LABEL: 'Privacy policy', HREF: '/privacy-policy' },
+  { KEY: 'terms', LABEL: 'Terms of use', HREF: '/terms' },
 ] as const;
 
 export const SITE_FOOTER_CONNECT = {

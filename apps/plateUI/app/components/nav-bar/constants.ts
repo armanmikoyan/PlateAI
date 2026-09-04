@@ -11,7 +11,8 @@ export const NAV = {
   FEEDBACK: 'Wall of love',
   PRICING: 'Pricing',
   FAQ: 'FAQ',
-  CONTACT: 'Contact',
+  CONTACT: 'Contact us',
+  PRIVACY_POLICY: 'Privacy policy',
   MENU_OPEN: 'Open menu',
   MENU_CLOSE: 'Close menu',
   MENU_HEADING: 'On this page',
@@ -45,7 +46,13 @@ export const NAV_MAIN_SECTION_LINKS: readonly NavMainSectionLinkRow[] = [
   { SECTION_ID: 'feedback', HREF: '/#feedback', LABEL: NAV.FEEDBACK },
   { SECTION_ID: 'pricing', HREF: '/#pricing', LABEL: NAV.PRICING },
   { SECTION_ID: 'faq', HREF: '/#faq', LABEL: NAV.FAQ },
+] as const;
+
+/** Drawer-only links (not shown in the desktop nav): page links + anchors. */
+export const NAV_DRAWER_SECTION_LINKS: readonly NavMainSectionLinkRow[] = [
+  ...NAV_MAIN_SECTION_LINKS,
   { SECTION_ID: 'contact', HREF: '/#contact', LABEL: NAV.CONTACT },
+  { SECTION_ID: 'privacy-policy', HREF: '/privacy-policy', LABEL: NAV.PRIVACY_POLICY },
 ] as const;
 
 /** Sticky header height (`h-20`) — top band used for scroll-spy (viewport px). */

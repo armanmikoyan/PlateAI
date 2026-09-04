@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { readSiteUrl } from '@/app/utils/site/url';
 
-const PUBLIC_ROUTES = ['/', '/pricing'] as const;
+const PUBLIC_ROUTES = ['/', '/pricing', '/privacy-policy', '/terms'] as const;
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const siteUrl = readSiteUrl();

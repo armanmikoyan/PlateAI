@@ -3,7 +3,7 @@
 import type { MouseEvent } from 'react';
 import { useSyncExternalStore } from 'react';
 import { cn } from '@/app/utils/cn';
-import { NAV_MAIN_SECTION_LINKS } from './constants';
+import { NAV_DRAWER_SECTION_LINKS, NAV_MAIN_SECTION_LINKS } from './constants';
 import type { NavBarSectionLinksProps } from './types';
 import {
   getNavScrollSpyServerSnapshot,
@@ -35,9 +35,11 @@ export function NavBarSectionLinks({ onAfterNavigate, variant }: NavBarSectionLi
     onAfterNavigate?.();
   };
 
+  const links = variant === 'drawer' ? NAV_DRAWER_SECTION_LINKS : NAV_MAIN_SECTION_LINKS;
+
   return (
     <>
-      {NAV_MAIN_SECTION_LINKS.map((row) => {
+      {links.map((row) => {
         const isActive = activeId === row.SECTION_ID;
         return (
           <a

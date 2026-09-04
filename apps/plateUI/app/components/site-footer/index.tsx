@@ -5,6 +5,7 @@ import { Button } from '@/app/ui/button';
 import SiGithub from '@icons-pack/react-simple-icons/icons/SiGithub';
 import { Separator } from '@/app/ui/separator';
 import Image from 'next/image';
+import type { SiteFooterLinkProps } from './types';
 import {
   SITE_FOOTER_COLUMNS,
   SITE_FOOTER_COMPANY_ITEMS,
@@ -12,11 +13,6 @@ import {
   SITE_FOOTER_MAIN,
   SITE_FOOTER_PRODUCT_LINKS,
 } from './constants';
-
-type SiteFooterLinkProps = Readonly<{
-  href: string;
-  label: string;
-}>;
 
 function SiteFooterLink({ href, label }: SiteFooterLinkProps) {
   return (

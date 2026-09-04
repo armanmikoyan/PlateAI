@@ -9,6 +9,7 @@ export function ContactForm() {
   const [sending, setSending] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [email, setEmail] = useState<string | null>(null);
+  const [checkingAuth, setCheckingAuth] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
@@ -25,6 +26,10 @@ export function ContactForm() {
         }
       } catch {
         // Leave email null; submission will use it as missing.
+      } finally {
+        if (!cancelled) {
+          setCheckingAuth(false);
+        }
       }
     }
 
@@ -86,9 +91,9 @@ export function ContactForm() {
 
   return (
     <form onSubmit={handleSubmit} className="mx-auto mt-10 flex max-w-lg flex-col gap-5">
-      {email ? null : (
+      {!checkingAuth && !email ? (
         <p className="text-muted-foreground text-center text-sm">{CONTACT_SECTION.SIGN_IN_REQUIRED}</p>
-      )}
+      ) : null}
       <div className="flex flex-col gap-1.5">
         <textarea
           id="contact-message"
@@ -101,8 +106,8 @@ export function ContactForm() {
       </div>
       <button
         type="submit"
-        disabled={sending || !email}
-        aria-disabled={sending || !email}
+        disabled={sending || checkingAuth || !email}
+        aria-disabled={sending || checkingAuth || !email}
         className="text-button-default-fg inline-flex h-11 items-center justify-center rounded-lg px-5 text-base font-medium disabled:opacity-50"
         style={{
           background: 'linear-gradient(165deg, var(--color-cta-soft) 0%, var(--color-cta) 48%, var(--color-cta-deep) 100%)',
