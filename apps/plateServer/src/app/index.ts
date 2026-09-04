@@ -21,7 +21,7 @@ export function createApp(config: ServerConfig): express.Express {
 
   // Webhook signatures require the raw body, so parse it before the global JSON parser.
   app.use('/webhook', express.raw({ type: 'application/json' }));
-  app.use(express.json());
+  app.use(express.json({ limit: '10mb' }));
 
   app.use('/health', createHealthRouter());
 

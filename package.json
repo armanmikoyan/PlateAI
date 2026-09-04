@@ -11,7 +11,7 @@
     "packages/*"
   ],
   "scripts": {
-    "build:packages": "npm run build --workspace @plate/plate-billing",
+    "build:packages": "npm run build --workspace @plate/plate-billing && npm run build --workspace @plate/plate-ai",
     "dev": "npm run build:packages && npm run dev --workspace @plate/plate-ui",
     "dev:server": "npm run build:packages && npm run dev --workspace @plate/plate-server",
     "build": "npm run build:packages && npm run build --workspace @plate/plate-ui",
@@ -22,6 +22,7 @@
     "test:ui": "npm run build:packages && vitest run --project plateUI",
     "test:server": "npm run build:packages && vitest run --project plateServer",
     "test:billing": "npm run build:packages && vitest run --project plate-billing",
+    "test:ai": "npm run build:packages && vitest run --project plate-ai",
     "typecheck": "npm run build:packages && npm run typecheck --workspace @plate/plate-ui",
     "typecheck:server": "npm run build:packages && npm run typecheck --workspace @plate/plate-server",
     "format": "oxfmt --write .",

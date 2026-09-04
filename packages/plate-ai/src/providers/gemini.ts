@@ -1,12 +1,12 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { MEAL_IMAGE_ANALYSIS_PROMPT } from '@/routes/meal-analyses/ai/constants.js';
-import { AiProviderError } from '@/routes/meal-analyses/ai/errors.js';
-import { parseMealImageAnalysis } from '@/routes/meal-analyses/ai/parse-analysis.js';
+import { IMAGE_ANALYSIS_PROVIDER, MEAL_IMAGE_ANALYSIS_PROMPT } from '@/constants.js';
+import { AiProviderError } from '@/errors.js';
+import { parseMealImageAnalysis } from '@/utils.js';
 import type {
   ImageAnalysisProvider,
   ImageAnalysisProviderConfig,
   MealImageAnalysisInput,
-} from '@/routes/meal-analyses/ai/types.js';
+} from '@/types.js';
 
 function providerErrorMessage(error: unknown): string {
   return error instanceof Error ? error.message : 'Gemini request failed.';
@@ -18,7 +18,7 @@ export function createGeminiImageAnalysisProvider(
   const client = new GoogleGenerativeAI(config.apiKey);
 
   return {
-    id: 'gemini',
+    id: IMAGE_ANALYSIS_PROVIDER.GEMINI,
     async analyzeMeal(input: MealImageAnalysisInput) {
       try {
         const model = client.getGenerativeModel({
@@ -42,7 +42,7 @@ export function createGeminiImageAnalysisProvider(
         const text = result.response.text().trim();
 
         if (!text) {
-          throw new AiProviderError('gemini', 'Gemini returned an empty response.');
+          throw new AiProviderError(IMAGE_ANALYSIS_PROVIDER.GEMINI, 'Gemini returned an empty response.');
         }
 
         return parseMealImageAnalysis(text);
@@ -50,8 +50,7 @@ export function createGeminiImageAnalysisProvider(
         if (error instanceof AiProviderError) {
           throw error;
         }
-
-        throw new AiProviderError('gemini', providerErrorMessage(error));
+        throw new AiProviderError(IMAGE_ANALYSIS_PROVIDER.GEMINI, providerErrorMessage(error));
       }
     },
   };

@@ -1,12 +1,9 @@
 import { isActivePaidPlan, getDailyAnalysisLimit } from '@plate/plate-billing/utils';
+import type { MealAnalysisResult } from '@plate/plate-ai/types';
 import type { MealAnalysisDocument } from '@/models/meal-analysis.js';
 import type { SubscriptionEntitlementInput } from '@/routes/meal-analyses/constants.js';
 import type { SubscriptionPlan } from '@plate/plate-billing/types';
-import type {
-  MealAnalysisDetail,
-  MealAnalysisResultDto,
-  MealAnalysisSummary,
-} from '@/routes/meal-analyses/types.js';
+import type { MealAnalysisSummary } from '@plate/plate-ai/types';
 
 export function canAnalyzeToday(analysisCount: number, plan: SubscriptionPlan | null): boolean {
   const limit = getDailyAnalysisLimit(plan);
@@ -21,9 +18,9 @@ export function isSnapAnalysisLocked(subscription: SubscriptionEntitlementInput)
   return !hasSnapAnalysisAccess(subscription);
 }
 
-export function toMealAnalysisResultDto(
+export function toMealAnalysisResult(
   analysis: NonNullable<MealAnalysisDocument['analysis']>,
-): MealAnalysisResultDto {
+): MealAnalysisResult {
   return {
     mealName: analysis.mealName,
     calories: analysis.calories,
@@ -41,18 +38,14 @@ export function toMealAnalysisSummary(document: MealAnalysisDocument): MealAnaly
     status: document.status,
     imageMimeType: document.imageMimeType,
     imageBase64: document.imageBase64,
-    analysis: document.analysis ? toMealAnalysisResultDto(document.analysis) : null,
+    analysis: document.analysis ? toMealAnalysisResult(document.analysis) : null,
     errorMessage: document.errorMessage ?? null,
     createdAt: document.createdAt.toISOString(),
     updatedAt: document.updatedAt.toISOString(),
   };
 }
 
-export function toMealAnalysisDetail(document: MealAnalysisDocument): MealAnalysisDetail {
-  return toMealAnalysisSummary(document);
-}
-
-export function isMealAnalysisResultDto(value: unknown): value is MealAnalysisResultDto {
+export function isMealAnalysisResult(value: unknown): value is MealAnalysisResult {
   if (!value || typeof value !== 'object') {
     return false;
   }

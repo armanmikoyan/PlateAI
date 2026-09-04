@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { ChevronRight, Clock3, LoaderCircle, Trash2 } from 'lucide-react';
-import { MEAL_ANALYSIS_STATUS } from '@/app/utils/meal-analyses/constants';
+import { MEAL_ANALYSIS_STATUS } from '@plate/plate-ai/constants';
 import { writeSnapSavedMealCache } from '@/app/utils/meal-analyses/session-cache';
 import { Badge } from '@/app/ui/badge';
 import { Button } from '@/app/ui/button';

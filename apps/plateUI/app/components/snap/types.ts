@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import type { MealAnalysisResult } from '@/app/utils/meal-analyses/types';
+import type { MealAnalysisResult } from '@plate/plate-ai/types';
 import type { HeroStatTileChrome } from '@/app/components/hero/constants';
 import { SNAP_ANALYSIS_STATUS, type SnapHeadingPhase } from './constants';
 

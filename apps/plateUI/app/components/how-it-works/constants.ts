@@ -21,7 +21,7 @@ export const HOW_IT_WORKS_STEPS: readonly HowItWorksStepRow[] = [
     KEY: 'snap',
     ICON: Camera,
     TITLE: 'Snap your meal',
-    BODY: 'One clear photo of the plate is enough—no weighing, no barcode scanning, no manual entry.',
+    BODY: 'One clear photo of the plate is enough—no weighing, no barcode scanning.',
     ICON_SHELL:
       'bg-macro-fat-strong/15 text-macro-fat-strong ring-1 ring-macro-fat-strong/25',
   },

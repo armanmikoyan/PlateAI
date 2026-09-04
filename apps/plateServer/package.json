@@ -12,14 +12,13 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@google/generative-ai": "^0.24.1",
+    "@plate/plate-ai": "*",
     "@plate/plate-billing": "*",
     "dotenv": "^16.6.1",
     "express": "^4.21.2",
     "jose": "^6.1.0",
     "mongoose": "^8.19.1",
     "nodemailer": "^10.0.0",
-    "openai": "^7.5.0",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0"
   },

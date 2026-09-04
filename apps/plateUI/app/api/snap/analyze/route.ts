@@ -1,5 +1,5 @@
 import { analyzeMealAnalysis, createPendingMealAnalysis } from '@/app/api/meal-analyses/client';
-import type { MealAnalysisResult } from '@/app/utils/meal-analyses/types';
+import type { MealAnalysisResult } from '@plate/plate-ai/types';
 
 type AnalyzeSuccessResponse = Readonly<{
   analysis: MealAnalysisResult;

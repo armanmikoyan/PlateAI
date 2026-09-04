@@ -1,5 +1,5 @@
 import { deleteMealAnalysis, getMealAnalysis } from '@/app/api/meal-analyses/client';
-import type { MealAnalysisDetailResponse } from '@/app/utils/meal-analyses/types';
+import type { MealAnalysisItemResponse } from '@plate/plate-ai/types';
 
 type MealAnalysisRouteContext = Readonly<{
   params: Promise<{ id: string }>;
@@ -14,7 +14,7 @@ export async function GET(request: Request, context: MealAnalysisRouteContext): 
     return Response.json({ error: 'Meal analysis not found.' }, { status: 404 });
   }
 
-  return Response.json(data satisfies MealAnalysisDetailResponse);
+  return Response.json(data satisfies MealAnalysisItemResponse);
 }
 
 export async function DELETE(request: Request, context: MealAnalysisRouteContext): Promise<Response> {

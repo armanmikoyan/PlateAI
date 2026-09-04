@@ -1,14 +1,11 @@
 import { readPlateServerUrl } from '@/app/api/auth/utils';
 import type {
-  AnalyzeMealAnalysisResponse,
-  AnalyzeResult,
-  CreateMealAnalysisResponse,
-  MealAnalysisDetailResponse,
+  MealAnalysisItemResponse,
   MealAnalysisListResponse,
   MealAnalysisResult,
-  UpdateMealAnalysisResponse,
-} from '@/app/utils/meal-analyses/types';
-import { MEAL_ANALYSIS_STATUS } from '@/app/utils/meal-analyses/constants';
+} from '@plate/plate-ai/types';
+import type { AnalyzeResult } from '@/app/utils/meal-analyses/types';
+import { MEAL_ANALYSIS_STATUS } from '@plate/plate-ai/constants';
 
 type MealAnalysisRequestOptions = Readonly<{
   cookieHeader: string | null;
@@ -59,8 +56,8 @@ export async function createPendingMealAnalysis(
   cookieHeader: string | null,
   imageBase64: string,
   imageMimeType: string,
-): Promise<CreateMealAnalysisResponse | null> {
-  const result = await mealAnalysisRequest<CreateMealAnalysisResponse>({
+): Promise<MealAnalysisItemResponse | null> {
+  const result = await mealAnalysisRequest<MealAnalysisItemResponse>({
     cookieHeader,
     method: 'POST',
     path: '',
@@ -85,8 +82,8 @@ export async function listMealAnalyses(
 export async function getMealAnalysis(
   cookieHeader: string | null,
   analysisId: string,
-): Promise<MealAnalysisDetailResponse | null> {
-  const result = await mealAnalysisRequest<MealAnalysisDetailResponse>({
+): Promise<MealAnalysisItemResponse | null> {
+  const result = await mealAnalysisRequest<MealAnalysisItemResponse>({
     cookieHeader,
     method: 'GET',
     path: `/${analysisId}`,
@@ -99,8 +96,8 @@ export async function markMealAnalysisDone(
   cookieHeader: string | null,
   analysisId: string,
   analysis: MealAnalysisResult,
-): Promise<UpdateMealAnalysisResponse | null> {
-  const result = await mealAnalysisRequest<UpdateMealAnalysisResponse>({
+): Promise<MealAnalysisItemResponse | null> {
+  const result = await mealAnalysisRequest<MealAnalysisItemResponse>({
     cookieHeader,
     method: 'PATCH',
     path: `/${analysisId}`,
@@ -117,8 +114,8 @@ export async function markMealAnalysisFailed(
   cookieHeader: string | null,
   analysisId: string,
   errorMessage: string,
-): Promise<UpdateMealAnalysisResponse | null> {
-  const result = await mealAnalysisRequest<UpdateMealAnalysisResponse>({
+): Promise<MealAnalysisItemResponse | null> {
+  const result = await mealAnalysisRequest<MealAnalysisItemResponse>({
     cookieHeader,
     method: 'PATCH',
     path: `/${analysisId}`,
@@ -156,7 +153,7 @@ export async function analyzeMealAnalysis(
     return { ok: false, locked: false, status: 401 };
   }
 
-  const result = await mealAnalysisRequest<AnalyzeMealAnalysisResponse>({
+  const result = await mealAnalysisRequest<MealAnalysisItemResponse>({
     cookieHeader,
     method: 'POST',
     path: `/${analysisId}/analyze`,

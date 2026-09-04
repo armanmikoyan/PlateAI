@@ -1,6 +1,6 @@
 import type { AuthUser } from '@/app/api/auth/types';
 
-import type { MealAnalysisSummary } from '@/app/utils/meal-analyses/types';
+import type { MealAnalysisSummary } from '@plate/plate-ai/types';
 
 export type MealHistoryProps = Readonly<{
   user: AuthUser | null;

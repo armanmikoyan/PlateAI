@@ -1,4 +1,4 @@
-import type { MealAnalysisConfidence, MealAnalysisResult } from '@/app/utils/meal-analyses/types';
+import type { MealAnalysisConfidence, MealAnalysisResult } from '@plate/plate-ai/types';
 import type { DeviceType } from '@/app/utils/device-detection/types';
 import { DEVICE_TYPE } from '@/app/utils/device-detection/types';
 import {

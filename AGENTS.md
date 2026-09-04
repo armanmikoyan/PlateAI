@@ -112,15 +112,26 @@ Route features follow the same file pattern as app features — `index.ts` (rout
 - **Types live only in `types.ts`** — never `type`/`interface` in `constants.ts` (consts stay **UPPERCASE** copy/static only). Pure helpers live in `utils.ts` with co-located `utils.test.ts`.
 - **Body parsing is app-level, not router-level.** `createApp` mounts `express.json()` once for all routes and `express.raw({ type: 'application/json' })` scoped to `/webhook` (before the JSON parser) so webhook signatures can read the raw body. Routers must not add `express.json()` / `express.raw()`.
 - ESM imports use **`.js`** extensions.
-- `ai/` lives under `routes/meal-analyses/ai/` and holds the provider abstraction (`create-provider.ts`, `errors.ts`, `parse-analysis.ts`, `providers/gemini.ts`, `providers/openai.ts`).
 
 Dev: `npm run dev:server` (tsx watch).
 
-**`AUTH.ACCESS_COOKIE_NAME`** (`plateai.access`) and **`AUTH.REFRESH_COOKIE_NAME`** (`plateai.refresh`) in `apps/plateServer/src/routes/auth/constants.ts` must match **`apps/plateUI/app/api/auth/constants.ts`**.
+**`AUTH.ACCESS_COOKIE_NAME`** (`plateai.access`) and **`AUTH.REFRESH_COOKIE_NAME`** (`plateai.refresh`) live in `apps/plateServer/src/routes/auth/constants.ts` and must match `apps/plateUI/app/api/auth/constants.ts`.
 
 ## packages/ (shared code)
 
 Shared, non-app-specific TS packages that both apps can consume. Keep them framework-agnostic (no Next or Express imports). Each gets `package.json` + `tsconfig.json` extending `../../tsconfig.base.json`. Add to the root `workspaces` glob via the `packages/*` pattern (already configured) — no other wiring needed. Do not create `packages/index.ts` barrels.
+
+**Packages are self-contained and the single source of truth for their domain.** Any concept a package owns (domain types, constants, status/plan enums, pure helpers) must be defined **in the package** and **imported by both apps directly from the package subpath**. Do **not** copy, re-declare, or alias a package-owned constant/type in an app (no `export { X } from '...'`, no `export type MealsX = PackageX`, no duplicate `const MEAL_ANALYSIS_STATUS = { ... }` in app files). Apps import and use exactly what the package exports; if an app needs a derived value, compute it in the app from the package's public API rather than restating the definition. **Never re-export** — consumers import directly from the concrete subpath (`@plate/plate-ai/constants`, `@plate/plate-ai/types`, ...).
+
+### `plate-ai` (`@plate/plate-ai`)
+
+The single source of truth for AI meal analysis: prompt, model/config (provider + model selection), analysis parsing, provider abstraction, and the domain types/constants that describe a meal analysis. Both apps depend on it (`"@plate/plate-ai": "*"`). It is **provider-agnostic**: it exposes a generic `analyzeMealImage` function plus `ImageAnalysisProvider` interface created via `createImageAnalysisProvider`, and implements it for many model providers (Gemini, OpenAI) internally.
+
+- **Public surface only, subpath entries — no barrel / no re-exports.** `@plate/plate-ai/constants` (`MEAL_ANALYSIS_STATUS`, `MEAL_ANALYSIS_CONFIDENCE`, `IMAGE_ANALYSIS_PROVIDER`, `DEFAULT_IMAGE_ANALYSIS_MODEL`, prompt copy, test fixture, timing), `@plate/plate-ai/types` (generic AI types incl. `MealAnalysisStatus`, `MealAnalysisConfidence`, `MealAnalysisResult`, the shared API contract types `MealAnalysisSummary` / `MealAnalysisItemResponse` / `MealAnalysisListResponse`, provider ids/configs), `@plate/plate-ai/errors` (`AiConfigError`, `AiParseError`, `AiProviderError`), `@plate/plate-ai/utils` (pure helpers/parser), `@plate/plate-ai/provider` (`analyzeMealImage`, `createImageAnalysisProvider`). Consumers import from the concrete subpath; there is no `.` root entry.
+- **Providers are internal** under `src/providers/` (`gemini.ts`, `openai.ts`). No provider SDK types leak to the package consumers.
+- **`@/` aliases + `tsc-alias`**: uses `@/*` → `./src/*` (NodeNext) like `apps/plateServer`, `build` runs `tsc && tsc-alias`. Never import across package folders with `../`.
+- **Owns its SDK dependencies.** `@google/generative-ai` and `openai` are declared in this package's `package.json`, not in `apps/plateServer`.
+- The server keeps all HTTP (`controller.ts`) and DB (`repository.ts`) concerns; the package does the AI/prompt/parsing logic. `meal-analyses/service.ts` calls `analyzeMealImage` from `@plate/plate-ai/provider` and maps generic results/errors to HTTP. Server model + repository import `MEAL_ANALYSIS_STATUS`/`MEAL_ANALYSIS_CONFIDENCE` directly from `@plate/plate-ai/constants`.
 
 ### `plate-billing` (`@plate/plate-billing`)
 

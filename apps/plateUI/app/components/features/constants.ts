@@ -21,7 +21,7 @@ export const FEATURE_CARD_ROWS: readonly FeatureCardRow[] = [
     KEY: 'photo',
     ICON: Camera,
     TITLE: 'Photo-first analysis',
-    BODY: 'Snap a plate and get calories, protein, carbs, and fat in seconds—no scales, no barcodes, no manual entry.',
+    BODY: 'Snap a plate and get calories, protein, carbs, and fat in seconds—no scales, no barcodes.',
     ICON_SHELL:
       'bg-macro-fat-strong/12 text-macro-fat-strong ring-1 ring-macro-fat-strong/20',
   },

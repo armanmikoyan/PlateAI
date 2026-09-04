@@ -27,5 +27,6 @@ ENV NODE_ENV=production
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=builder /app/apps/plateServer/dist /app/dist
 COPY --from=builder /app/packages/plate-billing /app/packages/plate-billing
+COPY --from=builder /app/packages/plate-ai /app/packages/plate-ai
 EXPOSE 4000
 CMD ["node", "dist/index.js"]

@@ -1,9 +1,10 @@
-import { MEAL_ANALYSIS_STATUS, MEAL_ANALYSES_CHANGED_EVENT } from '@/app/utils/meal-analyses/constants';
+import { MEAL_ANALYSIS_STATUS } from '@plate/plate-ai/constants';
 import type {
   MealAnalysisListResponse,
   MealAnalysisSummary,
-  SnapSavedMealCache,
-} from '@/app/utils/meal-analyses/types';
+} from '@plate/plate-ai/types';
+import { MEAL_ANALYSES_CHANGED_EVENT } from '@/app/utils/meal-analyses/constants';
+import type { SnapSavedMealCache } from '@/app/utils/meal-analyses/types';
 
 export function formatMealHistoryDate(isoDate: string): string {
   return new Intl.DateTimeFormat(undefined, {

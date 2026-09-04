@@ -1,5 +1,5 @@
 import { listMealAnalyses } from '@/app/api/meal-analyses/client';
-import type { MealAnalysisListResponse } from '@/app/utils/meal-analyses/types';
+import type { MealAnalysisListResponse } from '@plate/plate-ai/types';
 
 export async function GET(request: Request): Promise<Response> {
   const cookieHeader = request.headers.get('cookie');

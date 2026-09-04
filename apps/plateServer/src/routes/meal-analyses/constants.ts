@@ -1,19 +1,3 @@
-export const MEAL_ANALYSIS_STATUS = {
-  PENDING: 'pending',
-  DONE: 'done',
-  FAILED: 'failed',
-} as const;
-
-export type MealAnalysisStatus = (typeof MEAL_ANALYSIS_STATUS)[keyof typeof MEAL_ANALYSIS_STATUS];
-
-export const MEAL_ANALYSIS_CONFIDENCE = {
-  LOW: 'low',
-  MEDIUM: 'medium',
-  HIGH: 'high',
-} as const;
-
-export type MealAnalysisConfidence = (typeof MEAL_ANALYSIS_CONFIDENCE)[keyof typeof MEAL_ANALYSIS_CONFIDENCE];
-
 import type { SubscriptionPlan, SubscriptionStatus } from '@plate/plate-billing/types';
 
 export const MEAL_ANALYSIS_ERRORS = {
@@ -28,11 +12,6 @@ export const MEAL_ANALYSIS_ERRORS = {
   AI_FAILED: 'Could not analyze that photo. Try a clearer shot.',
   AI_UNKNOWN: 'Something went wrong while analyzing the photo.',
 } as const;
-
-export type UserSubscription = Readonly<{
-  PLAN: SubscriptionPlan | null;
-  STATUS: SubscriptionStatus | null;
-}>;
 
 export type SubscriptionEntitlementInput = Readonly<{
   subscriptionPlan: SubscriptionPlan | null;

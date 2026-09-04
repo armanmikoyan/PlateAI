@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { useSearchParams } from 'next/navigation';
-import { MEAL_ANALYSIS_STATUS } from '@/app/utils/meal-analyses/constants';
+import { MEAL_ANALYSIS_STATUS } from '@plate/plate-ai/constants';
 import { readSnapSavedMealCache, writeSnapSavedMealCache } from '@/app/utils/meal-analyses/session-cache';
 import type { SnapSavedMealCache } from '@/app/utils/meal-analyses/types';
 import { SNAP, SNAP_ANALYSIS_STATUS } from './constants';

@@ -46,6 +46,19 @@ export default defineConfig({
           include: ['packages/plate-billing/src/**/*.test.ts'],
         },
       },
+      {
+        root: rootDir,
+        resolve: {
+          alias: {
+            '@': path.join(rootDir, 'packages/plate-ai/src'),
+          },
+        },
+        test: {
+          name: 'plate-ai',
+          environment: 'node',
+          include: ['packages/plate-ai/src/**/*.test.ts'],
+        },
+      },
     ],
   },
 });

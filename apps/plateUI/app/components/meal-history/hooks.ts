@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { AuthMeResponse } from '@/app/api/auth/types';
 import { clearSnapSavedMealCache } from '@/app/utils/meal-analyses/session-cache';
-import type { MealAnalysisSummary } from '@/app/utils/meal-analyses/types';
+import type { MealAnalysisSummary } from '@plate/plate-ai/types';
 import { MEAL_HISTORY } from './constants';
 import type { UseMealHistoryResult } from './types';
 import {
