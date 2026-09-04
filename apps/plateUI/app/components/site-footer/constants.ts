@@ -5,7 +5,7 @@ export const SITE_FOOTER_MAIN = {
   TAGLINE: 'Photo-first logging that keeps pace with your day.',
   SUBLINE: 'Estimates, day context, and lists—without living in a spreadsheet.',
   CTA_LINE:
-    'Public accounts are on the way. Until then, this page is a living preview of the product.',
+    'Photo nutrition analyzed in private. Your data is never sold or shared.',
   COPYRIGHT: '© 2026 PlateAI. All rights reserved.',
   LEGAL_NOTE:
     'Nutrition and health information is for general wellness only and is not medical advice. Consult a clinician for personal guidance.',
