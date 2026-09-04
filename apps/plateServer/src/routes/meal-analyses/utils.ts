@@ -1,11 +1,17 @@
-import { isActivePaidPlan } from '@plate/plate-billing/utils';
+import { isActivePaidPlan, getDailyAnalysisLimit } from '@plate/plate-billing/utils';
 import type { MealAnalysisDocument } from '@/models/meal-analysis.js';
 import type { SubscriptionEntitlementInput } from '@/routes/meal-analyses/constants.js';
+import type { SubscriptionPlan } from '@plate/plate-billing/types';
 import type {
   MealAnalysisDetail,
   MealAnalysisResultDto,
   MealAnalysisSummary,
 } from '@/routes/meal-analyses/types.js';
+
+export function canAnalyzeToday(analysisCount: number, plan: SubscriptionPlan | null): boolean {
+  const limit = getDailyAnalysisLimit(plan);
+  return analysisCount < limit;
+}
 
 export function hasSnapAnalysisAccess(subscription: SubscriptionEntitlementInput): boolean {
   return isActivePaidPlan(subscription.subscriptionPlan, subscription.subscriptionStatus);

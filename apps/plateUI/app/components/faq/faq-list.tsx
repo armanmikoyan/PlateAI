@@ -6,7 +6,7 @@ import { FAQ_ITEMS } from './constants';
 
 export function FaqList() {
   return (
-    <div className="mx-auto mt-10 min-h-128 max-w-4xl sm:mt-12 sm:min-h-136">
+    <div className="mx-auto mt-10 min-h-92 max-w-4xl sm:mt-12 sm:min-h-96">
       <Card>
         <CardContent>
           <Accordion>

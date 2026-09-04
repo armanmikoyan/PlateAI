@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import Contact from '@/app/components/contact';
 import Faq from '@/app/components/faq';
 import FeedbackMarquee from '@/app/components/feedback-marquee';
 import Features from '@/app/components/features';
@@ -18,6 +19,7 @@ export default function Page(): ReactNode {
       <FeedbackMarquee />
       <Pricing />
       <Faq />
+      <Contact />
       <SiteFooter />
     </>
   );

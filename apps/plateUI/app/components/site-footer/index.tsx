@@ -113,7 +113,7 @@ export default function SiteFooter() {
                 <Button
                   className="h-auto gap-1.5 px-0"
                   nativeButton={false}
-                  render={<a href={SITE_FOOTER_CONNECT.EMAIL_HREF} />}
+                  render={<Link href={SITE_FOOTER_CONNECT.EMAIL_HREF} />}
                   size="sm"
                   variant="link"
                 >

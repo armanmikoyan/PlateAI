@@ -48,7 +48,7 @@ export const SITE_FOOTER_CONNECT = {
   BLURB:
     'Release notes, tips, and product teasers will land on our social channels when the beta opens—watch this space.',
   EMAIL_LABEL: 'Email the team',
-  EMAIL_HREF: 'mailto:hello@plateai.fit',
+  EMAIL_HREF: '/#contact',
   GITHUB_LABEL: 'GitHub',
   GITHUB_HREF: 'https://github.com/armanmikoyan/MealAI',
 } as const;

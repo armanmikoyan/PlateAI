@@ -67,6 +67,13 @@ export async function updateForUser(
   ).exec();
 }
 
+export async function countAnalysesSince(userId: string, since: Date): Promise<number> {
+  return MealAnalysis.countDocuments({
+    userId: new Types.ObjectId(userId),
+    createdAt: { $gte: since },
+  }).exec();
+}
+
 export async function deletePendingForUser(
   userId: string,
   analysisId: string,

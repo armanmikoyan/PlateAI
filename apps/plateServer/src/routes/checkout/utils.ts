@@ -9,7 +9,7 @@ export function toBillingProviderConfig(config: ServerConfig): BillingProviderCo
     apiKey: config.LEMON_SQUEEZY_API_KEY,
     storeId: config.LEMON_SQUEEZY_STORE_ID,
     webhookSecret: config.LEMON_SQUEEZY_WEBHOOK_SECRET,
-    variantIdPlus: config.LEMON_SQUEEZY_VARIANT_ID_PLUS,
+    variantIdBasic: config.LEMON_SQUEEZY_VARIANT_ID_BASIC,
     variantIdPro: config.LEMON_SQUEEZY_VARIANT_ID_PRO,
     testMode: config.LEMON_SQUEEZY_TEST_MODE,
   };

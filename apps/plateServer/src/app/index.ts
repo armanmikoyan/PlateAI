@@ -6,6 +6,7 @@ import { createAuthRouter } from '@/routes/auth/index.js';
 import { configurePassport } from '@/routes/auth/google-oauth.js';
 import { createCheckoutSessionRouter, createCheckoutWebhookRouter } from '@/routes/checkout/index.js';
 import { toBillingProviderConfig } from '@/routes/checkout/utils.js';
+import { createContactRouter } from '@/routes/contact/index.js';
 import { createHealthRouter } from '@/routes/health/index.js';
 import { createMealAnalysesRouter } from '@/routes/meal-analyses/index.js';
 import type { ServerConfig } from '@/config/types.js';
@@ -29,6 +30,7 @@ export function createApp(config: ServerConfig): express.Express {
   app.use('/meal-analyses', createMealAnalysesRouter(config));
   app.use('/checkout', createCheckoutSessionRouter(config, billing));
   app.use('/webhook', createCheckoutWebhookRouter(billing));
+  app.use('/contact', createContactRouter(config));
 
   app.use(
     (error: Error, request: express.Request, response: express.Response, next: express.NextFunction) => {

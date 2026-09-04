@@ -27,9 +27,9 @@ export function verifyWebhookSignature(
   return timingSafeEqual(expected, received);
 }
 
-export function buildVariantPlanMap(plusVariantId: string, proVariantId: string): LemonSqueezyVariantPlanMap {
+export function buildVariantPlanMap(basicVariantId: string, proVariantId: string): LemonSqueezyVariantPlanMap {
   return {
-    [plusVariantId]: SUBSCRIPTION_PLAN.PLUS,
+    [basicVariantId]: SUBSCRIPTION_PLAN.BASIC,
     [proVariantId]: SUBSCRIPTION_PLAN.PRO,
   };
 }
@@ -109,7 +109,7 @@ export function resolvePlanFromVariantId(
 ): SubscriptionPlan | null {
   const plan = variantPlanMap[String(variantId)];
 
-  return plan && (plan === SUBSCRIPTION_PLAN.PLUS || plan === SUBSCRIPTION_PLAN.PRO) ? plan : null;
+  return plan && (plan === SUBSCRIPTION_PLAN.BASIC || plan === SUBSCRIPTION_PLAN.PRO) ? plan : null;
 }
 
 function toWebhookEvent(eventName: string): WebhookEvent | null {

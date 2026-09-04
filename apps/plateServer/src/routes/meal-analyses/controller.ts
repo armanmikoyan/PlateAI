@@ -1,10 +1,11 @@
 import type { NextFunction, Request, Response } from 'express';
 import { MEAL_ANALYSIS_STATUS } from '@/routes/meal-analyses/constants.js';
-import { isSnapAnalysisLocked } from '@/routes/meal-analyses/utils.js';
+import { isSnapAnalysisLocked, canAnalyzeToday } from '@/routes/meal-analyses/utils.js';
 import { analyzeMealImage } from '@/routes/meal-analyses/ai/analyze-meal-image.js';
 import { AiConfigError, AiParseError, AiProviderError } from '@/routes/meal-analyses/ai/errors.js';
 import { MEAL_ANALYSIS_ERRORS } from '@/routes/meal-analyses/constants.js';
 import {
+  countAnalysesSince,
   createPending,
   deletePendingForUser,
   findByIdForUser,
@@ -157,6 +158,15 @@ export async function analyzeMealAnalysis(
       response
         .status(403)
         .json({ error: MEAL_ANALYSIS_ERRORS.LOCKED, locked: true } satisfies MealAnalysisLockedResponse);
+      return;
+    }
+
+    const startOfDay = new Date();
+    startOfDay.setUTCHours(0, 0, 0, 0);
+    const todayCount = await countAnalysesSince(userId, startOfDay);
+
+    if (!canAnalyzeToday(todayCount, request.authUser!.subscriptionPlan)) {
+      response.status(429).json({ error: MEAL_ANALYSIS_ERRORS.DAILY_LIMIT_REACHED });
       return;
     }
 

@@ -1,14 +1,14 @@
 import { ScrollEnter } from '@/app/components/scroll';
 import { SectionIntro } from '@/app/components/section-intro';
-import { FAQ_SECTION } from './constants';
-import { FaqList } from './faq-list';
+import { CONTACT_SECTION } from './constants';
+import { ContactForm } from './contact-form';
 
-export default function Faq() {
+export default function Contact() {
   return (
     <section
-      id="faq"
+      id="contact"
       className="border-edge/60 scroll-mt-28 border-t bg-canvas py-16 sm:py-20 lg:py-24"
-      aria-labelledby="faq-heading"
+      aria-labelledby="contact-heading"
     >
       <ScrollEnter
         className="layout-page-shell"
@@ -18,12 +18,12 @@ export default function Faq() {
             content: (
               <>
                 <SectionIntro
-                  eyebrow={FAQ_SECTION.EYEBROW}
-                  title={FAQ_SECTION.TITLE}
-                  subtitle={FAQ_SECTION.SUBTITLE}
-                  headingId="faq-heading"
+                  eyebrow={CONTACT_SECTION.EYEBROW}
+                  title={CONTACT_SECTION.TITLE}
+                  subtitle={CONTACT_SECTION.SUBTITLE}
+                  headingId="contact-heading"
                 />
-                <FaqList />
+                <ContactForm />
               </>
             ),
           },

@@ -1,3 +1,11 @@
+export type EmailConfig = Readonly<{
+  EMAIL_HOST: string;
+  EMAIL_PORT: number;
+  EMAIL_USER: string;
+  EMAIL_PASS: string;
+  EMAIL_TO: string;
+}>;
+
 export type ServerConfig = Readonly<{
   PORT: number;
   MONGODB_URI: string;
@@ -10,7 +18,12 @@ export type ServerConfig = Readonly<{
   LEMON_SQUEEZY_API_KEY: string;
   LEMON_SQUEEZY_WEBHOOK_SECRET: string;
   LEMON_SQUEEZY_STORE_ID: string;
-  LEMON_SQUEEZY_VARIANT_ID_PLUS: string;
+  LEMON_SQUEEZY_VARIANT_ID_BASIC: string;
   LEMON_SQUEEZY_VARIANT_ID_PRO: string;
   LEMON_SQUEEZY_TEST_MODE: boolean;
+  EMAIL_HOST: string;
+  EMAIL_PORT: number;
+  EMAIL_USER: string;
+  EMAIL_PASS: string;
+  EMAIL_TO: string;
 }>;

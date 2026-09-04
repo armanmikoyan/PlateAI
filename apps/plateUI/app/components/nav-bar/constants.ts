@@ -11,6 +11,7 @@ export const NAV = {
   FEEDBACK: 'Wall of love',
   PRICING: 'Pricing',
   FAQ: 'FAQ',
+  CONTACT: 'Contact',
   MENU_OPEN: 'Open menu',
   MENU_CLOSE: 'Close menu',
   MENU_HEADING: 'On this page',
@@ -44,6 +45,7 @@ export const NAV_MAIN_SECTION_LINKS: readonly NavMainSectionLinkRow[] = [
   { SECTION_ID: 'feedback', HREF: '/#feedback', LABEL: NAV.FEEDBACK },
   { SECTION_ID: 'pricing', HREF: '/#pricing', LABEL: NAV.PRICING },
   { SECTION_ID: 'faq', HREF: '/#faq', LABEL: NAV.FAQ },
+  { SECTION_ID: 'contact', HREF: '/#contact', LABEL: NAV.CONTACT },
 ] as const;
 
 /** Sticky header height (`h-20`) — top band used for scroll-spy (viewport px). */

@@ -31,7 +31,7 @@ export type CreateCheckoutInput = Readonly<{
   email: string;
   name: string;
   customerRef: string;
-  plan: Exclude<SubscriptionPlan, 'basic'>;
+  plan: Exclude<SubscriptionPlan, 'individual'>;
   redirectUrl: string;
 }>;
 

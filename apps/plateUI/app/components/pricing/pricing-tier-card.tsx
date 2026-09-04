@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { isPaidPlan } from '@plate/plate-billing/utils';
+import { isPaidPlan, isPurchasablePlan } from '@plate/plate-billing/utils';
 import { cn } from '@/app/utils/cn';
 import { Badge } from '@/app/ui/badge';
 import {
@@ -63,7 +63,12 @@ export function PricingTierCard({
       <CardContent className={cn(variant === 'detail' && 'flex flex-1 flex-col')}>
         <div className="flex items-baseline gap-1">
           <span className="font-heading text-4xl font-semibold tracking-tight tabular-nums sm:text-5xl">
-            {tier.PRICE}
+            {tier.PRICE.replace(/\.\d+$/, '')}
+            {tier.PRICE.includes('.') ? (
+              <span className="text-lg font-medium text-muted-foreground sm:text-xl">
+                {tier.PRICE.slice(tier.PRICE.indexOf('.'))}
+              </span>
+            ) : null}
           </span>
           <span className="text-muted-foreground text-sm font-medium">{tier.PERIOD}</span>
         </div>
@@ -137,7 +142,7 @@ export function PricingTierCard({
       </button>
       {isSelected ? (
         <div className="flex flex-col gap-3 px-(--card-spacing) pb-(--card-spacing)">
-          {isPaidPlan(tier.ID) ? (
+          {isPurchasablePlan(tier.ID) ? (
             <>
               <ShimmerButton
                 type="button"
@@ -160,6 +165,14 @@ export function PricingTierCard({
                 {error ?? PRICING_SECTION.CHECKOUT_NOTE}
               </p>
             </>
+          ) : isPaidPlan(tier.ID) ? (
+            <a
+              href={PRICING_SECTION.CONTACT_US_HREF}
+              className="text-button-default-fg inline-flex h-11 w-full items-center justify-center rounded-lg px-5 text-base font-medium"
+              style={{ background: PRICING_PAGE.FIXED_CTA_SHIMMER_BACKGROUND }}
+            >
+              {PRICING_SECTION.CONTACT_US}
+            </a>
           ) : (
             <p className="text-muted-foreground text-center text-xs">{PRICING_SECTION.FREE_PLAN_CTA}</p>
           )}

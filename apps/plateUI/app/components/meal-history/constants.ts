@@ -30,8 +30,8 @@ export const MEAL_HISTORY = {
 
 export const MEAL_HISTORY_PLAN_LABELS: Record<SubscriptionPlan, string> = {
   [SUBSCRIPTION_PLAN.BASIC]: 'Basic',
-  [SUBSCRIPTION_PLAN.PLUS]: 'Plus',
   [SUBSCRIPTION_PLAN.PRO]: 'Pro',
+  [SUBSCRIPTION_PLAN.INDIVIDUAL]: 'Individual',
 };
 
 export const MEAL_HISTORY_STATUS_LABELS: Record<SubscriptionStatus, string> = {

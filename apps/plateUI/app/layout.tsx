@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { Navbar } from '@/app/components/nav-bar';
+import { Toaster } from '@/app/ui/toast';
 import { readSiteUrl } from '@/app/utils/site/url';
 
 type RootLayoutProps = Readonly<{
@@ -46,6 +47,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
       <body className="flex min-h-full flex-col font-sans" suppressHydrationWarning>
         <Navbar />
         <main className="flex min-h-0 flex-1 flex-col">{children}</main>
+        <Toaster />
       </body>
     </html>
   );

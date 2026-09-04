@@ -14,16 +14,16 @@ export type LemonSqueezyProviderConfig = Readonly<{
   apiKey: string;
   storeId: string;
   webhookSecret: string;
-  variantIdPlus: string;
+  variantIdBasic: string;
   variantIdPro: string;
   testMode: boolean;
 }>;
 
 export function createLemonSqueezyProvider(config: LemonSqueezyProviderConfig): BillingProvider {
-  const variantPlanMap = buildVariantPlanMap(config.variantIdPlus, config.variantIdPro);
+  const variantPlanMap = buildVariantPlanMap(config.variantIdBasic, config.variantIdPro);
 
   function variantIdForPlan(plan: CreateCheckoutInput['plan']): string {
-    return plan === SUBSCRIPTION_PLAN.PLUS ? config.variantIdPlus : config.variantIdPro;
+    return plan === SUBSCRIPTION_PLAN.BASIC ? config.variantIdBasic : config.variantIdPro;
   }
 
   return {

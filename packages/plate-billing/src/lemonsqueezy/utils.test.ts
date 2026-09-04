@@ -13,8 +13,8 @@ import {
 import { createLemonSqueezyProvider } from './provider.js';
 
 const variantPlanMap = {
-  '2060965': SUBSCRIPTION_PLAN.PLUS,
-  '2060966': SUBSCRIPTION_PLAN.PRO,
+  '2060877': SUBSCRIPTION_PLAN.BASIC,
+  '2060965': SUBSCRIPTION_PLAN.PRO,
 } as const;
 
 const webhookPayload = {
@@ -25,7 +25,7 @@ const webhookPayload = {
   data: {
     id: 'order_1',
     attributes: {
-      first_order_item: { variant_id: 2060965 },
+      first_order_item: { variant_id: 2060877 },
       status: null,
       test_mode: false,
       renews_at: '2026-10-01T12:00:00Z',
@@ -59,17 +59,17 @@ describe('verifyWebhookSignature', () => {
 
 describe('buildVariantPlanMap', () => {
   it('maps both variants to their plans', () => {
-    const map = buildVariantPlanMap('2060965', '2060966');
+    const map = buildVariantPlanMap('2060877', '2060965');
 
-    expect(map['2060965']).toBe(SUBSCRIPTION_PLAN.PLUS);
-    expect(map['2060966']).toBe(SUBSCRIPTION_PLAN.PRO);
+    expect(map['2060877']).toBe(SUBSCRIPTION_PLAN.BASIC);
+    expect(map['2060965']).toBe(SUBSCRIPTION_PLAN.PRO);
   });
 });
 
 describe('resolvePlanFromVariantId', () => {
   it('maps known variant ids', () => {
-    expect(resolvePlanFromVariantId(2060965, variantPlanMap)).toBe(SUBSCRIPTION_PLAN.PLUS);
-    expect(resolvePlanFromVariantId(2060966, variantPlanMap)).toBe(SUBSCRIPTION_PLAN.PRO);
+    expect(resolvePlanFromVariantId(2060877, variantPlanMap)).toBe(SUBSCRIPTION_PLAN.BASIC);
+    expect(resolvePlanFromVariantId(2060965, variantPlanMap)).toBe(SUBSCRIPTION_PLAN.PRO);
   });
 
   it('returns null for unknown variant ids', () => {
@@ -128,7 +128,7 @@ describe('normalizeWebhookPayload', () => {
     expect(result).toEqual({
       event: 'purchased',
       userId: 'user_1',
-      plan: SUBSCRIPTION_PLAN.PLUS,
+      plan: SUBSCRIPTION_PLAN.BASIC,
       status: SUBSCRIPTION_STATUS.ACTIVE,
       customerId: 'customer_1',
       orderId: 'order_1',
@@ -145,8 +145,8 @@ describe('provider parseWebhook', () => {
     apiKey: 'api',
     storeId: 'store',
     webhookSecret: 'secret',
-    variantIdPlus: '2060965',
-    variantIdPro: '2060966',
+    variantIdBasic: '2060877',
+    variantIdPro: '2060965',
     testMode: false,
   });
 

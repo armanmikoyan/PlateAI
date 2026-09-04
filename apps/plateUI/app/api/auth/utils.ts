@@ -107,7 +107,7 @@ export async function proxyToApiServer(request: Request, upstreamPath: string): 
   try {
     upstream = await fetch(targetUrl, init);
   } catch {
-    return Response.json({ error: 'Auth server unavailable.' }, { status: 502 });
+    return Response.json({ error: 'Unable to reach our servers right now. Please try again in a moment.' }, { status: 502 });
   }
 
   return new Response(upstream.body, {

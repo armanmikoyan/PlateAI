@@ -66,7 +66,7 @@ export function usePricingPurchase(): UsePricingPurchase {
         }
 
         const data = (await response.json()) as { url: string };
-        window.location.assign(data.url);
+        window.open(data.url, '_blank', 'noopener,noreferrer');
       } catch {
         setError(PRICING_SECTION.CHECKOUT_ERROR);
       } finally {
