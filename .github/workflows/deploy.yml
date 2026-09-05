@@ -46,6 +46,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
 
       - name: Copy compose manifest
         uses: appleboy/scp-action@v1
@@ -82,7 +84,7 @@ jobs:
           script: |
             set -euo pipefail
             cd "$HOME/$EC2_APP_DIR"
-            
+
             sudo systemctl stop nginx 2>/dev/null || true
             sudo systemctl disable nginx 2>/dev/null || true
             sudo chkconfig nginx off 2>/dev/null || true          # sysv init
