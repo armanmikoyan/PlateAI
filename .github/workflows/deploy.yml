@@ -19,8 +19,8 @@ jobs:
       cancel-in-progress: false
     env:
       EC2_APP_DIR: plateai
-      DOCKER_IMAGE: armanmikoyan/plateai:latest
-      DOCKER_AUTH_IMAGE: armanmikoyan/plateai-auth:latest
+      DOCKER_PLATE_UI_IMAGE: armanmikoyan/plateai-ui:latest
+      DOCKER_PLATE_SERVER_IMAGE: armanmikoyan/plateai-server:latest
       AI_TEST_MODE: ${{ vars.AI_TEST_MODE }}
       AI_IMAGE_PROVIDER: ${{ vars.AI_IMAGE_PROVIDER }}
       AI_IMAGE_MODEL: ${{ vars.AI_IMAGE_MODEL }}
@@ -72,7 +72,7 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           envs: >-
-            DOCKER_IMAGE,DOCKER_AUTH_IMAGE,EC2_APP_DIR,
+            DOCKER_PLATE_UI_IMAGE,DOCKER_PLATE_SERVER_IMAGE,EC2_APP_DIR,
             AI_TEST_MODE,AI_IMAGE_PROVIDER,AI_IMAGE_MODEL,AI_PROVIDER_API_KEY,
             EMAIL_HOST,EMAIL_PORT,EMAIL_USER,EMAIL_PASS,
             JWT_SECRET,FRONTEND_URL,GOOGLE_CALLBACK_URL,GOOGLE_CLIENT_ID,

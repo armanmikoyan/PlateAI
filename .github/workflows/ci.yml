@@ -11,8 +11,8 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  DOCKER_IMAGE: armanmikoyan/plateai
-  DOCKER_AUTH_IMAGE: armanmikoyan/plateai-auth
+  DOCKER_PLATE_UI_IMAGE: armanmikoyan/plateai-ui
+  DOCKER_PLATE_SERVER_IMAGE: armanmikoyan/plateai-server
 
 jobs:
   check:
@@ -63,8 +63,8 @@ jobs:
           build-args: |
             NEXT_PUBLIC_SITE_URL=${{ vars.PRODUCTION_URL }}
           tags: |
-            ${{ env.DOCKER_IMAGE }}:latest
-            ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
+            ${{ env.DOCKER_PLATE_UI_IMAGE }}:latest
+            ${{ env.DOCKER_PLATE_UI_IMAGE }}:${{ github.sha }}
 
       - name: Build and push plateServer image
         uses: docker/build-push-action@v6
@@ -73,5 +73,5 @@ jobs:
           file: apps/plateServer/Dockerfile
           push: true
           tags: |
-            ${{ env.DOCKER_AUTH_IMAGE }}:latest
-            ${{ env.DOCKER_AUTH_IMAGE }}:${{ github.sha }}
+            ${{ env.DOCKER_PLATE_SERVER_IMAGE }}:latest
+            ${{ env.DOCKER_PLATE_SERVER_IMAGE }}:${{ github.sha }}

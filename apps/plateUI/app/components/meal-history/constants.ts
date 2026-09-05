@@ -22,6 +22,7 @@ export const MEAL_HISTORY = {
   REMOVE_ERROR: 'Could not remove that meal.',
   PENDING_COUNT_LABEL: 'pending',
   PLAN_LABEL: 'Your plan',
+  PLAN_NONE: 'No plan',
   PLAN_CTA: 'View plans',
   PLAN_CTA_HREF: '/pricing',
   PLAN_RENEWS_ON: 'Renews',

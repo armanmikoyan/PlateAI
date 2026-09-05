@@ -1,6 +1,6 @@
 services:
   plate-server:
-    image: ${DOCKER_AUTH_IMAGE}
+    image: ${DOCKER_PLATE_SERVER_IMAGE}
     container_name: plateai-server
     restart: unless-stopped
     environment:
@@ -20,6 +20,10 @@ services:
       LEMON_SQUEEZY_VARIANT_ID_BASIC: ${LEMON_SQUEEZY_VARIANT_ID_BASIC}
       LEMON_SQUEEZY_VARIANT_ID_PRO: ${LEMON_SQUEEZY_VARIANT_ID_PRO}
       LEMON_SQUEEZY_TEST_MODE: ${LEMON_SQUEEZY_TEST_MODE}
+      AI_TEST_MODE: ${AI_TEST_MODE}
+      AI_IMAGE_PROVIDER: ${AI_IMAGE_PROVIDER}
+      AI_IMAGE_MODEL: ${AI_IMAGE_MODEL}
+      AI_PROVIDER_API_KEY: ${AI_PROVIDER_API_KEY}
       EMAIL_HOST: ${EMAIL_HOST}
       EMAIL_PORT: ${EMAIL_PORT}
       EMAIL_USER: ${EMAIL_USER}
@@ -28,19 +32,14 @@ services:
       - plateai-net
 
   plate-ui:
-    image: ${DOCKER_IMAGE}
+    image: ${DOCKER_PLATE_UI_IMAGE}
     container_name: plateai-ui
     restart: unless-stopped
     ports:
       - '3000:3000'
     environment:
       NODE_ENV: production
-      JWT_SECRET: ${JWT_SECRET}
       PLATE_SERVER_URL: http://plate-server:4000
-      AI_TEST_MODE: ${AI_TEST_MODE}
-      AI_IMAGE_PROVIDER: ${AI_IMAGE_PROVIDER}
-      AI_IMAGE_MODEL: ${AI_IMAGE_MODEL}
-      AI_PROVIDER_API_KEY: ${AI_PROVIDER_API_KEY}
     depends_on:
       - plate-server
     networks:

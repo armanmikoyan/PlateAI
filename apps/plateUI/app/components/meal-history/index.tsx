@@ -17,9 +17,7 @@ export default function MealHistory({ user, justPurchased = false }: MealHistory
   const { items, loading, error, removingMealId, removeMeal } = useMealHistory(justPurchased);
 
   const planLabel =
-    user?.subscriptionPlan != null
-      ? MEAL_HISTORY_PLAN_LABELS[user.subscriptionPlan]
-      : MEAL_HISTORY_PLAN_LABELS.basic;
+    user?.subscriptionPlan != null ? MEAL_HISTORY_PLAN_LABELS[user.subscriptionPlan] : MEAL_HISTORY.PLAN_NONE;
   const statusLabel =
     user?.subscriptionStatus != null ? MEAL_HISTORY_STATUS_LABELS[user.subscriptionStatus] : null;
   const paid = user?.subscriptionPlan != null && isPaidPlan(user.subscriptionPlan);

@@ -30,6 +30,9 @@ export type LemonSqueezyWebhookPayload = Readonly<{
       first_order_item: Readonly<{
         variant_id: number;
       }> | null;
+      first_subscription_item?: Readonly<{
+        variant_id: number;
+      }> | null;
       status: LemonSqueezySubscriptionStatus | null;
       test_mode: boolean;
       renews_at?: string | null;

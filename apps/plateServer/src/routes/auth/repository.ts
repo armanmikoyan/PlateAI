@@ -46,6 +46,10 @@ export async function findSessionByRefreshHash(refreshTokenHash: string): Promis
 }
 
 export async function findActiveSessionById(sessionId: string): Promise<SessionDocument | null> {
+  if (!Types.ObjectId.isValid(sessionId)) {
+    return null;
+  }
+
   return Session.findOne({
     _id: new Types.ObjectId(sessionId),
     revokedAt: null,

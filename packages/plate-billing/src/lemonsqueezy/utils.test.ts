@@ -137,6 +137,89 @@ describe('normalizeWebhookPayload', () => {
       endsAt: '2026-09-01T12:00:00Z',
     });
   });
+
+  it('normalizes a subscription_created purchase with the subscription variant', () => {
+    const payload = {
+      meta: { event_name: 'subscription_created', custom_data: { user_id: 'user_1' } },
+      data: {
+        id: 'subscription_1',
+        attributes: {
+          first_order_item: null,
+          first_subscription_item: { variant_id: 2060965 },
+          status: 'active',
+          test_mode: false,
+          renews_at: '2026-10-01T12:00:00Z',
+          ends_at: null,
+        },
+        relationships: {
+          customer: { data: { id: 'customer_1' } },
+          subscription: { data: { id: 'subscription_1' } },
+        },
+      },
+    } as const;
+
+    const result = normalizeWebhookPayload(payload, variantPlanMap);
+
+    expect(result).toEqual({
+      event: 'purchased',
+      userId: 'user_1',
+      plan: SUBSCRIPTION_PLAN.PRO,
+      status: SUBSCRIPTION_STATUS.ACTIVE,
+      customerId: 'customer_1',
+      orderId: 'subscription_1',
+      subscriptionId: 'subscription_1',
+      renewsAt: '2026-10-01T12:00:00Z',
+      endsAt: undefined,
+    });
+  });
+
+  it('carries the plan through a subscription_updated event so status and plan write together', () => {
+    const payload = {
+      meta: { event_name: 'subscription_updated', custom_data: { user_id: 'user_1' } },
+      data: {
+        id: 'subscription_1',
+        attributes: {
+          first_order_item: null,
+          first_subscription_item: { variant_id: 2060877 },
+          status: 'active',
+          test_mode: false,
+          renews_at: '2026-10-01T12:00:00Z',
+          ends_at: null,
+        },
+        relationships: {
+          customer: { data: { id: 'customer_1' } },
+          subscription: { data: { id: 'subscription_1' } },
+        },
+      },
+    } as const;
+
+    const result = normalizeWebhookPayload(payload, variantPlanMap);
+
+    expect(result).toEqual({
+      event: 'subscription_updated',
+      userId: 'user_1',
+      plan: SUBSCRIPTION_PLAN.BASIC,
+      status: SUBSCRIPTION_STATUS.ACTIVE,
+      subscriptionId: 'subscription_1',
+      renewsAt: '2026-10-01T12:00:00Z',
+      endsAt: undefined,
+    });
+  });
+
+  it('omits plan when the variant cannot be resolved', () => {
+    const payload = {
+      ...webhookPayload,
+      data: {
+        ...webhookPayload.data,
+        attributes: {
+          ...webhookPayload.data.attributes,
+          first_order_item: { variant_id: 999999 },
+        },
+      },
+    } as const;
+
+    expect(normalizeWebhookPayload(payload, variantPlanMap)).toBeNull();
+  });
 });
 
 describe('provider parseWebhook', () => {

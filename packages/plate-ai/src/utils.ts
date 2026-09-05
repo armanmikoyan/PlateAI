@@ -6,7 +6,7 @@ import {
   MEAL_ANALYSIS_CONFIDENCE_VALUES,
   MEAL_IMAGE_ANALYSIS_TEST_DELAY_MS,
 } from '@/constants.js';
-import { AiParseError } from '@/errors.js';
+import { AiConfigError, AiParseError } from '@/errors.js';
 import type {
   ImageAnalysisProvider,
   ImageAnalysisProviderConfig,
@@ -83,7 +83,9 @@ function parseProvider(value: string | undefined): ImageAnalysisProviderId {
   if (normalized === IMAGE_ANALYSIS_PROVIDER.GEMINI || normalized === IMAGE_ANALYSIS_PROVIDER.OPENAI) {
     return normalized;
   }
-  throw new Error('AI_IMAGE_PROVIDER must be set to "gemini" or "openai" (e.g. AI_IMAGE_PROVIDER=gemini).');
+  throw new AiConfigError(
+    'AI_IMAGE_PROVIDER must be set to "gemini" or "openai" (e.g. AI_IMAGE_PROVIDER=gemini).',
+  );
 }
 
 export function readImageAnalysisProviderConfig(
@@ -92,7 +94,7 @@ export function readImageAnalysisProviderConfig(
   const provider = parseProvider(env.AI_IMAGE_PROVIDER);
   const apiKey = env.AI_PROVIDER_API_KEY?.trim();
   if (!apiKey) {
-    throw new Error('AI_PROVIDER_API_KEY is required for meal image analysis.');
+    throw new AiConfigError('AI_PROVIDER_API_KEY is required for meal image analysis.');
   }
   const model = env.AI_IMAGE_MODEL?.trim() || DEFAULT_IMAGE_ANALYSIS_MODELS[provider];
   return { provider, apiKey, model };

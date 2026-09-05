@@ -112,9 +112,18 @@ export function resolvePlanFromVariantId(
   return plan && (plan === SUBSCRIPTION_PLAN.BASIC || plan === SUBSCRIPTION_PLAN.PRO) ? plan : null;
 }
 
+function readVariantId(payload: LemonSqueezyWebhookPayload): number | null {
+  const fromOrder = payload.data.attributes.first_order_item?.variant_id;
+  const fromSubscription = payload.data.attributes.first_subscription_item?.variant_id;
+
+  return fromOrder ?? fromSubscription ?? null;
+}
+
 function toWebhookEvent(eventName: string): WebhookEvent | null {
   switch (eventName) {
     case LEMON_SQUEEZY_WEBHOOK_EVENTS.ORDER_CREATED:
+      return 'purchased';
+    case LEMON_SQUEEZY_WEBHOOK_EVENTS.SUBSCRIPTION_CREATED:
       return 'purchased';
     case LEMON_SQUEEZY_WEBHOOK_EVENTS.SUBSCRIPTION_PAYMENT_FAILED:
       return 'payment_failed';
@@ -145,11 +154,10 @@ export function normalizeWebhookPayload(
   const customerId = payload.data.relationships.customer?.data?.id ?? undefined;
   const subscriptionId = payload.data.relationships.subscription?.data?.id ?? undefined;
   const { renewsAt, endsAt } = readSubscriptionDates(payload);
+  const variantId = readVariantId(payload);
+  const plan = variantId ? resolvePlanFromVariantId(variantId, variantPlanMap) : null;
 
   if (event === 'purchased') {
-    const variantId = payload.data.attributes.first_order_item?.variant_id;
-    const plan = variantId ? resolvePlanFromVariantId(variantId, variantPlanMap) : null;
-
     if (!plan) {
       return null;
     }
@@ -172,7 +180,8 @@ export function normalizeWebhookPayload(
   return {
     event,
     userId,
-    status,
+    ...(plan ? { plan } : {}),
+    ...(status ? { status } : {}),
     subscriptionId,
     renewsAt,
     endsAt,

@@ -46,8 +46,6 @@ The frontend never decodes JWTs client-side — every auth check calls the serve
 - `/api/auth/refresh` — rotates the refresh token and mints a new access token (used for silent refresh).
 - `/api/auth/logout` — revokes the session and clears both cookies.
 
-On a 401 from `/auth/me`, the navbar silently calls `/auth/refresh` and retries; if refresh fails it clears the session and shows signed-out. `JWT_SECRET` must match across both apps.
-
 ## Getting started
 
 **Prerequisites:** Node 24 (pinned via `engines`), npm (pinned via `packageManager`), MongoDB for the auth server.
@@ -60,10 +58,8 @@ npm install
 
 **2. Configure env files** (each from its `.env.example`):
 
-- `apps/plateUI/.env.local` — site URL, auth server URL, AI provider config
-- `apps/plateServer/.env` — port, MongoDB, Google OAuth, JWT secret
-
-`JWT_SECRET` must match across both files.
+- `apps/plateUI/.env.local` — site URL, auth server URL
+- `apps/plateServer/.env` — port, MongoDB, Google OAuth, JWT secret, AI provider, Lemon Squeezy
 
 **3. Run**
 

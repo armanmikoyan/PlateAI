@@ -48,7 +48,7 @@ plateai/
 | `npm run typecheck` / `typecheck:server` | Per-app tsc |
 | `npm run format` / `format:check` | oxfmt over everything |
 
-**Env files** live per-app: `apps/plateUI/.env.local` (from `apps/plateUI/.env.example`), `apps/plateServer/.env` (from `apps/plateServer/.env.example`). `JWT_SECRET` must match across both.
+**Env files** live per-app: `apps/plateUI/.env.local` (from `apps/plateUI/.env.example`), `apps/plateServer/.env` (from `apps/plateServer/.env.example`).
 
 ## TypeScript
 
