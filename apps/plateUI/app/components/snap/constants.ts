@@ -20,6 +20,11 @@ export const SNAP_HEADING_PHASE = {
 
 export type SnapHeadingPhase = (typeof SNAP_HEADING_PHASE)[keyof typeof SNAP_HEADING_PHASE];
 
+export const SNAP_LOCKED_REASON = {
+  PLAN: 'plan',
+  DAILY_LIMIT: 'daily-limit',
+} as const;
+
 export const SNAP = {
   TITLE: 'Snap a plate',
   SUBTITLE: 'Drop a meal photo. One clear shot of the plate is enough.',
@@ -53,6 +58,9 @@ export const SNAP = {
   ANALYZING: 'Analyzing your plate…',
   SIGN_IN_REQUIRED: 'Sign in to analyze your photo.',
   ANALYSIS_ERROR: 'Could not analyze that photo. Try again with a clearer shot.',
+  DAILY_LIMIT_TITLE: 'Daily analysis limit reached',
+  DAILY_LIMIT_REACHED: 'All daily analyses used. New analyses unlock after midnight (UTC).',
+  DAILY_LIMIT_TOAST_TIMEOUT_MS: 10000,
   ANALYSIS_DETECTED: 'Detected meal',
   ANALYSIS_SCOPE: 'Estimated from your photo',
   CONFIDENCE_LOW: 'Low confidence',
@@ -64,10 +72,13 @@ export const SNAP = {
   HEADING_LOADING_SUBTITLE: 'Reading nutrition from your photo…',
   HEADING_LOCKED_TITLE: 'Paid plan required to unlock results',
   HEADING_LOCKED_SUBTITLE:
-    'Your photo is ready. Upgrade to Plus or Pro to see calories, macros, and the full breakdown.',
+    'Your photo is ready. Upgrade to Pro to see calories, macros, and the full breakdown.',
+  HEADING_DAILY_LIMIT_TITLE: 'Daily analysis limit reached',
+  HEADING_DAILY_LIMIT_SUBTITLE:
+    'You have used all your analyses for today. Upgrade to Pro for more, or new analyses unlock after midnight (UTC).',
   HEADING_SHELL: 'min-h-[8.75rem] sm:min-h-[9.25rem]',
-  HEADING_NOT_DETECTED_TITLE: 'Meal not detected',
-  HEADING_NOT_DETECTED_SUBTITLE: 'Try a clearer shot of the full plate, then analyze again.',
+  HEADING_ERROR_TITLE: 'Analysis failed',
+  HEADING_ERROR_SUBTITLE: 'We could not analyze that photo. Try again, or upload a clearer shot.',
   PAYWALL_CTA: 'See plans',
   PAYWALL_ARIA: 'Nutrition analysis locked — view pricing plans',
   PAYWALL_CTA_SHIMMER_BACKGROUND:

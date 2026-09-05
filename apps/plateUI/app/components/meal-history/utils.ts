@@ -3,7 +3,6 @@ import type {
   MealAnalysisListResponse,
   MealAnalysisSummary,
 } from '@plate/plate-ai/types';
-import { MEAL_ANALYSES_CHANGED_EVENT } from '@/app/utils/meal-analyses/constants';
 import type { SnapSavedMealCache } from '@/app/utils/meal-analyses/types';
 
 export function formatMealHistoryDate(isoDate: string): string {
@@ -23,8 +22,13 @@ export function pendingMealCount(items: readonly MealAnalysisSummary[]): number 
   return items.filter((item) => item.status === MEAL_ANALYSIS_STATUS.PENDING).length;
 }
 
-export function isPendingMealHistoryItem(item: MealAnalysisSummary): boolean {
-  return item.status === MEAL_ANALYSIS_STATUS.PENDING;
+export function analysesCountToday(items: readonly MealAnalysisSummary[], now = new Date()): number {
+  const startOfDay = new Date(now);
+  startOfDay.setUTCHours(0, 0, 0, 0);
+
+  return items.filter(
+    (item) => item.status === MEAL_ANALYSIS_STATUS.DONE && new Date(item.createdAt).getTime() >= startOfDay.getTime(),
+  ).length;
 }
 
 export function mealHistoryRowHref(item: MealAnalysisSummary): string {
@@ -65,20 +69,4 @@ export async function fetchMealHistory(): Promise<MealAnalysisListResponse | nul
   } catch {
     return null;
   }
-}
-
-export async function deletePendingMealAnalysis(mealId: string): Promise<boolean> {
-  try {
-    const response = await fetch(`/api/meal-analyses/${mealId}`, {
-      method: 'DELETE',
-    });
-
-    return response.ok;
-  } catch {
-    return false;
-  }
-}
-
-export function notifyMealAnalysesChanged(): void {
-  window.dispatchEvent(new Event(MEAL_ANALYSES_CHANGED_EVENT));
 }

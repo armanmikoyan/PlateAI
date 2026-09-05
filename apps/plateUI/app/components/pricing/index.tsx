@@ -2,8 +2,9 @@ import { ScrollEnter } from '@/app/components/scroll';
 import { SectionIntro } from '@/app/components/section-intro';
 import { PRICING_SECTION } from './constants';
 import { PricingTierGrid } from './pricing-tier-grid';
+import type { PricingSectionProps } from './types';
 
-export default function Pricing() {
+export default function Pricing({ currentPlanId = null }: PricingSectionProps) {
   return (
     <section
       id="pricing"
@@ -26,7 +27,7 @@ export default function Pricing() {
           },
           {
             KEY: 'grid',
-            content: <PricingTierGrid variant="preview" />,
+            content: <PricingTierGrid variant="preview" currentPlanId={currentPlanId} />,
             delayClass: 'motion-safe:delay-150',
           },
         ]}

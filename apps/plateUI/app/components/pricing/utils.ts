@@ -24,6 +24,10 @@ export function buildPricingPurchaseCtaLabel(tier: PricingTierRow): string {
   return `${PRICING_PAGE.FIXED_CTA_PURCHASE} ${tier.NAME} — ${tier.PRICE}`;
 }
 
+export function buildPricingUpgradeCtaLabel(tier: PricingTierRow): string {
+  return `${PRICING_PAGE.FIXED_CTA_UPGRADE} ${tier.NAME} — ${tier.PRICE}`;
+}
+
 export function buildPricingPlanCardId(tierId: string): string {
   return `pricing-plan-${tierId}`;
 }

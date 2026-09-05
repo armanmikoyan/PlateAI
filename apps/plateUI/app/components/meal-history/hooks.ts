@@ -2,16 +2,10 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import type { AuthMeResponse } from '@/app/api/auth/types';
-import { clearSnapSavedMealCache } from '@/app/utils/meal-analyses/session-cache';
 import type { MealAnalysisSummary } from '@plate/plate-ai/types';
 import { MEAL_HISTORY } from './constants';
 import type { UseMealHistoryResult } from './types';
-import {
-  deletePendingMealAnalysis,
-  fetchMealHistory,
-  notifyMealAnalysesChanged,
-  pendingMealCount,
-} from './utils';
+import { fetchMealHistory, pendingMealCount } from './utils';
 
 const PLAN_SYNC_MAX_ATTEMPTS = 10;
 const PLAN_SYNC_RETRY_MS = 1000;
@@ -44,7 +38,6 @@ export function useMealHistory(justPurchased = false): UseMealHistoryResult {
   const [items, setItems] = useState<readonly MealAnalysisSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [removingMealId, setRemovingMealId] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
     setLoading(true);
@@ -100,31 +93,11 @@ export function useMealHistory(justPurchased = false): UseMealHistoryResult {
     };
   }, [justPurchased]);
 
-  const removeMeal = useCallback(async (mealId: string) => {
-    setRemovingMealId(mealId);
-    setError(null);
-
-    const deleted = await deletePendingMealAnalysis(mealId);
-
-    if (!deleted) {
-      setError(MEAL_HISTORY.REMOVE_ERROR);
-      setRemovingMealId(null);
-      return;
-    }
-
-    clearSnapSavedMealCache(mealId);
-    setItems((current) => current.filter((item) => item.id !== mealId));
-    notifyMealAnalysesChanged();
-    setRemovingMealId(null);
-  }, []);
-
   return {
     items,
     pendingCount: pendingMealCount(items),
     loading,
     error,
-    removingMealId,
-    removeMeal,
     refresh,
   };
 }

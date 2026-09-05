@@ -18,8 +18,6 @@ export const MEAL_HISTORY = {
   MEAL_PREVIEW_ALT: 'Saved meal photo',
   LOAD_ERROR: 'Could not load meal history.',
   PLAN_SYNC_ERROR: 'Your plan is still updating, but your meals are available below.',
-  REMOVE_PENDING_ARIA: 'Remove pending meal',
-  REMOVE_ERROR: 'Could not remove that meal.',
   PENDING_COUNT_LABEL: 'pending',
   PLAN_LABEL: 'Your plan',
   PLAN_NONE: 'No plan',
@@ -27,6 +25,8 @@ export const MEAL_HISTORY = {
   PLAN_CTA_HREF: '/pricing',
   PLAN_RENEWS_ON: 'Renews',
   PLAN_ACCESS_UNTIL: 'Access until',
+  DAILY_USAGE_LABEL: 'Daily analyses',
+  DAILY_USAGE_FULL: 'Daily limit reached. New analyses unlock after midnight (UTC).',
 } as const;
 
 export const MEAL_HISTORY_PLAN_LABELS: Record<SubscriptionPlan, string> = {

@@ -5,8 +5,9 @@ import { PricingFixedCta } from './pricing-fixed-cta';
 import { PricingPageIntro } from './pricing-page-intro';
 import { PricingTierGrid } from './pricing-tier-grid';
 import { PricingUrlSync } from './pricing-url-sync';
+import type { PricingPageProps } from './types';
 
-export default function PricingPage() {
+export default function PricingPage({ currentPlanId = null }: PricingPageProps) {
   return (
     <>
       <PricingUrlSync />
@@ -17,7 +18,7 @@ export default function PricingPage() {
             { KEY: 'intro', content: <PricingPageIntro /> },
             {
               KEY: 'grid',
-              content: <PricingTierGrid variant="detail" />,
+              content: <PricingTierGrid variant="detail" currentPlanId={currentPlanId} />,
               delayClass: 'motion-safe:delay-150',
             },
           ]}
@@ -41,7 +42,7 @@ export default function PricingPage() {
 
       <SiteFooter />
       <div aria-hidden className="h-28 shrink-0 sm:h-32" />
-      <PricingFixedCta />
+      <PricingFixedCta currentPlanId={currentPlanId} />
     </>
   );
 }

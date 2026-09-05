@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { LoaderCircle } from 'lucide-react';
-import { isPaidPlan } from '@plate/plate-billing/utils';
+import { isPaidPlan, getDailyAnalysisLimit } from '@plate/plate-billing/utils';
 import { SUBSCRIPTION_STATUS } from '@plate/plate-billing/constants';
 import { Badge } from '@/app/ui/badge';
 import { Button } from '@/app/ui/button';
@@ -11,10 +11,10 @@ import { MEAL_HISTORY, MEAL_HISTORY_PLAN_LABELS, MEAL_HISTORY_STATUS_LABELS } fr
 import { useMealHistory } from './hooks';
 import { MealHistoryRow } from './meal-history-row';
 import type { MealHistoryProps } from './types';
-import { formatPlanDate, isPendingMealHistoryItem } from './utils';
+import { analysesCountToday, formatPlanDate } from './utils';
 
 export default function MealHistory({ user, justPurchased = false }: MealHistoryProps) {
-  const { items, loading, error, removingMealId, removeMeal } = useMealHistory(justPurchased);
+  const { items, loading, error } = useMealHistory(justPurchased);
 
   const planLabel =
     user?.subscriptionPlan != null ? MEAL_HISTORY_PLAN_LABELS[user.subscriptionPlan] : MEAL_HISTORY.PLAN_NONE;
@@ -31,19 +31,34 @@ export default function MealHistory({ user, justPurchased = false }: MealHistory
       ? MEAL_HISTORY.PLAN_ACCESS_UNTIL
       : MEAL_HISTORY.PLAN_RENEWS_ON;
 
+  const dailyLimit = paid ? getDailyAnalysisLimit(user.subscriptionPlan) : 0;
+  const usedToday = analysesCountToday(items);
+  const dailyLimitReached = paid && usedToday >= dailyLimit;
+
   const planSummary = (
     <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-edge/60 bg-muted/30 px-4 py-3">
-      <div className="flex items-center gap-2">
-        <span className="text-muted-foreground text-sm font-medium">{MEAL_HISTORY.PLAN_LABEL}</span>
-        <span className="font-heading text-lg font-semibold tracking-tight">{planLabel}</span>
-        {statusLabel ? <Badge variant="secondary">{statusLabel}</Badge> : null}
+      <div className="flex flex-col gap-1">
+        <div className="flex items-center gap-2">
+          <span className="text-muted-foreground text-sm font-medium">{MEAL_HISTORY.PLAN_LABEL}</span>
+          <span className="font-heading text-lg font-semibold tracking-tight">{planLabel}</span>
+          {statusLabel ? <Badge variant="secondary">{statusLabel}</Badge> : null}
+        </div>
+        {paid && dailyLimitReached ? (
+          <p className="text-warning text-sm">{MEAL_HISTORY.DAILY_USAGE_FULL}</p>
+        ) : null}
       </div>
       {paid ? (
-        planDate ? (
-          <span className="text-muted-foreground text-sm">
-            {planDateLabel} {formatPlanDate(planDate)}
+        <div className="flex flex-col items-end gap-1">
+          {planDate ? (
+            <span className="text-muted-foreground text-sm">
+              {planDateLabel} {formatPlanDate(planDate)}
+            </span>
+          ) : null}
+          <span className="text-sm">
+            <span className="text-muted-foreground">{MEAL_HISTORY.DAILY_USAGE_LABEL}: </span>
+            <span className="font-semibold">{usedToday} / {dailyLimit}</span>
           </span>
-        ) : null
+        </div>
       ) : (
         <Button
           nativeButton={false}
@@ -107,12 +122,7 @@ export default function MealHistory({ user, justPurchased = false }: MealHistory
         </p>
       ) : null}
       {items.map((item) => (
-        <MealHistoryRow
-          key={item.id}
-          item={item}
-          onRemove={isPendingMealHistoryItem(item) ? removeMeal : undefined}
-          removing={removingMealId === item.id}
-        />
+        <MealHistoryRow key={item.id} item={item} />
       ))}
     </div>
   );

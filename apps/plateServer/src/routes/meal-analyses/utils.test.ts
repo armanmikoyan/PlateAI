@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { SUBSCRIPTION_PLAN, SUBSCRIPTION_STATUS } from '@plate/plate-billing/constants';
-import { canAnalyzeToday, hasSnapAnalysisAccess, isSnapAnalysisLocked } from './utils.js';
+import {
+  canAnalyzeToday,
+  formatDailyLimitReachedMessage,
+  hasSnapAnalysisAccess,
+  isSnapAnalysisLocked,
+} from './utils.js';
 
 describe('snap analysis entitlements', () => {
   it('grants access to active basic, pro, and individual plans', () => {
@@ -66,5 +71,16 @@ describe('canAnalyzeToday', () => {
 
   it('denies analyses for null plan', () => {
     expect(canAnalyzeToday(0, null)).toBe(false);
+  });
+});
+
+describe('formatDailyLimitReachedMessage', () => {
+  it('interpolates the used and limit counts', () => {
+    expect(formatDailyLimitReachedMessage(3, 3)).toBe(
+      'Daily analysis limit reached — 3 of 3 used today. New analyses unlock after midnight (UTC).',
+    );
+    expect(formatDailyLimitReachedMessage(7, 15)).toBe(
+      'Daily analysis limit reached — 7 of 15 used today. New analyses unlock after midnight (UTC).',
+    );
   });
 });

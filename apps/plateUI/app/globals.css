@@ -34,6 +34,7 @@
   --color-macro-sodium: #c4b5fd;
   --color-macro-potassium: #bef264;
   --color-danger: #f87171;
+  --color-warning: #fbbf24;
   /* Button / control surfaces (match prior zinc scale on dark canvas). */
   --color-button-default-bg: #f4f4f5;
   --color-button-default-fg: #09090b;

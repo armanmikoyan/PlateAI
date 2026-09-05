@@ -1,14 +1,19 @@
 import { analyzeMealImage } from '@plate/plate-ai/provider';
 import { AiConfigError, AiParseError, AiProviderError } from '@plate/plate-ai/errors';
 import { MEAL_ANALYSIS_STATUS } from '@plate/plate-ai/constants';
+import { getDailyAnalysisLimit } from '@plate/plate-billing/utils';
 import { MEAL_ANALYSIS_ERRORS } from '@/routes/meal-analyses/constants.js';
 import {
   countAnalysesSince,
   findByIdForUser,
   updateForUser,
 } from '@/routes/meal-analyses/repository.js';
-import { canAnalyzeToday, isSnapAnalysisLocked } from '@/routes/meal-analyses/utils.js';
-import type { SubscriptionEntitlementInput } from '@/routes/meal-analyses/constants.js';
+import {
+  canAnalyzeToday,
+  formatDailyLimitReachedMessage,
+  isSnapAnalysisLocked,
+} from '@/routes/meal-analyses/utils.js';
+import type { SubscriptionEntitlementInput } from '@/routes/meal-analyses/types.js';
 import type { SubscriptionPlan } from '@plate/plate-billing/types';
 import type { AnalyzeMealResult } from '@/routes/meal-analyses/types.js';
 
@@ -25,7 +30,11 @@ export async function analyzeMeal(
   const todayCount = await countAnalysesSince(user.id, startOfDay);
 
   if (!canAnalyzeToday(todayCount, user.subscriptionPlan)) {
-    return { ok: false, status: 429, error: MEAL_ANALYSIS_ERRORS.DAILY_LIMIT_REACHED };
+    return {
+      ok: false,
+      status: 429,
+      error: formatDailyLimitReachedMessage(todayCount, getDailyAnalysisLimit(user.subscriptionPlan)),
+    };
   }
 
   const document = await findByIdForUser(user.id, analysisId);

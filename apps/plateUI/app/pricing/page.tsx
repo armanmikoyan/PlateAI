@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';
-import { redirect } from 'next/navigation';
 import type { ReactNode } from 'react';
 import { Suspense } from 'react';
 import { isActivePaidPlan } from '@plate/plate-billing/utils';
@@ -15,14 +14,12 @@ export const metadata: Metadata = {
 
 export default async function Page(): Promise<ReactNode> {
   const user = await fetchAuthUser((await headers()).get('cookie'));
-
-  if (user && isActivePaidPlan(user.subscriptionPlan, user.subscriptionStatus)) {
-    redirect('/history');
-  }
+  const currentPlanId =
+    user && isActivePaidPlan(user.subscriptionPlan, user.subscriptionStatus) ? user.subscriptionPlan : null;
 
   return (
     <Suspense>
-      <PricingPage />
+      <PricingPage currentPlanId={currentPlanId} />
     </Suspense>
   );
 }

@@ -6,7 +6,7 @@ import type {
 } from '@plate/plate-ai/types';
 import { MEAL_ANALYSIS_ERRORS } from '@/routes/meal-analyses/constants.js';
 import { analyzeMeal } from '@/routes/meal-analyses/service.js';
-import { createPending, deletePendingForUser, findByIdForUser, listForUser, updateForUser } from '@/routes/meal-analyses/repository.js';
+import { createPending, findByIdForUser, listForUser, updateForUser } from '@/routes/meal-analyses/repository.js';
 import type {
   MealAnalysisLockedResponse,
   UpdateMealAnalysisBody,
@@ -109,26 +109,6 @@ export async function patchMealAnalysis(
     response.json({
       item: toMealAnalysisSummary(document),
     } satisfies MealAnalysisItemResponse);
-  } catch (error) {
-    next(error);
-  }
-}
-
-export async function deleteMealAnalysis(
-  request: Request,
-  response: Response,
-  next: NextFunction,
-): Promise<void> {
-  try {
-    const userId = request.authUser!.id;
-    const deleted = await deletePendingForUser(userId, request.params.id);
-
-    if (!deleted) {
-      response.status(404).json({ error: MEAL_ANALYSIS_ERRORS.NOT_FOUND });
-      return;
-    }
-
-    response.status(204).send();
   } catch (error) {
     next(error);
   }

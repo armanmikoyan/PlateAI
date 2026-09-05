@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { DEVICE_TYPE } from '@/app/utils/device-detection/types';
-import { SNAP, SNAP_ANALYSIS_STATUS, SNAP_HEADING_PHASE } from './constants';
+import { SNAP, SNAP_ANALYSIS_STATUS, SNAP_HEADING_PHASE, SNAP_LOCKED_REASON } from './constants';
 import {
   fileFromJpegDataUrl,
   firstAcceptedImageFile,
@@ -76,13 +76,39 @@ describe('snapHeadingCopy', () => {
     expect(
       snapHeadingCopy(
         photo,
-        { STATUS: SNAP_ANALYSIS_STATUS.SUCCESS, LOCKED: true, ANALYSIS_ID: 'abc' },
+        {
+          STATUS: SNAP_ANALYSIS_STATUS.SUCCESS,
+          LOCKED: true,
+          LOCKED_REASON: SNAP_LOCKED_REASON.PLAN,
+          ANALYSIS_ID: 'abc',
+        },
         DEVICE_TYPE.DESKTOP,
       ),
     ).toEqual({
       PHASE: SNAP_HEADING_PHASE.SUCCESS,
       TITLE: SNAP.HEADING_LOCKED_TITLE,
       SUBTITLE: SNAP.HEADING_LOCKED_SUBTITLE,
+    });
+  });
+
+  it('uses daily-limit copy for a daily-limit lock', () => {
+    const photo = { FILE: new File([], 'plate.jpg'), PREVIEW_URL: 'blob:test' };
+
+    expect(
+      snapHeadingCopy(
+        photo,
+        {
+          STATUS: SNAP_ANALYSIS_STATUS.SUCCESS,
+          LOCKED: true,
+          LOCKED_REASON: SNAP_LOCKED_REASON.DAILY_LIMIT,
+          ANALYSIS_ID: 'abc',
+        },
+        DEVICE_TYPE.DESKTOP,
+      ),
+    ).toEqual({
+      PHASE: SNAP_HEADING_PHASE.SUCCESS,
+      TITLE: SNAP.HEADING_DAILY_LIMIT_TITLE,
+      SUBTITLE: SNAP.HEADING_DAILY_LIMIT_SUBTITLE,
     });
   });
 
@@ -111,13 +137,13 @@ describe('snapHeadingCopy', () => {
     ).toBe('Chicken bowl');
   });
 
-  it('uses not detected copy after error', () => {
+  it('uses failure copy after error', () => {
     expect(
       snapHeadingCopy(
         { FILE: new File([], 'plate.jpg'), PREVIEW_URL: 'blob:test' },
         { STATUS: SNAP_ANALYSIS_STATUS.ERROR, MESSAGE: SNAP.ANALYSIS_ERROR },
         DEVICE_TYPE.DESKTOP,
       ).TITLE,
-    ).toBe(SNAP.HEADING_NOT_DETECTED_TITLE);
+    ).toBe(SNAP.HEADING_ERROR_TITLE);
   });
 });

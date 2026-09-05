@@ -1,4 +1,5 @@
 import { PRICING_COMPARISON_ROWS, PRICING_TIERS } from './constants';
+import type { SubscriptionPlan } from '@plate/plate-billing/types';
 
 export type PricingTierRow = (typeof PRICING_TIERS)[number];
 
@@ -11,10 +12,24 @@ export type PricingTierCardProps = Readonly<{
   variant: PricingTierCardVariant;
   isSelected?: boolean;
   hasActiveSelection?: boolean;
+  currentPlanId?: SubscriptionPlan | null;
 }>;
 
 export type PricingTierGridProps = Readonly<{
   variant: PricingTierCardVariant;
+  currentPlanId?: SubscriptionPlan | null;
+}>;
+
+export type PricingPageProps = Readonly<{
+  currentPlanId?: SubscriptionPlan | null;
+}>;
+
+export type PricingSectionProps = Readonly<{
+  currentPlanId?: SubscriptionPlan | null;
+}>;
+
+export type PricingFixedCtaProps = Readonly<{
+  currentPlanId?: SubscriptionPlan | null;
 }>;
 
 export type PricingTierCardDetailProps = Readonly<{

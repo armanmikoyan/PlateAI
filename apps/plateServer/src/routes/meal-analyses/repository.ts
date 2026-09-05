@@ -70,23 +70,7 @@ export async function updateForUser(
 export async function countAnalysesSince(userId: string, since: Date): Promise<number> {
   return MealAnalysis.countDocuments({
     userId: new Types.ObjectId(userId),
+    status: MEAL_ANALYSIS_STATUS.DONE,
     createdAt: { $gte: since },
   }).exec();
-}
-
-export async function deletePendingForUser(
-  userId: string,
-  analysisId: string,
-): Promise<boolean> {
-  if (!Types.ObjectId.isValid(analysisId)) {
-    return false;
-  }
-
-  const result = await MealAnalysis.findOneAndDelete({
-    _id: new Types.ObjectId(analysisId),
-    userId: new Types.ObjectId(userId),
-    status: MEAL_ANALYSIS_STATUS.PENDING,
-  }).exec();
-
-  return result !== null;
 }

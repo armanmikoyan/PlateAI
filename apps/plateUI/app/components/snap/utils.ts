@@ -1,6 +1,7 @@
 import type { MealAnalysisConfidence, MealAnalysisResult } from '@plate/plate-ai/types';
 import type { DeviceType } from '@/app/utils/device-detection/types';
 import { DEVICE_TYPE } from '@/app/utils/device-detection/types';
+import type { SnapSavedMealCache } from '@/app/utils/meal-analyses/types';
 import {
   HERO_CALORIES_TILE,
   HERO_NUTRIENT_METRIC_ROWS,
@@ -15,12 +16,21 @@ import {
   SNAP_CONFIDENCE_LABELS,
   SNAP_HEADING_PHASE,
   SNAP_LOCKED_PREVIEW_DELAY_MS_PRESET,
+  SNAP_LOCKED_REASON,
 } from './constants';
-import type { SnapAnalysisState, SnapHeadingCopy, SnapHeadingPhase, SnapPhoto } from './types';
-
-type MealImageAnalysis = MealAnalysisResult;
+import type { SavedMealPayload, SnapAnalysisState, SnapHeadingCopy, SnapHeadingPhase, SnapPhoto } from './types';
 
 const SNAP_MACRO_ROW_KEYS = new Set<HeroNutrientMetricRow['KEY']>(['PROTEIN', 'CARBS', 'FAT']);
+
+export function toSnapSavedMealCache(item: SavedMealPayload): SnapSavedMealCache {
+  return {
+    id: item.id,
+    status: item.status,
+    imageMimeType: item.imageMimeType,
+    imageBase64: item.imageBase64,
+    analysis: item.analysis,
+  };
+}
 
 export function snapHeadingPhase(
   photo: SnapPhoto | null,
@@ -88,6 +98,18 @@ export function snapHeadingCopy(
       };
     }
 
+    if (
+      analysisState.STATUS === SNAP_ANALYSIS_STATUS.SUCCESS &&
+      analysisState.LOCKED === true &&
+      analysisState.LOCKED_REASON === SNAP_LOCKED_REASON.DAILY_LIMIT
+    ) {
+      return {
+        PHASE: phase,
+        TITLE: SNAP.HEADING_DAILY_LIMIT_TITLE,
+        SUBTITLE: SNAP.HEADING_DAILY_LIMIT_SUBTITLE,
+      };
+    }
+
     return {
       PHASE: phase,
       TITLE: SNAP.HEADING_LOCKED_TITLE,
@@ -98,8 +120,8 @@ export function snapHeadingCopy(
   if (phase === SNAP_HEADING_PHASE.ERROR) {
     return {
       PHASE: phase,
-      TITLE: SNAP.HEADING_NOT_DETECTED_TITLE,
-      SUBTITLE: SNAP.HEADING_NOT_DETECTED_SUBTITLE,
+      TITLE: SNAP.HEADING_ERROR_TITLE,
+      SUBTITLE: SNAP.HEADING_ERROR_SUBTITLE,
     };
   }
 
@@ -110,7 +132,7 @@ export function snapHeadingCopy(
   };
 }
 
-export function snapCaloriesTileForAnalysis(analysis: MealImageAnalysis): HeroStatTileModel {
+export function snapCaloriesTileForAnalysis(analysis: MealAnalysisResult): HeroStatTileModel {
   return {
     ...HERO_CALORIES_TILE,
     VALUE: String(analysis.calories),
@@ -118,7 +140,7 @@ export function snapCaloriesTileForAnalysis(analysis: MealImageAnalysis): HeroSt
 }
 
 export function snapMacroTilesForAnalysis(
-  analysis: MealImageAnalysis,
+  analysis: MealAnalysisResult,
 ): readonly HeroNutrientTileRowModel[] {
   const values = {
     PROTEIN: String(analysis.proteinG),

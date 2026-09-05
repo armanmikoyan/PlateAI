@@ -43,6 +43,13 @@ export async function POST(
       return errorResponse('This meal analysis cannot be completed.', 409);
     }
 
+    if (result.status === 429) {
+      return errorResponse(
+        result.message ?? 'Daily analysis limit reached. New analyses unlock after midnight (UTC).',
+        429,
+      );
+    }
+
     return errorResponse('Could not analyze that photo. Try a clearer shot.', 502);
   }
 

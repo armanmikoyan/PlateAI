@@ -34,6 +34,45 @@ export function readRefreshTokenFromCookieHeader(cookieHeader: string | null): s
   return readCookie(cookieHeader, AUTH.REFRESH_COOKIE_NAME);
 }
 
+export function mergeRefreshedCookies(
+  cookieHeader: string | null,
+  setCookies: readonly string[],
+): string | null {
+  const cookies = new Map<string, string>();
+
+  if (cookieHeader) {
+    for (const part of cookieHeader.split(';')) {
+      const trimmed = part.trim();
+      const separatorIndex = trimmed.indexOf('=');
+
+      if (separatorIndex === -1) {
+        continue;
+      }
+
+      cookies.set(trimmed.slice(0, separatorIndex).trim(), trimmed.slice(separatorIndex + 1).trim());
+    }
+  }
+
+  for (const setCookie of setCookies) {
+    const valueStart = setCookie.indexOf('=');
+    const valueEnd = setCookie.indexOf(';');
+
+    if (valueStart === -1) {
+      continue;
+    }
+
+    const name = setCookie.slice(0, valueStart).trim();
+    const value = setCookie.slice(valueStart + 1, valueEnd === -1 ? undefined : valueEnd);
+    cookies.set(name, value.trim());
+  }
+
+  if (cookies.size === 0) {
+    return cookieHeader;
+  }
+
+  return [...cookies.entries()].map(([name, value]) => `${name}=${value}`).join('; ');
+}
+
 export async function fetchAuthUser(cookieHeader: string | null): Promise<AuthUser | null> {
   if (!cookieHeader) {
     return null;

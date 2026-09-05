@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from 'express';
-import { isPurchasablePlan } from '@plate/plate-billing/utils';
+import { isPlanUpgrade, isPurchasablePlan } from '@plate/plate-billing/utils';
 import type { BillingProvider, CheckoutSessionResponse } from '@plate/plate-billing/types';
 import { CHECKOUT_ERRORS } from '@/routes/checkout/constants.js';
 import { applyWebhookResult, createCheckout } from '@/routes/checkout/service.js';
@@ -23,6 +23,11 @@ export function createCheckoutSessionHandler(provider: BillingProvider, config: 
 
       if (typeof bodyPlan !== 'string' || !isPurchasablePlan(bodyPlan)) {
         response.status(400).json({ error: CHECKOUT_ERRORS.PLAN_NOT_PURCHASABLE });
+        return;
+      }
+
+      if (authUser.subscriptionPlan !== null && !isPlanUpgrade(bodyPlan, authUser.subscriptionPlan)) {
+        response.status(400).json({ error: CHECKOUT_ERRORS.PLAN_ALREADY_INCLUDED });
         return;
       }
 

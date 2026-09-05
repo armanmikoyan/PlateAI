@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { LoaderCircle } from 'lucide-react';
+import { SUBSCRIPTION_PLAN } from '@plate/plate-billing/constants';
 import { buildPricingTierHref } from '@/app/components/pricing/utils';
 import { Badge } from '@/app/ui/badge';
 import { Card, CardContent } from '@/app/ui/card';
@@ -119,7 +120,7 @@ export function SnapAnalysisReadout({ analysisState, photo }: SnapAnalysisReadou
 
   return (
     <Link
-      href={buildPricingTierHref('plus')}
+      href={buildPricingTierHref(SUBSCRIPTION_PLAN.PRO)}
       aria-label={SNAP.PAYWALL_ARIA}
       className="block w-full rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
     >

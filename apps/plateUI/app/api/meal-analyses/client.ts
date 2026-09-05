@@ -9,7 +9,7 @@ import { MEAL_ANALYSIS_STATUS } from '@plate/plate-ai/constants';
 
 type MealAnalysisRequestOptions = Readonly<{
   cookieHeader: string | null;
-  method: 'GET' | 'POST' | 'PATCH' | 'DELETE';
+  method: 'GET' | 'POST' | 'PATCH';
   path: string;
   body?: unknown;
 }>;
@@ -19,7 +19,7 @@ async function mealAnalysisRequest<T>({
   method,
   path,
   body,
-}: MealAnalysisRequestOptions): Promise<{ ok: true; data: T } | { ok: false; status: number }> {
+}: MealAnalysisRequestOptions): Promise<{ ok: true; data: T } | { ok: false; status: number; message?: string }> {
   if (!cookieHeader) {
     return { ok: false, status: 401 };
   }
@@ -38,7 +38,9 @@ async function mealAnalysisRequest<T>({
     const response = await fetch(`${readPlateServerUrl()}/meal-analyses${path}`, init);
 
     if (!response.ok) {
-      return { ok: false, status: response.status };
+      const message = (await response.json().catch(() => null))
+        ?.error as string | undefined;
+      return { ok: false, status: response.status, message };
     }
 
     if (response.status === 204) {
@@ -128,23 +130,6 @@ export async function markMealAnalysisFailed(
   return result.ok ? result.data : null;
 }
 
-export async function deleteMealAnalysis(
-  cookieHeader: string | null,
-  analysisId: string,
-): Promise<boolean> {
-  if (!cookieHeader) {
-    return false;
-  }
-
-  const result = await mealAnalysisRequest<never>({
-    cookieHeader,
-    method: 'DELETE',
-    path: `/${analysisId}`,
-  });
-
-  return result.ok;
-}
-
 export async function analyzeMealAnalysis(
   cookieHeader: string | null,
   analysisId: string,
@@ -164,7 +149,7 @@ export async function analyzeMealAnalysis(
       return { ok: false, locked: true, status: 403 };
     }
 
-    return { ok: false, locked: false, status: result.status };
+    return { ok: false, locked: false, status: result.status, message: result.message };
   }
 
   return { ok: true, locked: false, item: result.data.item };

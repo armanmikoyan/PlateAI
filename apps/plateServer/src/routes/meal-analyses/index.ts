@@ -3,7 +3,6 @@ import { requireUser } from '@/middleware/require-user.js';
 import {
   analyzeMealAnalysis,
   createMealAnalysis,
-  deleteMealAnalysis,
   getMealAnalysis,
   listMealAnalyses,
   patchMealAnalysis,
@@ -18,7 +17,6 @@ export function createMealAnalysesRouter(config: ServerConfig): Router {
   router.post('/', authenticated, createMealAnalysis);
   router.get('/:id', authenticated, getMealAnalysis);
   router.patch('/:id', authenticated, patchMealAnalysis);
-  router.delete('/:id', authenticated, deleteMealAnalysis);
   router.post('/:id/analyze', authenticated, analyzeMealAnalysis);
 
   return router;

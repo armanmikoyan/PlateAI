@@ -43,11 +43,3 @@ export function readSnapSavedMealCache(mealId: string): SnapSavedMealCache | nul
     return null;
   }
 }
-
-export function clearSnapSavedMealCache(mealId: string): void {
-  try {
-    sessionStorage.removeItem(cacheKey(mealId));
-  } catch {
-    // Private browsing, quota exceeded, or disabled storage.
-  }
-}

@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { isPaidPlan, isPurchasablePlan } from '@plate/plate-billing/utils';
+import { SUBSCRIPTION_PLAN } from '@plate/plate-billing/constants';
+import { isPaidPlan, isPlanUpgrade, isPurchasablePlan } from '@plate/plate-billing/utils';
 import { cn } from '@/app/utils/cn';
 import { Badge } from '@/app/ui/badge';
 import {
@@ -19,19 +20,28 @@ import { usePricingPurchase, usePricingSelectTier } from './hooks';
 import { PricingTierCardDetail } from './pricing-tier-card-detail';
 import { PricingTierFeatureList } from './pricing-tier-feature-list';
 import type { PricingTierCardProps } from './types';
-import { buildPricingPurchaseCtaLabel, buildPricingTierHref } from './utils';
+import {
+  buildPricingPurchaseCtaLabel,
+  buildPricingTierHref,
+  buildPricingUpgradeCtaLabel,
+  getPricingTierById,
+} from './utils';
 
 export function PricingTierCard({
   tier,
   variant,
   isSelected = false,
   hasActiveSelection = false,
+  currentPlanId = null,
 }: PricingTierCardProps) {
   const selectTier = usePricingSelectTier();
   const { purchase, isPurchasing, error } = usePricingPurchase();
+  const upgradeTier = getPricingTierById(SUBSCRIPTION_PLAN.PRO);
   const detailHref = buildPricingTierHref(tier.ID);
-  const showPopularHighlight = variant === 'preview' ? tier.HIGHLIGHT : tier.HIGHLIGHT && !hasActiveSelection;
-  const showSelectedHighlight = isSelected;
+  const isCurrentPlan = currentPlanId != null && tier.ID === currentPlanId;
+  const canPurchaseUpgrade = currentPlanId == null || isPlanUpgrade(tier.ID, currentPlanId);
+  const showPopularHighlight = tier.HIGHLIGHT && !isCurrentPlan && !hasActiveSelection;
+  const showSelectedHighlight = isSelected && !isCurrentPlan;
 
   const cardClassName = cn(
     'flex w-full flex-col transition-shadow motion-reduce:transition-none',
@@ -39,6 +49,7 @@ export function PricingTierCard({
     variant === 'detail' &&
       showSelectedHighlight &&
       'ring-accent/50 border-accent/40 bg-surface-raised ring-2 shadow-md shadow-accent/10 md:translate-y-0',
+    isCurrentPlan && 'border-positive/40 ring-positive/50 ring-1',
     variant === 'detail' &&
       !showSelectedHighlight &&
       showPopularHighlight &&
@@ -52,9 +63,14 @@ export function PricingTierCard({
   const cardBody = (
     <>
       <CardHeader>
-        {tier.BADGE ? (
+        {tier.BADGE || isCurrentPlan ? (
           <CardAction>
-            <Badge variant="secondary">{tier.BADGE}</Badge>
+            {tier.BADGE ? <Badge variant="secondary">{tier.BADGE}</Badge> : null}
+            {isCurrentPlan ? (
+              <Badge variant="outline" className="border-positive/60 text-positive">
+                {PRICING_SECTION.YOUR_PLAN}
+              </Badge>
+            ) : null}
           </CardAction>
         ) : null}
         <CardTitle>{tier.NAME}</CardTitle>
@@ -142,7 +158,32 @@ export function PricingTierCard({
       </button>
       {isSelected ? (
         <div className="flex flex-col gap-3 px-(--card-spacing) pb-(--card-spacing)">
-          {isPurchasablePlan(tier.ID) ? (
+          {isCurrentPlan ? (
+            <>
+              <p className="text-muted-foreground text-center text-xs" role="status">
+                {error ?? PRICING_SECTION.CURRENT_PLAN_NOTE}
+              </p>
+              {currentPlanId === SUBSCRIPTION_PLAN.BASIC ? (
+                <ShimmerButton
+                  type="button"
+                  background={PRICING_PAGE.FIXED_CTA_SHIMMER_BACKGROUND}
+                  shimmerColor={PRICING_PAGE.FIXED_CTA_SHIMMER_COLOR}
+                  shimmerSize="2px"
+                  disabled={isPurchasing}
+                  aria-disabled={isPurchasing}
+                  aria-label={buildPricingUpgradeCtaLabel(upgradeTier)}
+                  className="text-button-default-fg h-11 gap-2 px-5 text-base"
+                  onClick={() => {
+                    purchase(upgradeTier);
+                  }}
+                >
+                  <span aria-live="polite">
+                    {isPurchasing ? 'Redirecting to checkout…' : buildPricingUpgradeCtaLabel(upgradeTier)}
+                  </span>
+                </ShimmerButton>
+              ) : null}
+            </>
+          ) : isPurchasablePlan(tier.ID) && canPurchaseUpgrade ? (
             <>
               <ShimmerButton
                 type="button"
@@ -165,6 +206,8 @@ export function PricingTierCard({
                 {error ?? PRICING_SECTION.CHECKOUT_NOTE}
               </p>
             </>
+          ) : isPurchasablePlan(tier.ID) ? (
+            <p className="text-muted-foreground text-center text-xs">{PRICING_SECTION.ALREADY_INCLUDED}</p>
           ) : isPaidPlan(tier.ID) ? (
             <a
               href={PRICING_SECTION.CONTACT_US_HREF}

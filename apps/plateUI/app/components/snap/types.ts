@@ -1,9 +1,17 @@
 import type { ReactNode } from 'react';
-import type { MealAnalysisResult } from '@plate/plate-ai/types';
+import type { MealAnalysisResult, MealAnalysisStatus } from '@plate/plate-ai/types';
 import type { HeroStatTileChrome } from '@/app/components/hero/constants';
-import { SNAP_ANALYSIS_STATUS, type SnapHeadingPhase } from './constants';
+import { SNAP_ANALYSIS_STATUS, SNAP_LOCKED_REASON, type SnapHeadingPhase } from './constants';
 
-type MealImageAnalysis = MealAnalysisResult;
+export type SnapLockedReason = (typeof SNAP_LOCKED_REASON)[keyof typeof SNAP_LOCKED_REASON];
+
+export type SavedMealPayload = Readonly<{
+  id: string;
+  status: MealAnalysisStatus;
+  imageMimeType: string;
+  imageBase64: string;
+  analysis: MealAnalysisResult | null;
+}>;
 
 export type SnapPhoto = Readonly<{
   FILE: File;
@@ -27,11 +35,16 @@ export type UseSnapPhotoResult = Readonly<{
 export type SnapAnalysisState =
   | Readonly<{ STATUS: typeof SNAP_ANALYSIS_STATUS.IDLE }>
   | Readonly<{ STATUS: typeof SNAP_ANALYSIS_STATUS.LOADING }>
-  | Readonly<{ STATUS: typeof SNAP_ANALYSIS_STATUS.SUCCESS; LOCKED: true; ANALYSIS_ID: string }>
+  | Readonly<{
+      STATUS: typeof SNAP_ANALYSIS_STATUS.SUCCESS;
+      LOCKED: true;
+      LOCKED_REASON: SnapLockedReason;
+      ANALYSIS_ID: string;
+    }>
   | Readonly<{
       STATUS: typeof SNAP_ANALYSIS_STATUS.SUCCESS;
       LOCKED: false;
-      ANALYSIS: MealImageAnalysis;
+      ANALYSIS: MealAnalysisResult;
       ANALYSIS_ID: string;
     }>
   | Readonly<{ STATUS: typeof SNAP_ANALYSIS_STATUS.ERROR; MESSAGE: string }>;
@@ -48,7 +61,7 @@ export type UseSnapSavedMealLoaderResult = Readonly<{
 }>;
 
 export type SnapAnalyzeSuccessResponse = Readonly<{
-  analysis: MealImageAnalysis;
+  analysis: MealAnalysisResult;
   id: string;
 }>;
 
@@ -59,6 +72,7 @@ export type SnapAnalyzeLockedResponse = Readonly<{
 
 export type SnapAnalyzeErrorResponse = Readonly<{
   error?: string;
+  id?: string;
 }>;
 
 export type SnapAnalysisReadoutProps = Readonly<{
@@ -67,7 +81,7 @@ export type SnapAnalysisReadoutProps = Readonly<{
 }>;
 
 export type SnapAnalysisUnlockedReadoutProps = Readonly<{
-  analysis: MealImageAnalysis;
+  analysis: MealAnalysisResult;
   previewUrl: string;
 }>;
 

@@ -1,13 +1,21 @@
 import { isActivePaidPlan, getDailyAnalysisLimit } from '@plate/plate-billing/utils';
+import { MEAL_ANALYSIS_ERRORS } from '@/routes/meal-analyses/constants.js';
 import type { MealAnalysisResult } from '@plate/plate-ai/types';
 import type { MealAnalysisDocument } from '@/models/meal-analysis.js';
-import type { SubscriptionEntitlementInput } from '@/routes/meal-analyses/constants.js';
+import type { SubscriptionEntitlementInput } from '@/routes/meal-analyses/types.js';
 import type { SubscriptionPlan } from '@plate/plate-billing/types';
 import type { MealAnalysisSummary } from '@plate/plate-ai/types';
 
 export function canAnalyzeToday(analysisCount: number, plan: SubscriptionPlan | null): boolean {
   const limit = getDailyAnalysisLimit(plan);
   return analysisCount < limit;
+}
+
+export function formatDailyLimitReachedMessage(used: number, limit: number): string {
+  return MEAL_ANALYSIS_ERRORS.DAILY_LIMIT_REACHED.replace('{used}', String(used)).replace(
+    '{limit}',
+    String(limit),
+  );
 }
 
 export function hasSnapAnalysisAccess(subscription: SubscriptionEntitlementInput): boolean {

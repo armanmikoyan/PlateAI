@@ -7,7 +7,7 @@ import { PricingTierCard } from './pricing-tier-card';
 import type { PricingTierGridProps } from './types';
 import { buildPricingPlanCardId } from './utils';
 
-export function PricingTierGrid({ variant }: PricingTierGridProps) {
+export function PricingTierGrid({ variant, currentPlanId = null }: PricingTierGridProps) {
   const activeTierId = usePricingActiveTierId();
   const gridRef = useRef<HTMLUListElement>(null);
 
@@ -30,6 +30,7 @@ export function PricingTierGrid({ variant }: PricingTierGridProps) {
           className={variant === 'detail' ? 'min-w-0 scroll-mt-28' : 'h-full min-w-0 scroll-mt-28'}
         >
           <PricingTierCard
+            currentPlanId={currentPlanId}
             hasActiveSelection={variant === 'detail'}
             isSelected={variant === 'detail' && activeTierId === tier.ID}
             tier={tier}

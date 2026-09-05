@@ -8,6 +8,10 @@ export const PRICING_SECTION = {
   CHECKOUT_NOTE: 'Payments are handled securely by Lemon Squeezy.',
   CHECKOUT_ERROR: 'Could not start checkout. Please try again.',
   FREE_PLAN_CTA: 'Pick a plan to get started.',
+  YOUR_PLAN: 'Your plan',
+  CURRENT_PLAN_NOTE: "You're on this plan.",
+  UPGRADE_TO_PRO_NOTE: 'Upgrade to Pro for more analyses per day.',
+  ALREADY_INCLUDED: 'Already included in your plan.',
   VIEW_DETAILS: 'View plan details',
   SHOW_DETAILS_HINT: 'Tap for more details',
   CONTACT_US: 'Contact us',
@@ -25,6 +29,7 @@ export const PRICING_PAGE = {
   DEFAULT_TIER_ID: SUBSCRIPTION_PLAN.PRO,
   SCROLL_PLAN_FLAG: 'pricing-scroll-plan',
   FIXED_CTA_PURCHASE: 'Purchase',
+  FIXED_CTA_UPGRADE: 'Upgrade to',
   FIXED_CTA_SHIMMER_BACKGROUND:
     'linear-gradient(165deg, var(--color-cta-soft) 0%, var(--color-cta) 48%, var(--color-cta-deep) 100%)',
   FIXED_CTA_SHIMMER_COLOR: 'var(--color-content)',
