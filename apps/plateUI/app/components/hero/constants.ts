@@ -115,14 +115,6 @@ export const HERO_TYPEWRITER_CARET_REDUCE_CLASS =
 
 export const HERO_INTRO_TYPE_START_MS = 380 as const;
 
-/** Extra `|` marks after the blinking caret; staggered animation reads as a left→right sweep. */
-export const HERO_INTRO_CARET_ECHO_DELAY_CLASS = [
-  'delay-0',
-  'delay-[110ms]',
-  'delay-[220ms]',
-  'delay-[330ms]',
-] as const;
-
 export const HERO_INTRO_LINES = [
   {
     KEY: 'h',
@@ -132,7 +124,7 @@ export const HERO_INTRO_LINES = [
       'text-content font-heading text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl',
     CARET: 'animate-caret-blink text-content-muted inline-block align-baseline font-light',
     TEXT: HERO.HEADING,
-    MS: 26,
+    MS: 16,
   },
   {
     KEY: 's',
@@ -141,7 +133,7 @@ export const HERO_INTRO_LINES = [
     SHELL: 'text-content-muted mt-3 max-w-3xl text-base/relaxed sm:text-lg',
     CARET: 'animate-caret-blink text-content-muted/80 inline-block align-baseline font-light',
     TEXT: HERO.SUBHEAD,
-    MS: 11,
+    MS: 8,
   },
 ] as const;
 

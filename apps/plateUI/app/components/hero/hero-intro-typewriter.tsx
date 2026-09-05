@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react';
 import { cn } from '@/app/utils/cn';
 import {
   type HeroIntroLineKey,
-  HERO_INTRO_CARET_ECHO_DELAY_CLASS,
   HERO_INTRO_LINES,
   HERO_INTRO_TYPE_START_MS,
   HERO_TYPEWRITER_CARET_REDUCE_CLASS,
@@ -39,6 +38,7 @@ export function HeroIntroTypewriter() {
       timers.current.push(setTimeout(fn, delay));
     };
 
+    let offset = HERO_INTRO_TYPE_START_MS;
     for (const { KEY, TEXT, MS } of HERO_INTRO_LINES) {
       let i = 0;
       const step = () => {
@@ -48,7 +48,8 @@ export function HeroIntroTypewriter() {
           schedule(step, MS);
         }
       };
-      schedule(step, HERO_INTRO_TYPE_START_MS);
+      schedule(step, offset);
+      offset += TEXT.length * MS;
     }
 
     return clear;
@@ -68,19 +69,6 @@ export function HeroIntroTypewriter() {
                 {showCaret ? (
                   <span className="ml-0.5 inline-flex select-none items-baseline" aria-hidden>
                     <span className={cn(CARET, HERO_TYPEWRITER_CARET_REDUCE_CLASS)}>|</span>
-                    {HERO_INTRO_CARET_ECHO_DELAY_CLASS.map((delayClass, echoIndex) => (
-                      <span
-                        key={echoIndex}
-                        className={cn(
-                          'text-content-muted/50 ms-[-0.07em] inline-block align-baseline font-light',
-                          'animate-pulse',
-                          'motion-reduce:animate-none motion-reduce:opacity-[0.28]',
-                          delayClass,
-                        )}
-                      >
-                        |
-                      </span>
-                    ))}
                   </span>
                 ) : null}
               </span>
