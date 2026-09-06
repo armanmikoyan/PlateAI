@@ -73,6 +73,7 @@ export type SnapAnalyzeLockedResponse = Readonly<{
 export type SnapAnalyzeErrorResponse = Readonly<{
   error?: string;
   id?: string;
+  retryAfterSeconds?: number;
 }>;
 
 export type SnapAnalysisReadoutProps = Readonly<{

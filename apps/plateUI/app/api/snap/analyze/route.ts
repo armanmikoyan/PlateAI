@@ -14,6 +14,7 @@ type AnalyzeLockedResponse = Readonly<{
 type AnalyzeErrorResponse = Readonly<{
   error: string;
   id?: string;
+  retryAfterSeconds?: number;
 }>;
 
 function imageMimeForAnalysis(file: Pick<File, 'name' | 'type'>): string {
@@ -78,9 +79,9 @@ export async function POST(request: Request) {
       if (result.status === 429) {
         return Response.json(
           {
-            error:
-              result.message ?? 'Daily analysis limit reached. New analyses unlock after midnight (UTC).',
+            error: result.message ?? 'Daily analysis limit reached. New analyses unlock after midnight (UTC).',
             id: analysisId,
+            ...(result.retryAfterSeconds ? { retryAfterSeconds: result.retryAfterSeconds } : {}),
           } satisfies AnalyzeErrorResponse,
           { status: 429 },
         );

@@ -5,6 +5,11 @@ import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { useSearchParams } from 'next/navigation';
 import { MEAL_ANALYSIS_STATUS } from '@plate/plate-ai/constants';
 import { readSnapSavedMealCache, writeSnapSavedMealCache } from '@/app/utils/meal-analyses/session-cache';
+import {
+  RATE_LIMIT_TOAST_TIMEOUT_MS,
+  RATE_LIMIT_TOAST_TITLE,
+} from '@/app/utils/rate-limit/constants';
+import { formatRetryDescription } from '@/app/utils/rate-limit/utils';
 import { toast } from '@/app/ui/toast';
 import { SNAP, SNAP_ANALYSIS_STATUS, SNAP_LOCKED_REASON } from './constants';
 import { snapAnalysisAtom, snapPhotoAtom, snapResumeAnalysisIdAtom } from './state';
@@ -229,6 +234,19 @@ export function useSnapAnalyze(): UseSnapAnalyzeResult {
 
         if (response.status === 429) {
           const body = (await response.json().catch(() => null)) as SnapAnalyzeErrorResponse | null;
+
+          if (body?.retryAfterSeconds) {
+            toast.add({
+              title: RATE_LIMIT_TOAST_TITLE,
+              description: formatRetryDescription(body.retryAfterSeconds),
+              type: 'warning',
+              timeout: RATE_LIMIT_TOAST_TIMEOUT_MS,
+            });
+            setResumeAnalysisId(analysisId);
+            setAnalysisState({ STATUS: SNAP_ANALYSIS_STATUS.IDLE });
+            return;
+          }
+
           const message = body?.error ?? SNAP.DAILY_LIMIT_REACHED;
           toast.add({
             title: SNAP.DAILY_LIMIT_TITLE,
@@ -308,6 +326,18 @@ export function useSnapAnalyze(): UseSnapAnalyzeResult {
 
       if (response.status === 429) {
         const body = (await response.json().catch(() => null)) as SnapAnalyzeErrorResponse | null;
+
+        if (body?.retryAfterSeconds) {
+          toast.add({
+            title: RATE_LIMIT_TOAST_TITLE,
+            description: formatRetryDescription(body.retryAfterSeconds),
+            type: 'warning',
+            timeout: RATE_LIMIT_TOAST_TIMEOUT_MS,
+          });
+          setAnalysisState({ STATUS: SNAP_ANALYSIS_STATUS.IDLE });
+          return;
+        }
+
         const message = body?.error ?? SNAP.DAILY_LIMIT_REACHED;
         toast.add({
           title: SNAP.DAILY_LIMIT_TITLE,

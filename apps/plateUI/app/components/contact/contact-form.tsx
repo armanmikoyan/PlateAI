@@ -2,8 +2,18 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import type { AuthMeResponse } from '@/app/api/auth/types';
+import {
+  RATE_LIMIT_TOAST_TIMEOUT_MS,
+  RATE_LIMIT_TOAST_TITLE,
+} from '@/app/utils/rate-limit/constants';
+import { formatRetryDescription } from '@/app/utils/rate-limit/utils';
 import { toast } from '@/app/ui/toast';
 import { CONTACT_SECTION } from './constants';
+
+type ContactErrorResponse = Readonly<{
+  error?: string;
+  retryAfterSeconds?: number;
+}>;
 
 export function ContactForm() {
   const [sending, setSending] = useState(false);
@@ -65,7 +75,7 @@ export function ContactForm() {
         const response = await fetch('/api/contact', {
           method: 'POST',
           headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ email, message }),
+          body: JSON.stringify({ message }),
         });
 
         if (response.ok) {
@@ -78,7 +88,17 @@ export function ContactForm() {
           return;
         }
 
-        const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+        const payload = (await response.json().catch(() => null)) as ContactErrorResponse | null;
+
+        if (response.status === 429 && payload?.retryAfterSeconds) {
+          toast.add({
+            title: RATE_LIMIT_TOAST_TITLE,
+            description: formatRetryDescription(payload.retryAfterSeconds),
+            type: 'warning',
+            timeout: RATE_LIMIT_TOAST_TIMEOUT_MS,
+          });
+        }
+
         setErrorMessage(payload?.error ?? CONTACT_SECTION.FORM_ERROR);
       } catch {
         setErrorMessage(CONTACT_SECTION.FORM_SERVER_UNAVAILABLE);

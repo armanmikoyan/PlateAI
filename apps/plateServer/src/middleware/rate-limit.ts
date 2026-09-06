@@ -1,4 +1,4 @@
-import { rateLimit } from 'express-rate-limit';
+import { ipKeyGenerator, rateLimit } from 'express-rate-limit';
 import type { RequestHandler } from 'express';
 
 const RATE_LIMIT_ERROR = 'Too many requests. Try again later.' as const;
@@ -19,7 +19,7 @@ export function contactRateLimiter(): RequestHandler {
     limit: 5,
     standardHeaders: 'draft-8',
     legacyHeaders: false,
-    keyGenerator: (request) => request.authUser?.id ?? request.ip ?? 'anonymous',
+    keyGenerator: (request) => request.authUser?.id ?? ipKeyGenerator(request.ip ?? 'anonymous'),
     message: { error: RATE_LIMIT_ERROR },
   });
 }

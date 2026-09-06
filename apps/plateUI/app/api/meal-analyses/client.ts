@@ -4,6 +4,7 @@ import type {
   MealAnalysisListResponse,
   MealAnalysisResult,
 } from '@plate/plate-ai/types';
+import { retryAfterSecondsFromHeader } from '@/app/utils/rate-limit/utils';
 import type { AnalyzeResult } from '@/app/utils/meal-analyses/types';
 import { MEAL_ANALYSIS_STATUS } from '@plate/plate-ai/constants';
 
@@ -15,13 +16,22 @@ type MealAnalysisRequestOptions = Readonly<{
   body?: unknown;
 }>;
 
+type MealAnalysisRequestFailure = Readonly<{
+  ok: false;
+  status: number;
+  message?: string;
+  retryAfterSeconds?: number;
+}>;
+
+type MealAnalysisRequestResult<T> = Readonly<{ ok: true; data: T }> | MealAnalysisRequestFailure;
+
 async function mealAnalysisRequest<T>({
   cookieHeader,
   forwardedFor = null,
   method,
   path,
   body,
-}: MealAnalysisRequestOptions): Promise<{ ok: true; data: T } | { ok: false; status: number; message?: string }> {
+}: MealAnalysisRequestOptions): Promise<MealAnalysisRequestResult<T>> {
   if (!cookieHeader) {
     return { ok: false, status: 401 };
   }
@@ -43,7 +53,12 @@ async function mealAnalysisRequest<T>({
     if (!response.ok) {
       const message = (await response.json().catch(() => null))
         ?.error as string | undefined;
-      return { ok: false, status: response.status, message };
+      return {
+        ok: false,
+        status: response.status,
+        message,
+        retryAfterSeconds: retryAfterSecondsFromHeader(response.headers.get('retry-after')),
+      };
     }
 
     if (response.status === 204) {
@@ -164,7 +179,13 @@ export async function analyzeMealAnalysis(
       return { ok: false, locked: true, status: 403 };
     }
 
-    return { ok: false, locked: false, status: result.status, message: result.message };
+    return {
+      ok: false,
+      locked: false,
+      status: result.status,
+      message: result.message,
+      retryAfterSeconds: result.retryAfterSeconds,
+    };
   }
 
   return { ok: true, locked: false, item: result.data.item };

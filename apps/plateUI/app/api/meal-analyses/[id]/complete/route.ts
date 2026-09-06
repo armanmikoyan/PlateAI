@@ -9,15 +9,20 @@ type CompleteMealAnalysisResponse = Readonly<{
 type CompleteMealAnalysisErrorResponse = Readonly<{
   error: string;
   locked?: true;
+  retryAfterSeconds?: number;
 }>;
 
 type CompleteMealAnalysisRouteContext = Readonly<{
   params: Promise<{ id: string }>;
 }>;
 
-function errorResponse(message: string, status: number, locked = false) {
+function errorResponse(message: string, status: number, extra?: { locked?: true; retryAfterSeconds?: number }) {
   return Response.json(
-    { error: message, ...(locked ? { locked: true } : {}) } satisfies CompleteMealAnalysisErrorResponse,
+    {
+      error: message,
+      ...(extra?.locked ? { locked: true } : {}),
+      ...(extra?.retryAfterSeconds ? { retryAfterSeconds: extra.retryAfterSeconds } : {}),
+    } satisfies CompleteMealAnalysisErrorResponse,
     { status },
   );
 }
@@ -32,7 +37,7 @@ export async function POST(
 
   if (!result.ok) {
     if (result.locked) {
-      return errorResponse('Paid plan required to analyze this meal.', 403, true);
+      return errorResponse('Paid plan required to analyze this meal.', 403, { locked: true });
     }
 
     if (result.status === 404) {
@@ -47,6 +52,7 @@ export async function POST(
       return errorResponse(
         result.message ?? 'Daily analysis limit reached. New analyses unlock after midnight (UTC).',
         429,
+        { retryAfterSeconds: result.retryAfterSeconds },
       );
     }
 

@@ -15,4 +15,10 @@ export type SnapSavedMealCache = Readonly<{
 export type AnalyzeResult =
   | { ok: true; locked: false; item: MealAnalysisSummary }
   | { ok: false; locked: true; status: 403 }
-  | { ok: false; locked: false; status: number; message?: string };
+  | {
+      ok: false;
+      locked: false;
+      status: number;
+      message?: string;
+      retryAfterSeconds?: number;
+    };
