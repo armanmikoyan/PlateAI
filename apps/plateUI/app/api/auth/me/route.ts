@@ -3,7 +3,7 @@ import type { AuthMeResponse } from '@/app/api/auth/types';
 
 export async function GET(request: Request): Promise<Response> {
   const cookieHeader = request.headers.get('cookie');
-  const user = await fetchAuthUser(cookieHeader);
+  const user = await fetchAuthUser(cookieHeader, request.headers.get('x-forwarded-for'));
 
   if (!user) {
     return Response.json({ error: 'Not signed in.' }, { status: 401 });

@@ -6,6 +6,7 @@ import type { AuthMeResponse } from '@/app/api/auth/types';
 
 export async function POST(request: Request): Promise<Response> {
   const cookieHeader = request.headers.get('cookie');
+  const forwardedFor = request.headers.get('x-forwarded-for');
   const payload = (await request.json()) as { plan?: unknown };
   const plan = typeof payload?.plan === 'string' ? payload.plan : '';
 
@@ -13,13 +14,13 @@ export async function POST(request: Request): Promise<Response> {
     return Response.json({ error: 'Could not start checkout.' }, { status: 400 });
   }
 
-  const current = await readCurrentPlan(cookieHeader);
+  const current = await readCurrentPlan(cookieHeader, forwardedFor);
 
   if (current !== null && !isPlanUpgrade(plan, current)) {
     return Response.json({ error: 'This plan is already included.' }, { status: 400 });
   }
 
-  const result = await createCheckoutSession(cookieHeader, plan);
+  const result = await createCheckoutSession(cookieHeader, plan, forwardedFor);
 
   if (result.ok) {
     return Response.json({ url: result.url } satisfies CheckoutSessionResponse);
@@ -32,14 +33,20 @@ export async function POST(request: Request): Promise<Response> {
   return Response.json({ error: 'Could not start checkout.' }, { status: result.status });
 }
 
-async function readCurrentPlan(cookieHeader: string | null): Promise<SubscriptionPlan | null> {
+async function readCurrentPlan(
+  cookieHeader: string | null,
+  forwardedFor: string | null,
+): Promise<SubscriptionPlan | null> {
   if (!cookieHeader) {
     return null;
   }
 
   try {
     const response = await fetch(`${readPlateServerUrl()}/auth/me`, {
-      headers: { cookie: cookieHeader },
+      headers: {
+        cookie: cookieHeader,
+        ...(forwardedFor ? { 'x-forwarded-for': forwardedFor } : {}),
+      },
       cache: 'no-store',
     });
 
@@ -59,6 +66,7 @@ type CreateCheckoutSessionResult = { ok: true; url: string } | { ok: false; stat
 async function createCheckoutSession(
   cookieHeader: string | null,
   plan: string,
+  forwardedFor: string | null,
 ): Promise<CreateCheckoutSessionResult> {
   if (!cookieHeader) {
     return { ok: false, status: 401 };
@@ -70,6 +78,7 @@ async function createCheckoutSession(
       headers: {
         cookie: cookieHeader,
         'content-type': 'application/json',
+        ...(forwardedFor ? { 'x-forwarded-for': forwardedFor } : {}),
       },
       body: JSON.stringify({ plan }),
       cache: 'no-store',

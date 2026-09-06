@@ -11,6 +11,7 @@ import { createHealthRouter } from '@/routes/health/index.js';
 import { createMealAnalysesRouter } from '@/routes/meal-analyses/index.js';
 import { requestLogger } from '@/middleware/request-logger.js';
 import { security } from '@/middleware/security.js';
+import { authRateLimiter } from '@/middleware/rate-limit.js';
 import type { ServerConfig } from '@/config/types.js';
 
 export function createApp(config: ServerConfig): express.Express {
@@ -29,7 +30,7 @@ export function createApp(config: ServerConfig): express.Express {
   app.use(express.json({ limit: '10mb' }));
 
   app.use('/health', createHealthRouter());
-  app.use('/auth', createAuthRouter(config));
+  app.use('/auth', authRateLimiter(), createAuthRouter(config));
   app.use('/meal-analyses', createMealAnalysesRouter(config));
   app.use('/checkout', createCheckoutSessionRouter(config, billing));
   app.use('/webhook', createCheckoutWebhookRouter(billing));

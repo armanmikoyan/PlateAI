@@ -9,6 +9,7 @@ import { MEAL_ANALYSIS_STATUS } from '@plate/plate-ai/constants';
 
 type MealAnalysisRequestOptions = Readonly<{
   cookieHeader: string | null;
+  forwardedFor?: string | null;
   method: 'GET' | 'POST' | 'PATCH';
   path: string;
   body?: unknown;
@@ -16,6 +17,7 @@ type MealAnalysisRequestOptions = Readonly<{
 
 async function mealAnalysisRequest<T>({
   cookieHeader,
+  forwardedFor = null,
   method,
   path,
   body,
@@ -28,6 +30,7 @@ async function mealAnalysisRequest<T>({
     method,
     headers: {
       cookie: cookieHeader,
+      ...(forwardedFor ? { 'x-forwarded-for': forwardedFor } : {}),
       ...(body ? { 'content-type': 'application/json' } : {}),
     },
     cache: 'no-store',
@@ -58,9 +61,11 @@ export async function createPendingMealAnalysis(
   cookieHeader: string | null,
   imageBase64: string,
   imageMimeType: string,
+  forwardedFor?: string | null,
 ): Promise<MealAnalysisItemResponse | null> {
   const result = await mealAnalysisRequest<MealAnalysisItemResponse>({
     cookieHeader,
+    forwardedFor,
     method: 'POST',
     path: '',
     body: { imageBase64, imageMimeType },
@@ -71,9 +76,11 @@ export async function createPendingMealAnalysis(
 
 export async function listMealAnalyses(
   cookieHeader: string | null,
+  forwardedFor?: string | null,
 ): Promise<MealAnalysisListResponse | null> {
   const result = await mealAnalysisRequest<MealAnalysisListResponse>({
     cookieHeader,
+    forwardedFor,
     method: 'GET',
     path: '',
   });
@@ -84,9 +91,11 @@ export async function listMealAnalyses(
 export async function getMealAnalysis(
   cookieHeader: string | null,
   analysisId: string,
+  forwardedFor?: string | null,
 ): Promise<MealAnalysisItemResponse | null> {
   const result = await mealAnalysisRequest<MealAnalysisItemResponse>({
     cookieHeader,
+    forwardedFor,
     method: 'GET',
     path: `/${analysisId}`,
   });
@@ -98,9 +107,11 @@ export async function markMealAnalysisDone(
   cookieHeader: string | null,
   analysisId: string,
   analysis: MealAnalysisResult,
+  forwardedFor?: string | null,
 ): Promise<MealAnalysisItemResponse | null> {
   const result = await mealAnalysisRequest<MealAnalysisItemResponse>({
     cookieHeader,
+    forwardedFor,
     method: 'PATCH',
     path: `/${analysisId}`,
     body: {
@@ -116,9 +127,11 @@ export async function markMealAnalysisFailed(
   cookieHeader: string | null,
   analysisId: string,
   errorMessage: string,
+  forwardedFor?: string | null,
 ): Promise<MealAnalysisItemResponse | null> {
   const result = await mealAnalysisRequest<MealAnalysisItemResponse>({
     cookieHeader,
+    forwardedFor,
     method: 'PATCH',
     path: `/${analysisId}`,
     body: {
@@ -133,6 +146,7 @@ export async function markMealAnalysisFailed(
 export async function analyzeMealAnalysis(
   cookieHeader: string | null,
   analysisId: string,
+  forwardedFor?: string | null,
 ): Promise<AnalyzeResult> {
   if (!cookieHeader) {
     return { ok: false, locked: false, status: 401 };
@@ -140,6 +154,7 @@ export async function analyzeMealAnalysis(
 
   const result = await mealAnalysisRequest<MealAnalysisItemResponse>({
     cookieHeader,
+    forwardedFor,
     method: 'POST',
     path: `/${analysisId}/analyze`,
   });

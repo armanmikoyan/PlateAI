@@ -18,7 +18,8 @@ export const metadata: Metadata = {
 
 export default async function Page({ searchParams }: LoginPageProps): Promise<ReactNode> {
   const params = await searchParams;
-  const session = await getAuthSession((await headers()).get('cookie'));
+  const pageHeaders = await headers();
+  const session = await getAuthSession(pageHeaders.get('cookie'), pageHeaders.get('x-forwarded-for'));
 
   if (session) {
     redirect(readLoginRedirectPath(params.next));

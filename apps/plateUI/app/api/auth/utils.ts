@@ -73,14 +73,20 @@ export function mergeRefreshedCookies(
   return [...cookies.entries()].map(([name, value]) => `${name}=${value}`).join('; ');
 }
 
-export async function fetchAuthUser(cookieHeader: string | null): Promise<AuthUser | null> {
+export async function fetchAuthUser(
+  cookieHeader: string | null,
+  forwardedFor: string | null = null,
+): Promise<AuthUser | null> {
   if (!cookieHeader) {
     return null;
   }
 
   try {
     const response = await fetch(`${readPlateServerUrl()}/auth/me`, {
-      headers: { cookie: cookieHeader },
+      headers: {
+        cookie: cookieHeader,
+        ...(forwardedFor ? { 'x-forwarded-for': forwardedFor } : {}),
+      },
       cache: 'no-store',
     });
 
@@ -95,8 +101,11 @@ export async function fetchAuthUser(cookieHeader: string | null): Promise<AuthUs
   }
 }
 
-export function getAuthSession(cookieHeader: string | null): Promise<AuthUser | null> {
-  return fetchAuthUser(cookieHeader);
+export function getAuthSession(
+  cookieHeader: string | null,
+  forwardedFor: string | null = null,
+): Promise<AuthUser | null> {
+  return fetchAuthUser(cookieHeader, forwardedFor);
 }
 
 function upstreamResponseHeaders(upstream: Response): Headers {
@@ -130,9 +139,14 @@ export async function proxyToApiServer(request: Request, upstreamPath: string): 
 
   const headers = new Headers();
   const cookie = request.headers.get('cookie');
+  const forwardedFor = request.headers.get('x-forwarded-for');
 
   if (cookie) {
     headers.set('cookie', cookie);
+  }
+
+  if (forwardedFor) {
+    headers.set('x-forwarded-for', forwardedFor);
   }
 
   const init: RequestInit = {

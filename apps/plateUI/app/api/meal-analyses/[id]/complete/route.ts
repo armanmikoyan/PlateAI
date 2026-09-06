@@ -28,7 +28,7 @@ export async function POST(
 ): Promise<Response> {
   const { id } = await context.params;
   const cookieHeader = request.headers.get('cookie');
-  const result = await analyzeMealAnalysis(cookieHeader, id);
+  const result = await analyzeMealAnalysis(cookieHeader, id, request.headers.get('x-forwarded-for'));
 
   if (!result.ok) {
     if (result.locked) {

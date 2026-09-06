@@ -8,7 +8,7 @@ type MealAnalysisRouteContext = Readonly<{
 export async function GET(request: Request, context: MealAnalysisRouteContext): Promise<Response> {
   const { id } = await context.params;
   const cookieHeader = request.headers.get('cookie');
-  const data = await getMealAnalysis(cookieHeader, id);
+  const data = await getMealAnalysis(cookieHeader, id, request.headers.get('x-forwarded-for'));
 
   if (!data) {
     return Response.json({ error: 'Meal analysis not found.' }, { status: 404 });

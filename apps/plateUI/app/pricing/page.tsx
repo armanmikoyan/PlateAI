@@ -13,7 +13,8 @@ export const metadata: Metadata = {
 };
 
 export default async function Page(): Promise<ReactNode> {
-  const user = await fetchAuthUser((await headers()).get('cookie'));
+  const pageHeaders = await headers();
+  const user = await fetchAuthUser(pageHeaders.get('cookie'), pageHeaders.get('x-forwarded-for'));
   const currentPlanId =
     user && isActivePaidPlan(user.subscriptionPlan, user.subscriptionStatus) ? user.subscriptionPlan : null;
 

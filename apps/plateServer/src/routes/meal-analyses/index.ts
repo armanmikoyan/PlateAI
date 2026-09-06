@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { analyzeRateLimiter } from '@/middleware/rate-limit.js';
 import { requireUser } from '@/middleware/require-user.js';
 import {
   analyzeMealAnalysis,
@@ -17,7 +18,7 @@ export function createMealAnalysesRouter(config: ServerConfig): Router {
   router.post('/', authenticated, createMealAnalysis);
   router.get('/:id', authenticated, getMealAnalysis);
   router.patch('/:id', authenticated, patchMealAnalysis);
-  router.post('/:id/analyze', authenticated, analyzeMealAnalysis);
+  router.post('/:id/analyze', authenticated, analyzeRateLimiter(), analyzeMealAnalysis);
 
   return router;
 }

@@ -18,7 +18,10 @@ function loginRedirect(request: NextRequest): NextResponse {
   return NextResponse.redirect(loginUrl);
 }
 
-async function refreshSession(cookieHeader: string | null): Promise<Response | null> {
+async function refreshSession(
+  cookieHeader: string | null,
+  forwardedFor: string | null,
+): Promise<Response | null> {
   if (!cookieHeader) {
     return null;
   }
@@ -26,7 +29,10 @@ async function refreshSession(cookieHeader: string | null): Promise<Response | n
   try {
     return await fetch(`${readPlateServerUrl()}/auth/refresh`, {
       method: 'GET',
-      headers: { cookie: cookieHeader },
+      headers: {
+        cookie: cookieHeader,
+        ...(forwardedFor ? { 'x-forwarded-for': forwardedFor } : {}),
+      },
       cache: 'no-store',
     });
   } catch {
@@ -34,12 +40,12 @@ async function refreshSession(cookieHeader: string | null): Promise<Response | n
   }
 }
 
-async function checkSession(cookieHeader: string | null): Promise<SessionCheck> {
-  if (await getAuthSession(cookieHeader)) {
+async function checkSession(cookieHeader: string | null, headers: Headers): Promise<SessionCheck> {
+  if (await getAuthSession(cookieHeader, headers.get('x-forwarded-for'))) {
     return { ok: true, setCookies: [] };
   }
 
-  const refreshed = await refreshSession(cookieHeader);
+  const refreshed = await refreshSession(cookieHeader, headers.get('x-forwarded-for'));
 
   if (!refreshed?.ok) {
     return { ok: false, setCookies: [] };
@@ -50,7 +56,7 @@ async function checkSession(cookieHeader: string | null): Promise<SessionCheck> 
 
 export async function proxy(request: NextRequest) {
   const cookieHeader = request.headers.get('cookie');
-  const session = await checkSession(cookieHeader);
+  const session = await checkSession(cookieHeader, request.headers);
 
   if (session.ok) {
     if (session.setCookies.length === 0) {

@@ -3,7 +3,7 @@ import type { MealAnalysisListResponse } from '@plate/plate-ai/types';
 
 export async function GET(request: Request): Promise<Response> {
   const cookieHeader = request.headers.get('cookie');
-  const data = await listMealAnalyses(cookieHeader);
+  const data = await listMealAnalyses(cookieHeader, request.headers.get('x-forwarded-for'));
 
   if (!data) {
     return Response.json({ error: 'Could not load meal analyses.' }, { status: 401 });

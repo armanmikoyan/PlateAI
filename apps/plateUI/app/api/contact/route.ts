@@ -15,12 +15,17 @@ export async function POST(request: Request): Promise<NextResponse> {
     return NextResponse.json({ error: CONTACT_SECTION.FORM_INVALID }, { status: 400 });
   }
 
+  const forwardedFor = request.headers.get('x-forwarded-for');
+
   let response: Response;
 
   try {
     response = await fetch(`${readPlateServerUrl()}/contact`, {
       method: 'POST',
-      headers: { 'content-type': 'application/json' },
+      headers: {
+        'content-type': 'application/json',
+        ...(forwardedFor ? { 'x-forwarded-for': forwardedFor } : {}),
+      },
       body: JSON.stringify({ email, message }),
       cache: 'no-store',
     });

@@ -42,6 +42,7 @@ function errorResponse(message: string, status: number) {
 
 export async function POST(request: Request) {
   const cookieHeader = request.headers.get('cookie');
+  const forwardedFor = request.headers.get('x-forwarded-for');
 
   if (!cookieHeader) {
     return errorResponse('Sign in required.', 401);
@@ -57,14 +58,14 @@ export async function POST(request: Request) {
 
     const imageBase64 = Buffer.from(await image.arrayBuffer()).toString('base64');
     const mimeType = imageMimeForAnalysis(image);
-    const created = await createPendingMealAnalysis(cookieHeader, imageBase64, mimeType);
+    const created = await createPendingMealAnalysis(cookieHeader, imageBase64, mimeType, forwardedFor);
 
     if (!created) {
       return errorResponse('Could not save meal analysis.', 502);
     }
 
     const analysisId = created.item.id;
-    const result = await analyzeMealAnalysis(cookieHeader, analysisId);
+    const result = await analyzeMealAnalysis(cookieHeader, analysisId, forwardedFor);
 
     if (!result.ok) {
       if (result.locked) {

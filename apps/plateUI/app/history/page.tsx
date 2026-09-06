@@ -16,7 +16,8 @@ type HistoryRouteProps = Readonly<{
 
 export default async function Page({ searchParams }: HistoryRouteProps): Promise<ReactNode> {
   const params = await searchParams;
-  const user = await fetchAuthUser((await headers()).get('cookie'));
+  const pageHeaders = await headers();
+  const user = await fetchAuthUser(pageHeaders.get('cookie'), pageHeaders.get('x-forwarded-for'));
 
   return (
     <section className="border-edge/60 flex flex-1 flex-col border-b bg-canvas py-8 sm:py-10 lg:py-12">

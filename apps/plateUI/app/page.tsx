@@ -13,7 +13,11 @@ import SiteFooter from '@/app/components/site-footer';
 import UseCases from '@/app/components/use-cases';
 
 export default async function Page(): Promise<ReactNode> {
-  const session = await getAuthSession((await headers()).get('cookie'));
+  const pageHeaders = await headers();
+  const session = await getAuthSession(
+    pageHeaders.get('cookie'),
+    pageHeaders.get('x-forwarded-for'),
+  );
   const currentPlanId =
     session && isActivePaidPlan(session.subscriptionPlan, session.subscriptionStatus)
       ? session.subscriptionPlan
