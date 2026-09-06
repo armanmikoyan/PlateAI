@@ -1,6 +1,12 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
 import { SUBSCRIPTION_PLAN, SUBSCRIPTION_STATUS } from '@/constants.js';
-import type { SubscriptionPlan, SubscriptionStatus, WebhookEvent, WebhookResult } from '@/types.js';
+import type {
+  SubscriptionPlan,
+  SubscriptionStatus,
+  WebhookEvent,
+  WebhookNormalizeOutcome,
+  WebhookResult,
+} from '@/types.js';
 import { LEMON_SQUEEZY_SUBSCRIPTION_STATUS, LEMON_SQUEEZY_WEBHOOK_EVENTS } from './constants.js';
 import type {
   LemonSqueezySubscriptionStatus,
@@ -145,12 +151,15 @@ function toWebhookEvent(eventName: string): WebhookEvent | null {
 export function normalizeWebhookPayload(
   payload: LemonSqueezyWebhookPayload,
   variantPlanMap: LemonSqueezyVariantPlanMap,
-): WebhookResult | null {
+): WebhookNormalizeOutcome {
   const userId = payload.meta.custom_data?.user_id;
   const event = toWebhookEvent(payload.meta.event_name);
 
   if (!userId || !event) {
-    return null;
+    return {
+      ok: false,
+      reason: `cannot resolve user/event (userId present: ${Boolean(userId)}, event: ${event ?? 'unsupported'})`,
+    };
   }
 
   const customerId = payload.data.relationships.customer?.data?.id ?? undefined;
@@ -161,31 +170,40 @@ export function normalizeWebhookPayload(
 
   if (event === 'purchased') {
     if (!plan) {
-      return null;
+      return {
+        ok: false,
+        reason: `unresolved variant ${variantId ?? 'none'} (configured: ${Object.keys(variantPlanMap).join(', ')})`,
+      };
     }
 
     return {
-      event,
-      userId,
-      plan,
-      status: SUBSCRIPTION_STATUS.ACTIVE,
-      customerId,
-      orderId: payload.data.id,
-      subscriptionId,
-      renewsAt,
-      endsAt,
+      ok: true,
+      result: {
+        event,
+        userId,
+        plan,
+        status: SUBSCRIPTION_STATUS.ACTIVE,
+        customerId,
+        orderId: payload.data.id,
+        subscriptionId,
+        renewsAt,
+        endsAt,
+      },
     };
   }
 
   const status = toSubscriptionStatus(payload.data.attributes.status) ?? undefined;
 
   return {
-    event,
-    userId,
-    ...(plan ? { plan } : {}),
-    ...(status ? { status } : {}),
-    subscriptionId,
-    renewsAt,
-    endsAt,
+    ok: true,
+    result: {
+      event,
+      userId,
+      ...(plan ? { plan } : {}),
+      ...(status ? { status } : {}),
+      subscriptionId,
+      renewsAt,
+      endsAt,
+    },
   };
 }

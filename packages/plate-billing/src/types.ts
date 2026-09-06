@@ -57,9 +57,13 @@ export type WebhookResult = Readonly<{
   endsAt?: string;
 }>;
 
+export type WebhookNormalizeOutcome =
+  | Readonly<{ ok: true; result: WebhookResult }>
+  | Readonly<{ ok: false; reason: string }>;
+
 export type WebhookParseResult =
   | Readonly<{ status: 'invalid' }>
-  | Readonly<{ status: 'ignored' }>
+  | Readonly<{ status: 'ignored'; reason: string }>
   | Readonly<{ status: 'applied'; result: WebhookResult }>;
 
 export type BillingProvider = Readonly<{

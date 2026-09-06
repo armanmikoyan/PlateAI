@@ -75,16 +75,19 @@ export function createLemonSqueezyProvider(config: LemonSqueezyProviderConfig): 
         payload.data.attributes.test_mode !== undefined &&
         payload.data.attributes.test_mode !== config.testMode
       ) {
-        return { status: 'ignored' };
+        return {
+          status: 'ignored',
+          reason: `test_mode mismatch (payload=${payload.data.attributes.test_mode}, config=${config.testMode})`,
+        };
       }
 
-      const result = normalizeWebhookPayload(payload, variantPlanMap);
+      const normalized = normalizeWebhookPayload(payload, variantPlanMap);
 
-      if (!result) {
-        return { status: 'ignored' };
+      if (!normalized.ok) {
+        return { status: 'ignored', reason: normalized.reason };
       }
 
-      return { status: 'applied', result };
+      return { status: 'applied', result: normalized.result };
     },
   };
 }

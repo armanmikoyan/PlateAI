@@ -82,7 +82,7 @@ export function createWebhookHandler(provider: BillingProvider) {
           );
         }
       } else {
-        console.warn(`[webhook] event ignored (test_mode mismatch or unknown plan/variant)`);
+        console.warn(`[webhook] event ignored: ${parsed.reason}`);
       }
 
       response.status(200).json({ ok: true });

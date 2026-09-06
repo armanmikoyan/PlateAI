@@ -36,14 +36,6 @@ export function NavBarAuth() {
       }
     }
 
-    async function clearSession() {
-      try {
-        await fetch('/api/auth/logout', { cache: 'no-store' });
-      } catch {
-        // Best-effort cleanup.
-      }
-    }
-
     async function loadSession() {
       try {
         let response = await fetch('/api/auth/me', { cache: 'no-store' });
@@ -54,7 +46,6 @@ export function NavBarAuth() {
         }
 
         if (!response.ok) {
-          await clearSession();
           return;
         }
 
@@ -65,7 +56,7 @@ export function NavBarAuth() {
 
         loadPendingCount();
       } catch {
-        await clearSession();
+        return;
       } finally {
         if (!cancelled) {
           setReady(true);

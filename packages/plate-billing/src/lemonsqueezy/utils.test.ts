@@ -123,18 +123,21 @@ describe('readSubscriptionDates', () => {
 
 describe('normalizeWebhookPayload', () => {
   it('normalizes an order_created purchase', () => {
-    const result = normalizeWebhookPayload(webhookPayload, variantPlanMap);
+    const outcome = normalizeWebhookPayload(webhookPayload, variantPlanMap);
 
-    expect(result).toEqual({
-      event: 'purchased',
-      userId: 'user_1',
-      plan: SUBSCRIPTION_PLAN.BASIC,
-      status: SUBSCRIPTION_STATUS.ACTIVE,
-      customerId: 'customer_1',
-      orderId: 'order_1',
-      subscriptionId: 'subscription_1',
-      renewsAt: '2026-10-01T12:00:00Z',
-      endsAt: '2026-09-01T12:00:00Z',
+    expect(outcome).toEqual({
+      ok: true,
+      result: {
+        event: 'purchased',
+        userId: 'user_1',
+        plan: SUBSCRIPTION_PLAN.BASIC,
+        status: SUBSCRIPTION_STATUS.ACTIVE,
+        customerId: 'customer_1',
+        orderId: 'order_1',
+        subscriptionId: 'subscription_1',
+        renewsAt: '2026-10-01T12:00:00Z',
+        endsAt: '2026-09-01T12:00:00Z',
+      },
     });
   });
 
@@ -158,18 +161,21 @@ describe('normalizeWebhookPayload', () => {
       },
     } as const;
 
-    const result = normalizeWebhookPayload(payload, variantPlanMap);
+    const outcome = normalizeWebhookPayload(payload, variantPlanMap);
 
-    expect(result).toEqual({
-      event: 'purchased',
-      userId: 'user_1',
-      plan: SUBSCRIPTION_PLAN.PRO,
-      status: SUBSCRIPTION_STATUS.ACTIVE,
-      customerId: 'customer_1',
-      orderId: 'subscription_1',
-      subscriptionId: 'subscription_1',
-      renewsAt: '2026-10-01T12:00:00Z',
-      endsAt: undefined,
+    expect(outcome).toEqual({
+      ok: true,
+      result: {
+        event: 'purchased',
+        userId: 'user_1',
+        plan: SUBSCRIPTION_PLAN.PRO,
+        status: SUBSCRIPTION_STATUS.ACTIVE,
+        customerId: 'customer_1',
+        orderId: 'subscription_1',
+        subscriptionId: 'subscription_1',
+        renewsAt: '2026-10-01T12:00:00Z',
+        endsAt: undefined,
+      },
     });
   });
 
@@ -193,20 +199,23 @@ describe('normalizeWebhookPayload', () => {
       },
     } as const;
 
-    const result = normalizeWebhookPayload(payload, variantPlanMap);
+    const outcome = normalizeWebhookPayload(payload, variantPlanMap);
 
-    expect(result).toEqual({
-      event: 'subscription_updated',
-      userId: 'user_1',
-      plan: SUBSCRIPTION_PLAN.BASIC,
-      status: SUBSCRIPTION_STATUS.ACTIVE,
-      subscriptionId: 'subscription_1',
-      renewsAt: '2026-10-01T12:00:00Z',
-      endsAt: undefined,
+    expect(outcome).toEqual({
+      ok: true,
+      result: {
+        event: 'subscription_updated',
+        userId: 'user_1',
+        plan: SUBSCRIPTION_PLAN.BASIC,
+        status: SUBSCRIPTION_STATUS.ACTIVE,
+        subscriptionId: 'subscription_1',
+        renewsAt: '2026-10-01T12:00:00Z',
+        endsAt: undefined,
+      },
     });
   });
 
-  it('omits plan when the variant cannot be resolved', () => {
+  it('marks the outcome false and explains when the variant cannot be resolved', () => {
     const payload = {
       ...webhookPayload,
       data: {
@@ -218,7 +227,12 @@ describe('normalizeWebhookPayload', () => {
       },
     } as const;
 
-    expect(normalizeWebhookPayload(payload, variantPlanMap)).toBeNull();
+    const outcome = normalizeWebhookPayload(payload, variantPlanMap);
+
+    expect(outcome.ok).toBe(false);
+    if (!outcome.ok) {
+      expect(outcome.reason).toContain('unresolved variant');
+    }
   });
 });
 
@@ -246,13 +260,16 @@ describe('provider parseWebhook', () => {
     expect(provider.parseWebhook(Buffer.from('not json'))).toEqual({ status: 'invalid' });
   });
 
-  it('ignores test_mode mismatches', () => {
+  it('ignores test_mode mismatches with a reason', () => {
     const payload = {
       ...webhookPayload,
       data: { ...webhookPayload.data, attributes: { ...webhookPayload.data.attributes, test_mode: true } },
     };
 
-    expect(provider.parseWebhook(Buffer.from(JSON.stringify(payload)))).toEqual({ status: 'ignored' });
+    expect(provider.parseWebhook(Buffer.from(JSON.stringify(payload)))).toEqual({
+      status: 'ignored',
+      reason: expect.stringContaining('test_mode mismatch'),
+    });
   });
 
   it('applies an order payload without a test_mode attribute (order objects omit it)', () => {
