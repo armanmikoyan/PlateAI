@@ -81,7 +81,3 @@ export async function refreshSession(
     next(error);
   }
 }
-
-export function health(response: Response): void {
-  response.json({ ok: true });
-}

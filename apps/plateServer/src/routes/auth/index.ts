@@ -3,7 +3,6 @@ import passport from 'passport';
 import {
   getMe,
   googleCallback,
-  health,
   logout,
   refreshSession,
 } from '@/routes/auth/controller.js';
@@ -35,10 +34,6 @@ export function createAuthRouter(config: ServerConfig): Router {
 
   router.get('/logout', (request, response) => {
     logout(config, request, response);
-  });
-
-  router.get('/health', (request, response) => {
-    health(response);
   });
 
   return router;
