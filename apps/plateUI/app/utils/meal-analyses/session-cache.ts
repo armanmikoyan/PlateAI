@@ -15,8 +15,6 @@ function isSnapSavedMealCache(value: unknown): value is SnapSavedMealCache {
   return (
     typeof candidate.id === 'string' &&
     typeof candidate.status === 'string' &&
-    typeof candidate.imageMimeType === 'string' &&
-    typeof candidate.imageBase64 === 'string' &&
     (candidate.analysis === null || typeof candidate.analysis === 'object')
   );
 }

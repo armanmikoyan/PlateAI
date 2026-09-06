@@ -14,7 +14,7 @@ import type { MealHistoryProps } from './types';
 import { analysesCountToday, formatPlanDate } from './utils';
 
 export default function MealHistory({ user, justPurchased = false }: MealHistoryProps) {
-  const { items, loading, error } = useMealHistory(justPurchased);
+  const { items, loading, error, refresh } = useMealHistory(justPurchased);
 
   const planLabel =
     user?.subscriptionPlan != null ? MEAL_HISTORY_PLAN_LABELS[user.subscriptionPlan] : MEAL_HISTORY.PLAN_NONE;
@@ -34,6 +34,11 @@ export default function MealHistory({ user, justPurchased = false }: MealHistory
   const dailyLimit = paid ? getDailyAnalysisLimit(user.subscriptionPlan) : 0;
   const usedToday = analysesCountToday(items);
   const dailyLimitReached = paid && usedToday >= dailyLimit;
+
+  async function handleDeleteItem(analysisId: string) {
+    await fetch(`/api/meal-analyses/${encodeURIComponent(analysisId)}`, { method: 'DELETE' });
+    await refresh();
+  }
 
   const planSummary = (
     <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-edge/60 bg-muted/30 px-4 py-3">
@@ -122,7 +127,7 @@ export default function MealHistory({ user, justPurchased = false }: MealHistory
         </p>
       ) : null}
       {items.map((item) => (
-        <MealHistoryRow key={item.id} item={item} />
+        <MealHistoryRow key={item.id} item={item} onDelete={handleDeleteItem} />
       ))}
     </div>
   );

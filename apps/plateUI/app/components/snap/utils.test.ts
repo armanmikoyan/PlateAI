@@ -4,6 +4,7 @@ import { SNAP, SNAP_ANALYSIS_STATUS, SNAP_HEADING_PHASE, SNAP_LOCKED_REASON } fr
 import {
   fileFromJpegDataUrl,
   firstAcceptedImageFile,
+  shouldCompressImageFile,
   snapHeadingCopy,
   snapHeadingPhase,
 } from './utils';
@@ -32,6 +33,26 @@ describe('fileFromJpegDataUrl', () => {
     expect(file.name).toBe('plate.jpg');
     expect(file.type).toBe('image/jpeg');
     expect(file.size).toBeGreaterThan(0);
+  });
+});
+
+describe('shouldCompressImageFile', () => {
+  it('compresses accepted image types above the size threshold', () => {
+    const largeJpeg = new File([new ArrayBuffer(250 * 1024)], 'meal.jpg', { type: 'image/jpeg' });
+
+    expect(shouldCompressImageFile(largeJpeg)).toBe(true);
+  });
+
+  it('keeps accepted image types below the size threshold', () => {
+    const smallJpeg = new File([new ArrayBuffer(100)], 'meal.jpg', { type: 'image/jpeg' });
+
+    expect(shouldCompressImageFile(smallJpeg)).toBe(false);
+  });
+
+  it('keeps unsupported image types unchanged', () => {
+    const gif = new File([new ArrayBuffer(250 * 1024)], 'meal.gif', { type: 'image/gif' });
+
+    expect(shouldCompressImageFile(gif)).toBe(false);
   });
 });
 

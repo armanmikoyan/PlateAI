@@ -1,4 +1,4 @@
-import { DAILY_ANALYSIS_LIMITS, PLAN_RANK, SUBSCRIPTION_PLAN, SUBSCRIPTION_STATUS } from '@/constants.js';
+import { DAILY_ANALYSIS_LIMITS, NO_PLAN_PENDING_ANALYSIS_LIMIT, PENDING_ANALYSIS_LIMITS, PLAN_RANK, SUBSCRIPTION_PLAN, SUBSCRIPTION_STATUS } from '@/constants.js';
 import type { SubscriptionPlan, SubscriptionStatus } from '@/types.js';
 
 export function isPaidPlan(plan: string | null | undefined): plan is SubscriptionPlan {
@@ -22,4 +22,11 @@ export function getDailyAnalysisLimit(plan: SubscriptionPlan | null): number {
     return 0;
   }
   return DAILY_ANALYSIS_LIMITS[plan] ?? 0;
+}
+
+export function getPendingAnalysisLimit(plan: SubscriptionPlan | null): number {
+  if (!plan) {
+    return NO_PLAN_PENDING_ANALYSIS_LIMIT;
+  }
+  return PENDING_ANALYSIS_LIMITS[plan] ?? NO_PLAN_PENDING_ANALYSIS_LIMIT;
 }

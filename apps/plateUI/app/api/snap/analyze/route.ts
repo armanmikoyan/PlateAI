@@ -15,6 +15,7 @@ type AnalyzeErrorResponse = Readonly<{
   error: string;
   id?: string;
   retryAfterSeconds?: number;
+  pendingLimit?: true;
 }>;
 
 function imageMimeForAnalysis(file: Pick<File, 'name' | 'type'>): string {
@@ -61,11 +62,21 @@ export async function POST(request: Request) {
     const mimeType = imageMimeForAnalysis(image);
     const created = await createPendingMealAnalysis(cookieHeader, imageBase64, mimeType, forwardedFor);
 
-    if (!created) {
+    if (!created.ok) {
+      if (created.status === 429) {
+        return Response.json(
+          {
+            error: created.message ?? 'Could not save meal analysis.',
+            pendingLimit: true,
+          } satisfies AnalyzeErrorResponse,
+          { status: 429 },
+        );
+      }
+
       return errorResponse('Could not save meal analysis.', 502);
     }
 
-    const analysisId = created.item.id;
+    const analysisId = created.item.item.id;
     const result = await analyzeMealAnalysis(cookieHeader, analysisId, forwardedFor);
 
     if (!result.ok) {

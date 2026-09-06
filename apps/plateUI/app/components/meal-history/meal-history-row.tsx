@@ -1,8 +1,9 @@
 'use client';
 
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ChevronRight, Clock3 } from 'lucide-react';
+import { ChevronRight, Clock3, Trash2 } from 'lucide-react';
 import { MEAL_ANALYSIS_STATUS } from '@plate/plate-ai/constants';
 import { writeSnapSavedMealCache } from '@/app/utils/meal-analyses/session-cache';
 import { Badge } from '@/app/ui/badge';
@@ -42,7 +43,8 @@ function statusVariant(status: MealHistoryRowProps['item']['status']) {
   return 'outline' as const;
 }
 
-export function MealHistoryRow({ item }: MealHistoryRowProps) {
+export function MealHistoryRow({ item, onDelete }: MealHistoryRowProps) {
+  const [removing, setRemoving] = useState(false);
   const href = mealHistoryRowHref(item);
   const actionLabel =
     item.status === MEAL_ANALYSIS_STATUS.PENDING
@@ -53,6 +55,12 @@ export function MealHistoryRow({ item }: MealHistoryRowProps) {
 
   function handleOpenSavedMeal() {
     writeSnapSavedMealCache(mealHistorySnapCachePayload(item));
+  }
+
+  async function handleDelete() {
+    if (removing) return;
+    setRemoving(true);
+    await onDelete(item.id);
   }
 
   return (
@@ -92,6 +100,15 @@ export function MealHistoryRow({ item }: MealHistoryRowProps) {
         </div>
 
         <div className="flex shrink-0 flex-wrap items-center gap-2">
+          <Button
+            variant="ghost"
+            size="icon-xs"
+            disabled={removing}
+            aria-label={MEAL_HISTORY.REMOVE}
+            onClick={handleDelete}
+          >
+            <Trash2 />
+          </Button>
           <Button
             className="shrink-0"
             nativeButton={false}

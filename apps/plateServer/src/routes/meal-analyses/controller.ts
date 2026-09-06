@@ -6,12 +6,23 @@ import type {
 } from '@plate/plate-ai/types';
 import { MEAL_ANALYSIS_ERRORS } from '@/routes/meal-analyses/constants.js';
 import { analyzeMeal } from '@/routes/meal-analyses/service.js';
-import { createPending, findByIdForUser, listForUser, updateForUser } from '@/routes/meal-analyses/repository.js';
+import {
+  countPendingForUser,
+  createPending,
+  findByIdForUser,
+  findImageForUser,
+  listForUser,
+  removeForUser,
+  updateForUser,
+} from '@/routes/meal-analyses/repository.js';
+import { getPendingAnalysisLimit } from '@plate/plate-billing/utils';
 import type {
   MealAnalysisLockedResponse,
   UpdateMealAnalysisBody,
 } from '@/routes/meal-analyses/types.js';
 import {
+  canSavePendingAnalysis,
+  formatPendingLimitReachedMessage,
   isMealAnalysisResult,
   parseCreateMealAnalysisBody,
   toMealAnalysisSummary,
@@ -56,6 +67,29 @@ export async function getMealAnalysis(
   }
 }
 
+export async function mealAnalysisImage(
+  request: Request,
+  response: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const userId = request.authUser!.id;
+    const document = await findImageForUser(userId, request.params.id);
+
+    if (!document?.image) {
+      response.status(404).json({ error: MEAL_ANALYSIS_ERRORS.NOT_FOUND });
+      return;
+    }
+
+    response
+      .set('Content-Type', document.imageMimeType)
+      .set('Cache-Control', 'private, max-age=31536000, immutable, no-transform')
+      .send(document.image);
+  } catch (error) {
+    next(error);
+  }
+}
+
 export async function createMealAnalysis(
   request: Request,
   response: Response,
@@ -70,7 +104,22 @@ export async function createMealAnalysis(
       return;
     }
 
-    const document = await createPending(userId, body.imageBase64, body.imageMimeType);
+    const pendingCount = await countPendingForUser(userId);
+
+    if (!canSavePendingAnalysis(pendingCount, request.authUser!.subscriptionPlan)) {
+      response.status(429).json({
+        error: formatPendingLimitReachedMessage(
+          getPendingAnalysisLimit(request.authUser!.subscriptionPlan),
+        ),
+      });
+      return;
+    }
+
+    const document = await createPending(
+      userId,
+      Buffer.from(body.imageBase64, 'base64'),
+      body.imageMimeType,
+    );
 
     response.status(201).json({
       item: toMealAnalysisSummary(document),
@@ -135,6 +184,26 @@ export async function analyzeMealAnalysis(
     }
 
     response.status(result.status).json({ error: result.error });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function deleteMealAnalysis(
+  request: Request,
+  response: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const userId = request.authUser!.id;
+    const document = await removeForUser(userId, request.params.id);
+
+    if (!document) {
+      response.status(404).json({ error: MEAL_ANALYSIS_ERRORS.NOT_FOUND });
+      return;
+    }
+
+    response.status(204).end();
   } catch (error) {
     next(error);
   }

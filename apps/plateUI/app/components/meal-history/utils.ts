@@ -3,6 +3,7 @@ import type {
   MealAnalysisListResponse,
   MealAnalysisSummary,
 } from '@plate/plate-ai/types';
+import { mealAnalysisImageUrl } from '@/app/utils/meal-analyses/image';
 import type { SnapSavedMealCache } from '@/app/utils/meal-analyses/types';
 
 export function formatMealHistoryDate(isoDate: string): string {
@@ -44,15 +45,13 @@ export function mealHistoryRowTitle(item: MealAnalysisSummary): string {
 }
 
 export function mealHistoryImageSrc(item: MealAnalysisSummary): string {
-  return `data:${item.imageMimeType};base64,${item.imageBase64}`;
+  return mealAnalysisImageUrl(item.id);
 }
 
 export function mealHistorySnapCachePayload(item: MealAnalysisSummary): SnapSavedMealCache {
   return {
     id: item.id,
     status: item.status,
-    imageMimeType: item.imageMimeType,
-    imageBase64: item.imageBase64,
     analysis: item.analysis,
   };
 }

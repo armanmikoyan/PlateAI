@@ -8,13 +8,11 @@ export type SnapLockedReason = (typeof SNAP_LOCKED_REASON)[keyof typeof SNAP_LOC
 export type SavedMealPayload = Readonly<{
   id: string;
   status: MealAnalysisStatus;
-  imageMimeType: string;
-  imageBase64: string;
   analysis: MealAnalysisResult | null;
 }>;
 
 export type SnapPhoto = Readonly<{
-  FILE: File;
+  FILE: File | null;
   PREVIEW_URL: string;
 }>;
 
@@ -74,6 +72,7 @@ export type SnapAnalyzeErrorResponse = Readonly<{
   error?: string;
   id?: string;
   retryAfterSeconds?: number;
+  pendingLimit?: true;
 }>;
 
 export type SnapAnalysisReadoutProps = Readonly<{

@@ -26,7 +26,7 @@ export const IMAGE_ANALYSIS_PROVIDER = {
 } as const;
 
 export const DEFAULT_IMAGE_ANALYSIS_MODEL = {
-  GEMINI: 'gemini-3.6-flash',
+  GEMINI: 'gemini-3.5-flash-lite',
   OPENAI: 'gpt-4o-mini',
 } as const;
 

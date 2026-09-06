@@ -28,7 +28,7 @@ const mealAnalysisSchema = new Schema(
       index: true,
     },
     imageMimeType: { type: String, required: true },
-    imageBase64: { type: String, required: true },
+    image: { type: Buffer, required: true },
     analysis: { type: mealAnalysisResultSchema, default: null },
     errorMessage: { type: String, default: null },
   },

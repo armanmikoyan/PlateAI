@@ -7,8 +7,6 @@ const item = (createdAt: string, status: string): MealAnalysisSummary => ({
   id: createdAt,
   createdAt,
   status: status as MealAnalysisSummary['status'],
-  imageMimeType: 'image/jpeg',
-  imageBase64: 'fixture',
   analysis: null,
   errorMessage: null,
   updatedAt: createdAt,

@@ -61,6 +61,8 @@ export const SNAP = {
   DAILY_LIMIT_TITLE: 'Daily analysis limit reached',
   DAILY_LIMIT_REACHED: 'All daily analyses used. New analyses unlock after midnight (UTC).',
   DAILY_LIMIT_TOAST_TIMEOUT_MS: 10000,
+  PENDING_LIMIT_TITLE: 'Pending analysis limit reached',
+  PENDING_LIMIT_REACHED: 'You have reached the limit of saved analyses. Analyze or clear pending photos to upload more.',
   ANALYSIS_DETECTED: 'Detected meal',
   ANALYSIS_SCOPE: 'Estimated from your photo',
   CONFIDENCE_LOW: 'Low confidence',
@@ -131,3 +133,10 @@ export const ACCEPTED_IMAGE_TYPES: readonly AcceptedImageType[] = [
 ];
 
 export const ACCEPTED_IMAGE_ACCEPT = ACCEPTED_IMAGE_TYPES.join(',');
+
+export const SNAP_IMAGE_COMPRESSION = {
+  MAX_DIMENSION_PX: 1600,
+  JPEG_QUALITY: 0.8,
+  OUTPUT_MIME_TYPE: 'image/jpeg',
+  MIN_SOURCE_BYTES: 200 * 1024,
+} as const;

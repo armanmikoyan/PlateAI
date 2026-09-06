@@ -71,7 +71,10 @@ export function createLemonSqueezyProvider(config: LemonSqueezyProviderConfig): 
         return { status: 'invalid' };
       }
 
-      if (payload.data.attributes.test_mode !== config.testMode) {
+      if (
+        payload.data.attributes.test_mode !== undefined &&
+        payload.data.attributes.test_mode !== config.testMode
+      ) {
         return { status: 'ignored' };
       }
 

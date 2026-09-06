@@ -74,7 +74,15 @@ export function createWebhookHandler(provider: BillingProvider) {
       }
 
       if (parsed.status === 'applied') {
-        await applyWebhookResult(parsed.result);
+        const applied = await applyWebhookResult(parsed.result);
+
+        if (!applied) {
+          console.warn(
+            `[webhook] ${parsed.result.event} for user ${parsed.result.userId} could not be applied (user id mismatch?)`,
+          );
+        }
+      } else {
+        console.warn(`[webhook] event ignored (test_mode mismatch or unknown plan/variant)`);
       }
 
       response.status(200).json({ ok: true });

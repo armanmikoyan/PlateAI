@@ -19,8 +19,6 @@ export type MealAnalysisResult = Readonly<{
 export type MealAnalysisSummary = Readonly<{
   id: string;
   status: MealAnalysisStatus;
-  imageMimeType: string;
-  imageBase64: string;
   analysis: MealAnalysisResult | null;
   errorMessage: string | null;
   createdAt: string;

@@ -34,7 +34,7 @@ export type LemonSqueezyWebhookPayload = Readonly<{
         variant_id: number;
       }> | null;
       status: LemonSqueezySubscriptionStatus | null;
-      test_mode: boolean;
+      test_mode?: boolean;
       renews_at?: string | null;
       ends_at?: string | null;
     }>;

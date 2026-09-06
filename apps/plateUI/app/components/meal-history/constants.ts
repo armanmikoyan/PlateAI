@@ -27,6 +27,7 @@ export const MEAL_HISTORY = {
   PLAN_ACCESS_UNTIL: 'Access until',
   DAILY_USAGE_LABEL: 'Daily analyses',
   DAILY_USAGE_FULL: 'Daily limit reached. New analyses unlock after midnight (UTC).',
+  REMOVE: 'Remove',
 } as const;
 
 export const MEAL_HISTORY_PLAN_LABELS: Record<SubscriptionPlan, string> = {

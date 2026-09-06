@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import passport from 'passport';
+import { authRateLimiter } from '@/middleware/rate-limit.js';
 import {
   getMe,
   googleCallback,
@@ -14,10 +15,15 @@ export function createAuthRouter(config: ServerConfig): Router {
   const router = Router();
   const authenticated = requireUser(config);
 
-  router.get('/google', passport.authenticate('google', googleAuthOptions()));
+  router.get(
+    '/google',
+    authRateLimiter(),
+    passport.authenticate('google', googleAuthOptions()),
+  );
 
   router.get(
     '/google/callback',
+    authRateLimiter(),
     passport.authenticate('google', googleCallbackAuthOptions(config)),
     (request, response, next) => {
       googleCallback(config, request, response, next);

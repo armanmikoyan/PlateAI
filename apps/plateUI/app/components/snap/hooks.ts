@@ -5,6 +5,7 @@ import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { useSearchParams } from 'next/navigation';
 import { MEAL_ANALYSIS_STATUS } from '@plate/plate-ai/constants';
 import { readSnapSavedMealCache, writeSnapSavedMealCache } from '@/app/utils/meal-analyses/session-cache';
+import { mealAnalysisImageUrl } from '@/app/utils/meal-analyses/image';
 import {
   RATE_LIMIT_TOAST_TIMEOUT_MS,
   RATE_LIMIT_TOAST_TITLE,
@@ -22,7 +23,7 @@ import type {
   UseSnapPhotoResult,
   UseSnapSavedMealLoaderResult,
 } from './types';
-import { fileFromImageBase64, toSnapSavedMealCache, waitForSnapLockedPreviewDelay } from './utils';
+import { compressImageFile, toSnapSavedMealCache, waitForSnapLockedPreviewDelay } from './utils';
 
 export function useSnapPhoto(): UseSnapPhotoResult {
   const photo = useAtomValue(snapPhotoAtom);
@@ -84,20 +85,14 @@ export function useSnapSavedMealLoader(): UseSnapSavedMealLoaderResult {
 
   const applySavedMeal = useCallback(
     (item: SavedMealPayload) => {
-      const file = fileFromImageBase64(
-        item.imageBase64,
-        item.imageMimeType,
-        `meal-${item.id}`,
-      );
-
       setSnapPhoto((previous) => {
         if (previous) {
           URL.revokeObjectURL(previous.PREVIEW_URL);
         }
 
         return {
-          FILE: file,
-          PREVIEW_URL: URL.createObjectURL(file),
+          FILE: null,
+          PREVIEW_URL: mealAnalysisImageUrl(item.id),
         };
       });
 
@@ -304,9 +299,15 @@ export function useSnapAnalyze(): UseSnapAnalyzeResult {
 
     const startedAtMs = Date.now();
 
+    if (!photo.FILE) {
+      setAnalysisState({ STATUS: SNAP_ANALYSIS_STATUS.ERROR, MESSAGE: SNAP.ANALYSIS_ERROR });
+      return;
+    }
+
     try {
+      const uploadFile = await compressImageFile(photo.FILE);
       const formData = new FormData();
-      formData.append('image', photo.FILE);
+      formData.append('image', uploadFile);
 
       const response = await fetch('/api/snap/analyze', {
         method: 'POST',
@@ -326,6 +327,17 @@ export function useSnapAnalyze(): UseSnapAnalyzeResult {
 
       if (response.status === 429) {
         const body = (await response.json().catch(() => null)) as SnapAnalyzeErrorResponse | null;
+
+        if (body?.pendingLimit) {
+          toast.add({
+            title: SNAP.PENDING_LIMIT_TITLE,
+            description: body.error ?? SNAP.PENDING_LIMIT_REACHED,
+            type: 'error',
+            timeout: SNAP.DAILY_LIMIT_TOAST_TIMEOUT_MS,
+          });
+          setAnalysisState({ STATUS: SNAP_ANALYSIS_STATUS.IDLE });
+          return;
+        }
 
         if (body?.retryAfterSeconds) {
           toast.add({

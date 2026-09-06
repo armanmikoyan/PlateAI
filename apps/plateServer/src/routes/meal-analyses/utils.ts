@@ -1,4 +1,4 @@
-import { isActivePaidPlan, getDailyAnalysisLimit } from '@plate/plate-billing/utils';
+import { isActivePaidPlan, getDailyAnalysisLimit, getPendingAnalysisLimit } from '@plate/plate-billing/utils';
 import { MEAL_ANALYSIS_ERRORS } from '@/routes/meal-analyses/constants.js';
 import type { MealAnalysisResult } from '@plate/plate-ai/types';
 import type { MealAnalysisDocument } from '@/models/meal-analysis.js';
@@ -11,11 +11,20 @@ export function canAnalyzeToday(analysisCount: number, plan: SubscriptionPlan | 
   return analysisCount < limit;
 }
 
+export function canSavePendingAnalysis(pendingCount: number, plan: SubscriptionPlan | null): boolean {
+  const limit = getPendingAnalysisLimit(plan);
+  return pendingCount < limit;
+}
+
 export function formatDailyLimitReachedMessage(used: number, limit: number): string {
   return MEAL_ANALYSIS_ERRORS.DAILY_LIMIT_REACHED.replace('{used}', String(used)).replace(
     '{limit}',
     String(limit),
   );
+}
+
+export function formatPendingLimitReachedMessage(limit: number): string {
+  return MEAL_ANALYSIS_ERRORS.PENDING_LIMIT_REACHED.replace('{limit}', String(limit));
 }
 
 export function hasSnapAnalysisAccess(subscription: SubscriptionEntitlementInput): boolean {
@@ -44,8 +53,6 @@ export function toMealAnalysisSummary(document: MealAnalysisDocument): MealAnaly
   return {
     id: document._id.toString(),
     status: document.status,
-    imageMimeType: document.imageMimeType,
-    imageBase64: document.imageBase64,
     analysis: document.analysis ? toMealAnalysisResult(document.analysis) : null,
     errorMessage: document.errorMessage ?? null,
     createdAt: document.createdAt.toISOString(),

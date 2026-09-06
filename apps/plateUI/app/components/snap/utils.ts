@@ -11,10 +11,12 @@ import {
   type HeroStatTileModel,
 } from '@/app/components/hero/constants';
 import {
+  ACCEPTED_IMAGE_TYPES,
   SNAP,
   SNAP_ANALYSIS_STATUS,
   SNAP_CONFIDENCE_LABELS,
   SNAP_HEADING_PHASE,
+  SNAP_IMAGE_COMPRESSION,
   SNAP_LOCKED_PREVIEW_DELAY_MS_PRESET,
   SNAP_LOCKED_REASON,
 } from './constants';
@@ -26,8 +28,6 @@ export function toSnapSavedMealCache(item: SavedMealPayload): SnapSavedMealCache
   return {
     id: item.id,
     status: item.status,
-    imageMimeType: item.imageMimeType,
-    imageBase64: item.imageBase64,
     analysis: item.analysis,
   };
 }
@@ -164,6 +164,54 @@ export function firstAcceptedImageFile(files: FileList | null): File | null {
   return files?.item(0) ?? null;
 }
 
+export function shouldCompressImageFile(file: File): boolean {
+  return (
+    ACCEPTED_IMAGE_TYPES.includes(file.type as (typeof ACCEPTED_IMAGE_TYPES)[number]) &&
+    file.size > SNAP_IMAGE_COMPRESSION.MIN_SOURCE_BYTES
+  );
+}
+
+export async function compressImageFile(file: File): Promise<File> {
+  if (!shouldCompressImageFile(file)) {
+    return file;
+  }
+
+  try {
+    const bitmap = await createImageBitmap(file);
+    const { MAX_DIMENSION_PX, JPEG_QUALITY, OUTPUT_MIME_TYPE } = SNAP_IMAGE_COMPRESSION;
+
+    const scale = Math.min(1, MAX_DIMENSION_PX / Math.max(bitmap.width, bitmap.height));
+    const width = Math.max(1, Math.round(bitmap.width * scale));
+    const height = Math.max(1, Math.round(bitmap.height * scale));
+
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const context = canvas.getContext('2d');
+
+    if (!context) {
+      bitmap.close();
+      return file;
+    }
+
+    context.drawImage(bitmap, 0, 0, width, height);
+    bitmap.close();
+
+    const blob = await new Promise<Blob | null>((resolve) => {
+      canvas.toBlob(resolve, OUTPUT_MIME_TYPE, JPEG_QUALITY);
+    });
+
+    if (!blob || blob.size >= file.size) {
+      return file;
+    }
+
+    const outputName = file.name.replace(/\.\w+$/, '.jpg');
+    return new File([blob], outputName, { type: OUTPUT_MIME_TYPE });
+  } catch {
+    return file;
+  }
+}
+
 export function canUseCameraStream(): boolean {
   if (typeof window === 'undefined') {
     return false;
@@ -214,11 +262,4 @@ export async function waitForSnapLockedPreviewDelay(startedAtMs: number): Promis
   if (remainingMs > 0) {
     await sleep(remainingMs);
   }
-}
-
-export function fileFromImageBase64(imageBase64: string, mimeType: string, fileName = 'saved-meal'): File {
-  const bytes = Uint8Array.from(atob(imageBase64), (char) => char.charCodeAt(0));
-  const extension = mimeType === 'image/png' ? 'png' : mimeType === 'image/webp' ? 'webp' : 'jpg';
-
-  return new File([bytes], `${fileName}.${extension}`, { type: mimeType });
 }

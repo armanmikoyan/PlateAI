@@ -4,6 +4,7 @@ export const MEAL_ANALYSIS_ERRORS = {
   INVALID_BODY: 'Invalid request body.',
   SERVER_ERROR: 'Could not save meal analysis.',
   LOCKED: 'Paid plan required to analyze this meal.',
+  PENDING_LIMIT_REACHED: 'Pending analysis limit reached — you have {limit} saved. Analyze or clear pending photos to upload more.',
   DAILY_LIMIT_REACHED: 'Daily analysis limit reached — {used} of {limit} used today. New analyses unlock after midnight (UTC).',
   CANNOT_COMPLETE: 'This meal analysis cannot be completed.',
   AI_NOT_CONFIGURED: 'Meal analysis is not configured on this server.',

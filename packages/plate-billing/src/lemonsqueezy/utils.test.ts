@@ -254,4 +254,23 @@ describe('provider parseWebhook', () => {
 
     expect(provider.parseWebhook(Buffer.from(JSON.stringify(payload)))).toEqual({ status: 'ignored' });
   });
+
+  it('applies an order payload without a test_mode attribute (order objects omit it)', () => {
+    const payload = {
+      ...webhookPayload,
+      data: {
+        ...webhookPayload.data,
+        attributes: {
+          first_order_item: { variant_id: 2060877 },
+          status: null,
+          renews_at: '2026-10-01T12:00:00Z',
+          ends_at: '2026-09-01T12:00:00Z',
+        },
+      },
+    };
+
+    expect(provider.parseWebhook(Buffer.from(JSON.stringify(payload)))).toMatchObject({
+      status: 'applied',
+    });
+  });
 });

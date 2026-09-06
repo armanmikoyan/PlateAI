@@ -1,7 +1,6 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import type { AuthMeResponse } from '@/app/api/auth/types';
 import {
   RATE_LIMIT_TOAST_TIMEOUT_MS,
   RATE_LIMIT_TOAST_TITLE,
@@ -18,24 +17,28 @@ type ContactErrorResponse = Readonly<{
 export function ContactForm() {
   const [sending, setSending] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [email, setEmail] = useState<string | null>(null);
   const [checkingAuth, setCheckingAuth] = useState(true);
+  const [signedOut, setSignedOut] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
 
     async function loadUser() {
       try {
-        const response = await fetch('/api/auth/me', { cache: 'no-store' });
+        let response = await fetch('/api/auth/me', { cache: 'no-store' });
+
+        if (response.status === 401) {
+          await fetch('/api/auth/refresh', { cache: 'no-store' });
+          response = await fetch('/api/auth/me', { cache: 'no-store' });
+        }
 
         if (response.ok) {
-          const payload = (await response.json()) as AuthMeResponse;
           if (!cancelled) {
-            setEmail(payload.user.email);
+            setSignedOut(false);
           }
+        } else if (response.status === 401 && !cancelled) {
+          setSignedOut(true);
         }
-      } catch {
-        // Leave email null; submission will use it as missing.
       } finally {
         if (!cancelled) {
           setCheckingAuth(false);
@@ -56,7 +59,7 @@ export function ContactForm() {
       setErrorMessage(null);
       setSending(true);
 
-      if (!email) {
+      if (signedOut) {
         setErrorMessage(CONTACT_SECTION.SIGN_IN_REQUIRED);
         setSending(false);
         return;
@@ -106,12 +109,12 @@ export function ContactForm() {
         setSending(false);
       }
     },
-    [email],
+    [signedOut],
   );
 
   return (
     <form onSubmit={handleSubmit} className="mx-auto mt-10 flex max-w-lg flex-col gap-5">
-      {!checkingAuth && !email ? (
+      {!checkingAuth && signedOut ? (
         <p className="text-muted-foreground text-center text-sm">{CONTACT_SECTION.SIGN_IN_REQUIRED}</p>
       ) : null}
       <div className="flex flex-col gap-1.5">
@@ -126,8 +129,8 @@ export function ContactForm() {
       </div>
       <button
         type="submit"
-        disabled={sending || checkingAuth || !email}
-        aria-disabled={sending || checkingAuth || !email}
+        disabled={sending || checkingAuth || signedOut}
+        aria-disabled={sending || checkingAuth || signedOut}
         className="text-button-default-fg inline-flex h-11 items-center justify-center rounded-lg px-5 text-base font-medium disabled:opacity-50"
         style={{
           background: 'linear-gradient(165deg, var(--color-cta-soft) 0%, var(--color-cta) 48%, var(--color-cta-deep) 100%)',

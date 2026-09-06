@@ -47,11 +47,11 @@ export function isWebhookPayload(value: unknown): value is LemonSqueezyWebhookPa
 
   const meta = payload.meta as Record<string, unknown>;
 
-  if (typeof meta.event_name !== 'string' || !meta.custom_data || typeof meta.custom_data !== 'object') {
+  if (typeof meta.event_name !== 'string') {
     return false;
   }
 
-  if (typeof (meta.custom_data as { user_id?: unknown }).user_id !== 'string') {
+  if (meta.custom_data != null && typeof meta.custom_data !== 'object') {
     return false;
   }
 
@@ -69,7 +69,9 @@ export function isWebhookPayload(value: unknown): value is LemonSqueezyWebhookPa
     return false;
   }
 
-  if (typeof (data.attributes as { test_mode?: unknown }).test_mode !== 'boolean') {
+  const attributes = data.attributes as Record<string, unknown>;
+
+  if (attributes.test_mode !== undefined && typeof attributes.test_mode !== 'boolean') {
     return false;
   }
 

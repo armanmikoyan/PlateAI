@@ -5,7 +5,7 @@ import { getDailyAnalysisLimit } from '@plate/plate-billing/utils';
 import { MEAL_ANALYSIS_ERRORS } from '@/routes/meal-analyses/constants.js';
 import {
   countAnalysesSince,
-  findByIdForUser,
+  findByIdWithImageForUser,
   updateForUser,
 } from '@/routes/meal-analyses/repository.js';
 import {
@@ -37,7 +37,7 @@ export async function analyzeMeal(
     };
   }
 
-  const document = await findByIdForUser(user.id, analysisId);
+  const document = await findByIdWithImageForUser(user.id, analysisId);
 
   if (!document) {
     return { ok: false, status: 404, error: MEAL_ANALYSIS_ERRORS.NOT_FOUND };
@@ -58,7 +58,7 @@ export async function analyzeMeal(
 
   try {
     analysis = await analyzeMealImage({
-      imageBase64: document.imageBase64,
+      imageBase64: document.image.toString('base64'),
       mimeType: document.imageMimeType,
     });
   } catch (error) {

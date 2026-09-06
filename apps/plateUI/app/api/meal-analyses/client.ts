@@ -11,7 +11,7 @@ import { MEAL_ANALYSIS_STATUS } from '@plate/plate-ai/constants';
 type MealAnalysisRequestOptions = Readonly<{
   cookieHeader: string | null;
   forwardedFor?: string | null;
-  method: 'GET' | 'POST' | 'PATCH';
+  method: 'GET' | 'POST' | 'PATCH' | 'DELETE';
   path: string;
   body?: unknown;
 }>;
@@ -72,12 +72,16 @@ async function mealAnalysisRequest<T>({
   }
 }
 
+export type CreatePendingMealAnalysisResult =
+  | Readonly<{ ok: true; item: MealAnalysisItemResponse }>
+  | Readonly<{ ok: false; status: number; message?: string }>;
+
 export async function createPendingMealAnalysis(
   cookieHeader: string | null,
   imageBase64: string,
   imageMimeType: string,
   forwardedFor?: string | null,
-): Promise<MealAnalysisItemResponse | null> {
+): Promise<CreatePendingMealAnalysisResult> {
   const result = await mealAnalysisRequest<MealAnalysisItemResponse>({
     cookieHeader,
     forwardedFor,
@@ -86,7 +90,11 @@ export async function createPendingMealAnalysis(
     body: { imageBase64, imageMimeType },
   });
 
-  return result.ok ? result.data : null;
+  if (!result.ok) {
+    return { ok: false, status: result.status, message: result.message };
+  }
+
+  return { ok: true, item: result.data };
 }
 
 export async function listMealAnalyses(
@@ -156,6 +164,21 @@ export async function markMealAnalysisFailed(
   });
 
   return result.ok ? result.data : null;
+}
+
+export async function deleteMealAnalysis(
+  cookieHeader: string | null,
+  analysisId: string,
+  forwardedFor?: string | null,
+): Promise<boolean> {
+  const result = await mealAnalysisRequest<undefined>({
+    cookieHeader,
+    forwardedFor,
+    method: 'DELETE',
+    path: `/${analysisId}`,
+  });
+
+  return result.ok;
 }
 
 export async function analyzeMealAnalysis(

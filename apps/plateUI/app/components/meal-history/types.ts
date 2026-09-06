@@ -9,6 +9,7 @@ export type MealHistoryProps = Readonly<{
 
 export type MealHistoryRowProps = Readonly<{
   item: MealAnalysisSummary;
+  onDelete: (analysisId: string) => Promise<void>;
 }>;
 
 export type UseMealHistoryResult = Readonly<{
