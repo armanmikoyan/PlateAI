@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from 'express';
 import { isPlanUpgrade, isPurchasablePlan } from '@plate/plate-billing/utils';
 import type { BillingProvider, CheckoutSessionResponse } from '@plate/plate-billing/types';
 import { CHECKOUT_ERRORS } from '@/routes/checkout/constants.js';
-import { applyWebhookResult, createCheckout } from '@/routes/checkout/service.js';
+import { applyWebhookResult, createCheckout, getCustomerPortalUrl as getCustomerPortalUrlService } from '@/routes/checkout/service.js';
 import type { ServerConfig } from '@/config/types.js';
 
 export function createCheckoutSessionHandler(provider: BillingProvider, config: ServerConfig) {
@@ -45,6 +45,34 @@ export function createCheckoutSessionHandler(provider: BillingProvider, config: 
       }
 
       response.json({ url: outcome.url } satisfies CheckoutSessionResponse);
+    } catch (error) {
+      next(error);
+    }
+  };
+}
+
+export function createPortalHandler(provider: BillingProvider) {
+  return async function handlePortal(
+    request: Request,
+    response: Response,
+    next: NextFunction,
+  ): Promise<void> {
+    try {
+      const authUser = request.authUser;
+
+      if (!authUser) {
+        response.status(401).json({ error: CHECKOUT_ERRORS.NOT_SIGNED_IN });
+        return;
+      }
+
+      const result = await getCustomerPortalUrlService(provider, authUser.id);
+
+      if (!result.ok) {
+        response.status(400).json({ error: CHECKOUT_ERRORS.NO_SUBSCRIPTION });
+        return;
+      }
+
+      response.json({ url: result.url });
     } catch (error) {
       next(error);
     }

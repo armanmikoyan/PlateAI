@@ -5,4 +5,5 @@ export const CHECKOUT_ERRORS = {
   NOT_SIGNED_IN: 'Not signed in.',
   INVALID_SIGNATURE: 'Invalid signature.',
   INVALID_WEBHOOK_PAYLOAD: 'Invalid webhook payload.',
+  NO_SUBSCRIPTION: 'No active subscription found.',
 } as const;

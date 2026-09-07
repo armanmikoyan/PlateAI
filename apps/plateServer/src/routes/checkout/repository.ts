@@ -7,6 +7,11 @@ export async function findUserById(id: string): Promise<UserDocument | null> {
   return User.findById(id).exec();
 }
 
+export async function findUserSubscriptionId(id: string): Promise<string | null> {
+  const user = await User.findById(id).select('billingSubscriptionId').lean().exec();
+  return user?.billingSubscriptionId ?? null;
+}
+
 export type ApplySubscriptionUpdate = Readonly<{
   subscriptionPlan?: SubscriptionPlan;
   subscriptionStatus?: SubscriptionStatus;

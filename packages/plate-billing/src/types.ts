@@ -1,13 +1,8 @@
-import { SUBSCRIPTION_PLAN, SUBSCRIPTION_STATUS } from '@/constants.js';
+import { CHECKOUT_ERROR, SUBSCRIPTION_PLAN, SUBSCRIPTION_STATUS } from '@/constants.js';
 
 export type SubscriptionPlan = (typeof SUBSCRIPTION_PLAN)[keyof typeof SUBSCRIPTION_PLAN];
 
 export type SubscriptionStatus = (typeof SUBSCRIPTION_STATUS)[keyof typeof SUBSCRIPTION_STATUS];
-
-export const CHECKOUT_ERROR = {
-  UNSUPPORTED_PLAN: 'UNSUPPORTED_PLAN',
-  PROVIDER_FAILED: 'PROVIDER_FAILED',
-} as const;
 
 export type CheckoutError = (typeof CHECKOUT_ERROR)[keyof typeof CHECKOUT_ERROR];
 
@@ -26,6 +21,17 @@ export type CheckoutResult = CheckoutSuccess | CheckoutFailure;
 export type CheckoutSessionResponse = Readonly<{
   url: string;
 }>;
+
+export type CustomerPortalSuccess = Readonly<{
+  ok: true;
+  url: string;
+}>;
+
+export type CustomerPortalFailure = Readonly<{
+  ok: false;
+}>;
+
+export type CustomerPortalResult = CustomerPortalSuccess | CustomerPortalFailure;
 
 export type CreateCheckoutInput = Readonly<{
   email: string;
@@ -70,4 +76,6 @@ export type BillingProvider = Readonly<{
   createCheckout(input: CreateCheckoutInput): Promise<CheckoutResult>;
   verifyWebhookSignature(rawBody: Buffer, signature: string | undefined): boolean;
   parseWebhook(rawBody: Buffer): WebhookParseResult;
+  getCustomerPortalUrl(subscriptionId: string): Promise<CustomerPortalResult>;
+  findCustomerPortalUrlByEmail(email: string): Promise<CustomerPortalResult>;
 }>;

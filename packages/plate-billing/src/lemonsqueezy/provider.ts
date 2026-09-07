@@ -1,7 +1,7 @@
-import { createCheckout, lemonSqueezySetup } from '@lemonsqueezy/lemonsqueezy.js';
+import { createCheckout, getSubscription, listSubscriptions, lemonSqueezySetup } from '@lemonsqueezy/lemonsqueezy.js';
 import { SUBSCRIPTION_PLAN } from '@/constants.js';
-import type { CheckoutResult, CreateCheckoutInput, BillingProvider, WebhookParseResult } from '@/types.js';
-import { CHECKOUT_ERROR } from '@/types.js';
+import type { CheckoutResult, CreateCheckoutInput, CustomerPortalResult, BillingProvider, WebhookParseResult } from '@/types.js';
+import { CHECKOUT_ERROR } from '@/constants.js';
 import {
   buildVariantPlanMap,
   isWebhookPayload,
@@ -88,6 +88,40 @@ export function createLemonSqueezyProvider(config: LemonSqueezyProviderConfig): 
       }
 
       return { status: 'applied', result: normalized.result };
+    },
+
+    async getCustomerPortalUrl(subscriptionId: string): Promise<CustomerPortalResult> {
+      lemonSqueezySetup({ apiKey: config.apiKey });
+
+      const response = await getSubscription(subscriptionId);
+
+      if (response.error !== null || response.data?.data.attributes.urls.customer_portal === undefined) {
+        return { ok: false };
+      }
+
+      return { ok: true, url: response.data.data.attributes.urls.customer_portal };
+    },
+
+    async findCustomerPortalUrlByEmail(email: string): Promise<CustomerPortalResult> {
+      lemonSqueezySetup({ apiKey: config.apiKey });
+
+      const response = await listSubscriptions({
+        filter: { userEmail: email, storeId: config.storeId },
+      });
+
+      if (response.error !== null || !response.data?.data) {
+        return { ok: false };
+      }
+
+      const subscription = response.data.data.find(
+        (sub) => sub.attributes.status === 'active' || sub.attributes.status === 'cancelled',
+      );
+
+      if (!subscription || subscription.attributes.urls.customer_portal === undefined) {
+        return { ok: false };
+      }
+
+      return { ok: true, url: subscription.attributes.urls.customer_portal };
     },
   };
 }
