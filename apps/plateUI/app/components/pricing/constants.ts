@@ -16,6 +16,8 @@ export const PRICING_SECTION = {
   SHOW_DETAILS_HINT: 'Tap for more details',
   CONTACT_US: 'Contact us',
   CONTACT_US_HREF: '/#contact',
+  CANCEL_ANYTIME: 'Cancel anytime. No questions asked.',
+  CANCEL_MANAGE: 'Manage or cancel anytime from your dashboard.',
 } as const;
 
 export const PRICING_PAGE = {

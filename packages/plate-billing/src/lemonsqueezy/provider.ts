@@ -87,12 +87,13 @@ export function createLemonSqueezyProvider(config: LemonSqueezyProviderConfig): 
       lemonSqueezySetup({ apiKey: config.apiKey });
 
       const response = await getSubscription(subscriptionId);
+      const portalUrl = response.data?.data.attributes.urls.customer_portal;
 
-      if (response.error !== null || response.data?.data.attributes.urls.customer_portal === undefined) {
+      if (response.error !== null || !portalUrl) {
         return { ok: false };
       }
 
-      return { ok: true, url: response.data.data.attributes.urls.customer_portal };
+      return { ok: true, url: portalUrl };
     },
 
     async findCustomerPortalUrlByEmail(email: string): Promise<CustomerPortalResult> {
@@ -110,11 +111,13 @@ export function createLemonSqueezyProvider(config: LemonSqueezyProviderConfig): 
         (sub) => sub.attributes.status === 'active' || sub.attributes.status === 'cancelled',
       );
 
-      if (!subscription || subscription.attributes.urls.customer_portal === undefined) {
+      const portalUrl = subscription?.attributes.urls.customer_portal;
+
+      if (!subscription || !portalUrl) {
         return { ok: false };
       }
 
-      return { ok: true, url: subscription.attributes.urls.customer_portal };
+      return { ok: true, url: portalUrl };
     },
   };
 }

@@ -163,6 +163,7 @@ export function PricingTierCard({
               <p className="text-muted-foreground text-center text-xs" role="status">
                 {error ?? PRICING_SECTION.CURRENT_PLAN_NOTE}
               </p>
+              <p className="text-muted-foreground text-center text-xs">{PRICING_SECTION.CANCEL_MANAGE}</p>
               {currentPlanId === SUBSCRIPTION_PLAN.BASIC ? (
                 <ShimmerButton
                   type="button"
@@ -205,6 +206,7 @@ export function PricingTierCard({
               <p className="text-muted-foreground text-center text-xs" role="status">
                 {error ?? PRICING_SECTION.CHECKOUT_NOTE}
               </p>
+              <p className="text-muted-foreground text-center text-xs">{PRICING_SECTION.CANCEL_ANYTIME}</p>
             </>
           ) : isPurchasablePlan(tier.ID) ? (
             <p className="text-muted-foreground text-center text-xs">{PRICING_SECTION.ALREADY_INCLUDED}</p>

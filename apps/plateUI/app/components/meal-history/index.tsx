@@ -63,8 +63,12 @@ export default function MealHistory({ user, justPurchased = false }: MealHistory
       const response = await fetch('/api/checkout/portal');
       const data = (await response.json()) as { url?: string; error?: string };
       if (data.url) {
-        window.open(data.url, '_blank', 'noopener');
+        window.open(data.url, '_blank', 'noopener,noreferrer');
+      } else if (data.error) {
+        console.error('[portal]', data.error);
       }
+    } catch {
+      console.error('[portal] network error');
     } finally {
       setPortalLoading(false);
     }
