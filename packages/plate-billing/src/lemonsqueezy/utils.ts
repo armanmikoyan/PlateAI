@@ -1,12 +1,6 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
 import { SUBSCRIPTION_PLAN, SUBSCRIPTION_STATUS } from '@/constants.js';
-import type {
-  SubscriptionPlan,
-  SubscriptionStatus,
-  WebhookEvent,
-  WebhookNormalizeOutcome,
-  WebhookResult,
-} from '@/types.js';
+import type { SubscriptionPlan, SubscriptionStatus, WebhookEvent, WebhookNormalizeOutcome } from '@/types.js';
 import { LEMON_SQUEEZY_SUBSCRIPTION_STATUS, LEMON_SQUEEZY_WEBHOOK_EVENTS } from './constants.js';
 import type {
   LemonSqueezySubscriptionStatus,
@@ -33,7 +27,10 @@ export function verifyWebhookSignature(
   return timingSafeEqual(expected, received);
 }
 
-export function buildVariantPlanMap(basicVariantId: string, proVariantId: string): LemonSqueezyVariantPlanMap {
+export function buildVariantPlanMap(
+  basicVariantId: string,
+  proVariantId: string,
+): LemonSqueezyVariantPlanMap {
   return {
     [basicVariantId]: SUBSCRIPTION_PLAN.BASIC,
     [proVariantId]: SUBSCRIPTION_PLAN.PRO,

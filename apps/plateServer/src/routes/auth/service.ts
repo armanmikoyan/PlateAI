@@ -1,6 +1,5 @@
 import type { Types } from 'mongoose';
 import type { UserDocument } from '@/models/user.js';
-import type { SessionDocument } from '@/models/session.js';
 import { AUTH } from '@/routes/auth/constants.js';
 import {
   createSession,

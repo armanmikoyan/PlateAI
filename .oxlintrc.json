@@ -1,10 +1,6 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": [
-    "nextjs",
-    "typescript",
-    "unicorn"
-  ],
+  "plugins": ["nextjs", "typescript", "unicorn"],
   "categories": {
     "correctness": "off"
   },
@@ -20,8 +16,8 @@
     "**/next-env.d.ts"
   ],
   "rules": {
-    "no-unused-vars": "warn",
-    "no-unused-expressions": "warn",
+    "no-unused-vars": "error",
+    "no-unused-expressions": "error",
     "no-var": "error",
     "prefer-const": "error",
     "typescript/no-explicit-any": "error",
@@ -31,13 +27,8 @@
   },
   "overrides": [
     {
-      "files": [
-        "apps/plateUI/**/*.{js,jsx,mjs,ts,tsx,mts,cts}"
-      ],
-      "plugins": [
-        "react",
-        "jsx-a11y"
-      ],
+      "files": ["apps/plateUI/**/*.{js,jsx,mjs,ts,tsx,mts,cts}"],
+      "plugins": ["react", "jsx-a11y"],
       "rules": {
         "no-unused-vars": "warn",
         "react/rules-of-hooks": "error",
@@ -52,9 +43,7 @@
       }
     },
     {
-      "files": [
-        "apps/plateUI/app/**/*.{ts,tsx}"
-      ],
+      "files": ["apps/plateUI/app/**/*.{ts,tsx}"],
       "rules": {
         "check-file/folder-naming-convention": [
           "error",
@@ -62,19 +51,11 @@
             "**/app/components/**": "KEBAB_CASE"
           },
           {
-            "ignoreWords": [
-              "app",
-              "apps",
-              "components",
-              "plateUI",
-              "plateServer"
-            ]
+            "ignoreWords": ["app", "apps", "components", "plateUI", "plateServer"]
           }
         ]
       },
-      "jsPlugins": [
-        "eslint-plugin-check-file"
-      ]
+      "jsPlugins": ["eslint-plugin-check-file"]
     }
   ]
 }

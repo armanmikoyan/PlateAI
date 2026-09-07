@@ -26,10 +26,22 @@
     "typecheck": "npm run build:packages && npm run typecheck --workspace @plate/plate-ui",
     "typecheck:server": "npm run build:packages && npm run typecheck --workspace @plate/plate-server",
     "format": "oxfmt --write .",
-    "format:check": "oxfmt --check ."
+    "format:check": "oxfmt --check .",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{js,jsx,mjs,ts,tsx,mts,cts}": [
+      "oxlint -c .oxlintrc.json --fix",
+      "oxfmt --write"
+    ],
+    "*.{json,md,yaml,yml}": [
+      "oxfmt --write"
+    ]
   },
   "devDependencies": {
     "@types/node": "^20",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.5.0",
     "oxfmt": "^0.65.0",
     "oxlint": "^1.80.0",
     "typescript": "^5",
