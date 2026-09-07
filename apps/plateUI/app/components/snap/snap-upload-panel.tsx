@@ -4,17 +4,11 @@ import { useRef, useState, type DragEvent, type MouseEvent, type ReactNode } fro
 import { AlertCircle, Camera, ImageUp, LoaderCircle, Upload } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/app/ui/alert';
 import { Button } from '@/app/ui/button';
-import {
-  Empty,
-  EmptyContent,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-} from '@/app/ui/empty';
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/app/ui/empty';
 import { cn } from '@/app/utils/cn';
 import { DEVICE_TYPE } from '@/app/utils/device-detection/types';
 import { useDeviceType } from '@/app/utils/device-detection/use-device-type';
+import { trackSnapPhoto } from '@/app/utils/analytics';
 import { ACCEPTED_IMAGE_ACCEPT, SNAP, SNAP_ANALYSIS_STATUS } from './constants';
 import { useSnapAnalyze, useSnapPhoto, useSnapSavedMealLoader } from './hooks';
 import { SnapAnalysisStage, SnapPhotoStage } from './snap-stage';
@@ -78,14 +72,17 @@ export function SnapUploadPanel() {
     event.preventDefault();
     dragCountRef.current = 0;
     setIsDragging(false);
+    trackSnapPhoto('drag');
     applyFile(firstAcceptedImageFile(event.dataTransfer.files));
   }
 
   function openGallery() {
+    trackSnapPhoto('gallery');
     fileInputRef.current?.click();
   }
 
   function openCamera() {
+    trackSnapPhoto('camera');
     if (!canUseCameraStream()) {
       if (deviceType === DEVICE_TYPE.PHONE) {
         cameraInputRef.current?.click();
@@ -156,9 +153,7 @@ export function SnapUploadPanel() {
       <Empty
         className={cn(
           'min-h-72 flex-1 sm:min-h-112 lg:min-h-128',
-          deviceType === DEVICE_TYPE.PHONE
-            ? 'border'
-            : 'cursor-pointer border-4 border-dashed',
+          deviceType === DEVICE_TYPE.PHONE ? 'border' : 'cursor-pointer border-4 border-dashed',
           deviceType === DEVICE_TYPE.DESKTOP && isDragging && 'border-cta bg-muted/40',
         )}
         onClick={handleZoneClick}
@@ -197,6 +192,7 @@ export function SnapUploadPanel() {
         className="sr-only"
         aria-label={SNAP.FILE_INPUT_LABEL}
         onChange={(event) => {
+          trackSnapPhoto('click');
           applyFile(firstAcceptedImageFile(event.target.files));
           event.target.value = '';
         }}
@@ -209,6 +205,7 @@ export function SnapUploadPanel() {
         className="sr-only"
         aria-label={SNAP.CAMERA}
         onChange={(event) => {
+          trackSnapPhoto('camera');
           applyFile(firstAcceptedImageFile(event.target.files));
           event.target.value = '';
         }}

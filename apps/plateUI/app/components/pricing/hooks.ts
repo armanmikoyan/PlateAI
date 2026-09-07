@@ -7,6 +7,7 @@ import { buildPricingTierHref, isPricingTierId, resolveActivePricingTierId } fro
 import { PRICING_SECTION } from './constants';
 import { pricingSelectedTierIdAtom } from './state';
 import type { PricingTierRow, UsePricingSelectTier, UsePricingPurchase } from './types';
+import { trackCheckoutStart } from '@/app/utils/analytics';
 
 const PRICING_TIER_SHELL_SELECTOR = '[data-pricing-tier-shell]';
 const PRICING_TIER_SHELL_MIN_HEIGHT_VAR = '--pricing-tier-shell-min-h';
@@ -49,6 +50,7 @@ export function usePricingPurchase(): UsePricingPurchase {
       setIsPurchasing(true);
 
       try {
+        trackCheckoutStart(tier.ID);
         const response = await fetch('/api/checkout', {
           method: 'POST',
           headers: { 'content-type': 'application/json' },

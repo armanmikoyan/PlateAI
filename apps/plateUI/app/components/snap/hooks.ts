@@ -6,10 +6,8 @@ import { useSearchParams } from 'next/navigation';
 import { MEAL_ANALYSIS_STATUS } from '@plate/plate-ai/constants';
 import { readSnapSavedMealCache, writeSnapSavedMealCache } from '@/app/utils/meal-analyses/session-cache';
 import { mealAnalysisImageUrl } from '@/app/utils/meal-analyses/image';
-import {
-  RATE_LIMIT_TOAST_TIMEOUT_MS,
-  RATE_LIMIT_TOAST_TITLE,
-} from '@/app/utils/rate-limit/constants';
+import { trackAnalysisComplete } from '@/app/utils/analytics';
+import { RATE_LIMIT_TOAST_TIMEOUT_MS, RATE_LIMIT_TOAST_TITLE } from '@/app/utils/rate-limit/constants';
 import { formatRetryDescription } from '@/app/utils/rate-limit/utils';
 import { toast } from '@/app/ui/toast';
 import { SNAP, SNAP_ANALYSIS_STATUS, SNAP_LOCKED_REASON } from './constants';
@@ -282,10 +280,7 @@ export function useSnapAnalyze(): UseSnapAnalyzeResult {
       return;
     }
 
-    if (
-      analysisState.STATUS === SNAP_ANALYSIS_STATUS.SUCCESS &&
-      analysisState.LOCKED === true
-    ) {
+    if (analysisState.STATUS === SNAP_ANALYSIS_STATUS.SUCCESS && analysisState.LOCKED === true) {
       await completePendingAnalysis(analysisState.ANALYSIS_ID);
       return;
     }
@@ -376,6 +371,7 @@ export function useSnapAnalyze(): UseSnapAnalyzeResult {
 
       const body = (await response.json()) as SnapAnalyzeSuccessResponse;
       setResumeAnalysisId(null);
+      trackAnalysisComplete(body.analysis.confidence);
       setAnalysisState({
         STATUS: SNAP_ANALYSIS_STATUS.SUCCESS,
         LOCKED: false,
@@ -385,7 +381,16 @@ export function useSnapAnalyze(): UseSnapAnalyzeResult {
     } catch {
       setAnalysisState({ STATUS: SNAP_ANALYSIS_STATUS.ERROR, MESSAGE: SNAP.ANALYSIS_ERROR });
     }
-  }, [analysisState, completePendingAnalysis, photo, resumeAnalysisId, setAnalysisState, setResumeAnalysisId, showDailyLimitLockedAnalysis, showLockedAnalysis]);
+  }, [
+    analysisState,
+    completePendingAnalysis,
+    photo,
+    resumeAnalysisId,
+    setAnalysisState,
+    setResumeAnalysisId,
+    showDailyLimitLockedAnalysis,
+    showLockedAnalysis,
+  ]);
 
   return { analysisState, analyzePhoto, completePendingAnalysis, resetAnalysis };
 }
