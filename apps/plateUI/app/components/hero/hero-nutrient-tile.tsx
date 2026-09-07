@@ -3,9 +3,9 @@
 import { Card, CardContent } from '@/app/ui/card';
 import { NumberTicker } from '@/app/ui/number-ticker';
 import { cn } from '@/app/utils/cn';
-import type { HeroStatTileModel } from './constants';
+import type { HeroNutrientTileProps } from './types';
 
-export type HeroNutrientTileProps = HeroStatTileModel;
+export type { HeroNutrientTileProps } from './types';
 
 export function HeroNutrientTile({
   ICON,

@@ -1,5 +1,7 @@
-import type { LucideIcon } from 'lucide-react';
 import { Camera, LineChart, ListChecks, Users } from 'lucide-react';
+import type { FeatureCardRow } from './types';
+
+export type { FeatureCardRow } from './types';
 
 export const FEATURES_SECTION = {
   EYEBROW: 'Features',
@@ -7,14 +9,6 @@ export const FEATURES_SECTION = {
   SUBTITLE:
     'Snap a photo, get your numbers, see how the rest of the day fits. No spreadsheets, no guesswork.',
 } as const;
-
-export type FeatureCardRow = Readonly<{
-  KEY: string;
-  ICON: LucideIcon;
-  TITLE: string;
-  BODY: string;
-  ICON_SHELL: string;
-}>;
 
 export const FEATURE_CARD_ROWS: readonly FeatureCardRow[] = [
   {

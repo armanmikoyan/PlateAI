@@ -1,4 +1,6 @@
 import type { SubscriptionPlan, SubscriptionStatus } from '@plate/plate-billing/types';
+import type { SessionDocument } from '@/models/session.js';
+import type { UserDocument } from '@/models/user.js';
 
 export type AuthUser = Readonly<{
   id: string;
@@ -30,3 +32,5 @@ export type AccessTokenClaims = Readonly<{
   email?: string;
   name?: string;
 }>;
+
+export type ActiveSession = Readonly<{ session: SessionDocument | null; user: UserDocument | null }>;

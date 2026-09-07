@@ -1,12 +1,11 @@
+import type { FeedbackMarqueeQuoteRow } from './types';
+
+export type { FeedbackMarqueeQuoteRow } from './types';
+
 export const FEEDBACK_MARQUEE_SECTION = {
   EYEBROW: 'Early feedback',
   TITLE: 'What people are saying',
 } as const;
-
-export type FeedbackMarqueeQuoteRow = Readonly<{
-  KEY: string;
-  QUOTE: string;
-}>;
 
 /** First row: scrolls left → right (track moves toward positive X). */
 export const FEEDBACK_MARQUEE_ROW_A_QUOTES: readonly FeedbackMarqueeQuoteRow[] = [

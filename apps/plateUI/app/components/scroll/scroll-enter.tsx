@@ -1,16 +1,11 @@
 'use client';
 
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { cn } from '@/app/utils/cn';
 import { MARKETING_SCROLL_ENTER_IN, MARKETING_SCROLL_MOTION_REDUCE } from './constants';
+import type { ScrollEnterRow } from './types';
 
-export type ScrollEnterRow = Readonly<{
-  /** Stable key for list reconciliation (defaults to index). */
-  KEY?: string;
-  content: ReactNode;
-  /** Extra classes when visible (e.g. `motion-safe:delay-150`). */
-  delayClass?: string;
-}>;
+export type { ScrollEnterRow } from './types';
 
 type ScrollEnterProps = Readonly<{
   /** Width / padding on the observed root (one `IntersectionObserver` for all rows). */

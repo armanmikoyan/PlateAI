@@ -8,16 +8,9 @@ import {
   normalizeWebhookPayload,
   verifyWebhookSignature,
 } from './utils.js';
+import type { LemonSqueezyProviderConfig } from './types.js';
 
-export type LemonSqueezyProviderConfig = Readonly<{
-  id: 'lemonsqueezy';
-  apiKey: string;
-  storeId: string;
-  webhookSecret: string;
-  variantIdBasic: string;
-  variantIdPro: string;
-  testMode: boolean;
-}>;
+export type { LemonSqueezyProviderConfig } from './types.js';
 
 export function createLemonSqueezyProvider(config: LemonSqueezyProviderConfig): BillingProvider {
   const variantPlanMap = buildVariantPlanMap(config.variantIdBasic, config.variantIdPro);

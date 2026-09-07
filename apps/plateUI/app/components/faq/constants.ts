@@ -1,14 +1,12 @@
+import type { FaqItemRow } from './types';
+
+export type { FaqItemRow } from './types';
+
 export const FAQ_SECTION = {
   EYEBROW: 'FAQ',
   TITLE: 'Answers before you ask',
   SUBTITLE: 'Straightforward details about how PlateAI fits into a real day of eating.',
 } as const;
-
-export type FaqItemRow = Readonly<{
-  KEY: string;
-  QUESTION: string;
-  ANSWER: string;
-}>;
 
 export const FAQ_ITEMS: readonly FaqItemRow[] = [
   {

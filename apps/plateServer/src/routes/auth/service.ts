@@ -10,7 +10,7 @@ import {
   revokeSessionByRefreshHash,
   updateSessionRefreshToken,
 } from '@/routes/auth/repository.js';
-import type { AuthUser } from '@/routes/auth/types.js';
+import type { ActiveSession, AuthUser } from '@/routes/auth/types.js';
 import {
   accessCookieOptions,
   generateRefreshToken,
@@ -132,8 +132,6 @@ export async function terminateSession(currentRefreshToken: string): Promise<voi
 
   await revokeSessionByRefreshHash(hashRefreshToken(currentRefreshToken));
 }
-
-export type ActiveSession = Readonly<{ session: SessionDocument | null; user: UserDocument | null }>;
 
 export async function resolveActiveSession(sessionId: string): Promise<ActiveSession> {
   const session = await findActiveSessionById(sessionId);

@@ -1,5 +1,7 @@
-import type { LucideIcon } from 'lucide-react';
 import { Briefcase, Dumbbell, UtensilsCrossed } from 'lucide-react';
+import type { UseCaseCardRow } from './types';
+
+export type { UseCaseCardRow } from './types';
 
 export const USE_CASES_SECTION = {
   EYEBROW: 'Use cases',
@@ -7,14 +9,6 @@ export const USE_CASES_SECTION = {
   SUBTITLE:
     'Whether you are tracking macros, living out of a suitcase, or feeding a household—PlateAI stays out of the way until you need it.',
 } as const;
-
-export type UseCaseCardRow = Readonly<{
-  KEY: string;
-  ICON: LucideIcon;
-  TITLE: string;
-  BODY: string;
-  ICON_SHELL: string;
-}>;
 
 export const USE_CASE_CARD_ROWS: readonly UseCaseCardRow[] = [
   {

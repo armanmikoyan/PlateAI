@@ -1,7 +1,14 @@
 import type { ReactNode } from 'react';
 import type { MealAnalysisResult, MealAnalysisStatus } from '@plate/plate-ai/types';
 import type { HeroStatTileChrome } from '@/app/components/hero/constants';
-import { SNAP_ANALYSIS_STATUS, SNAP_LOCKED_REASON, type SnapHeadingPhase } from './constants';
+import { SNAP_ANALYSIS_STATUS, SNAP_HEADING_PHASE, SNAP_LOCKED_REASON } from './constants';
+
+export type AcceptedImageType = 'image/jpeg' | 'image/png' | 'image/webp';
+
+export type SnapAnalysisStatus =
+  (typeof SNAP_ANALYSIS_STATUS)[keyof typeof SNAP_ANALYSIS_STATUS];
+
+export type SnapHeadingPhase = (typeof SNAP_HEADING_PHASE)[keyof typeof SNAP_HEADING_PHASE];
 
 export type SnapLockedReason = (typeof SNAP_LOCKED_REASON)[keyof typeof SNAP_LOCKED_REASON];
 
@@ -146,5 +153,3 @@ export type SnapHeadingCopy = Readonly<{
   SUBTITLE: string;
   PHASE: SnapHeadingPhase;
 }>;
-
-export type { AcceptedImageType, SnapAnalysisStatus, SnapHeadingPhase } from './constants';

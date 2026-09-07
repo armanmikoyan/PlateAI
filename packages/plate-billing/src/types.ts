@@ -1,4 +1,5 @@
 import { CHECKOUT_ERROR, SUBSCRIPTION_PLAN, SUBSCRIPTION_STATUS } from '@/constants.js';
+import type { LemonSqueezyProviderConfig } from '@/lemonsqueezy/types.js';
 
 export type SubscriptionPlan = (typeof SUBSCRIPTION_PLAN)[keyof typeof SUBSCRIPTION_PLAN];
 
@@ -79,3 +80,5 @@ export type BillingProvider = Readonly<{
   getCustomerPortalUrl(subscriptionId: string): Promise<CustomerPortalResult>;
   findCustomerPortalUrlByEmail(email: string): Promise<CustomerPortalResult>;
 }>;
+
+export type BillingProviderConfig = LemonSqueezyProviderConfig;

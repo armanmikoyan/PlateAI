@@ -50,3 +50,13 @@ export type LemonSqueezyWebhookPayload = Readonly<{
 }>;
 
 export type LemonSqueezyVariantPlanMap = Readonly<Record<string, SubscriptionPlan>>;
+
+export type LemonSqueezyProviderConfig = Readonly<{
+  id: 'lemonsqueezy';
+  apiKey: string;
+  storeId: string;
+  webhookSecret: string;
+  variantIdBasic: string;
+  variantIdPro: string;
+  testMode: boolean;
+}>;

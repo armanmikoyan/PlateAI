@@ -1,6 +1,6 @@
 import type { BillingProviderConfig } from '@plate/plate-billing/provider';
 import type { WebhookResult } from '@plate/plate-billing/types';
-import type { ApplySubscriptionUpdate } from '@/routes/checkout/repository.js';
+import type { ApplySubscriptionUpdate } from '@/routes/checkout/types.js';
 import type { ServerConfig } from '@/config/types.js';
 
 export function toBillingProviderConfig(config: ServerConfig): BillingProviderConfig {

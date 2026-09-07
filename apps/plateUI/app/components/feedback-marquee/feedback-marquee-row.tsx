@@ -1,8 +1,8 @@
 import { Marquee } from '@/app/ui/marquee';
-import type { FeedbackMarqueeQuoteRow } from './constants';
+import type { FeedbackMarqueeQuoteRow, FeedbackMarqueeRowVariant } from './types';
 import { FeedbackMarqueeQuoteChip } from './feedback-marquee-quote-chip';
 
-export type FeedbackMarqueeRowVariant = 'scroll-toward-left' | 'scroll-toward-right' | 'static';
+export type { FeedbackMarqueeRowVariant } from './types';
 
 type FeedbackMarqueeRowProps = Readonly<{
   quotes: readonly FeedbackMarqueeQuoteRow[];

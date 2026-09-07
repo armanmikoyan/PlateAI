@@ -1,4 +1,3 @@
-import type { LucideIcon } from 'lucide-react';
 import {
   Battery,
   Beef,
@@ -14,58 +13,23 @@ import {
   Sprout,
   Wheat,
 } from 'lucide-react';
+import type {
+  HeroStatTileChrome,
+  HeroNutrientMetricRow,
+  HeroMealSlide,
+} from './types';
 
-export type HeroMockMealChipRow = Readonly<{
-  ICON: LucideIcon;
-  ICON_CLASS: string;
-  TEXT: string;
-}>;
-
-export type HeroNutrientMetricKey =
-  | 'PROTEIN'
-  | 'CARBS'
-  | 'FAT'
-  | 'FIBER'
-  | 'SAT_FAT'
-  | 'SUGAR'
-  | 'SODIUM'
-  | 'POTASSIUM';
-
-export type HeroMealMacros = Readonly<Record<HeroNutrientMetricKey, string>>;
-
-export type HeroStatTileChrome = Readonly<{
-  ICON: LucideIcon;
-  LABEL: string;
-  UNIT: string;
-  ICON_CLASS: string;
-  ICON_BG_CLASS: string;
-}>;
-
-export type HeroNutrientMetricRow = HeroStatTileChrome &
-  Readonly<{
-    KEY: HeroNutrientMetricKey;
-  }>;
-
-export type HeroStatTileModel = HeroStatTileChrome &
-  Readonly<{
-    VALUE: string;
-  }>;
-
-export type HeroNutrientTileRowModel = HeroNutrientMetricRow &
-  Readonly<{
-    VALUE: string;
-  }>;
-
-export type HeroMealSlide = Readonly<{
-  KEY: string;
-  IMAGE_SRC: string;
-  IMAGE_ALT: string;
-  IMAGE_OBJECT_CLASS?: string;
-  NAME: string;
-  CHIPS: readonly HeroMockMealChipRow[];
-  CALORIES: string;
-  MACROS: HeroMealMacros;
-}>;
+export type {
+  HeroMockMealChipRow,
+  HeroNutrientMetricKey,
+  HeroMealMacros,
+  HeroStatTileChrome,
+  HeroNutrientMetricRow,
+  HeroStatTileModel,
+  HeroNutrientTileRowModel,
+  HeroMealSlide,
+  HeroIntroLineKey,
+} from './types';
 
 export const HERO = {
   HEADING: 'Meal planning that respects your calories and your time.',
@@ -136,8 +100,6 @@ export const HERO_INTRO_LINES = [
     MS: 8,
   },
 ] as const;
-
-export type HeroIntroLineKey = (typeof HERO_INTRO_LINES)[number]['KEY'];
 
 /** Upload | arrow | result from `md` up; stacked on small screens. */
 export const HERO_ENTER_GRID_SHELL =

@@ -1,14 +1,9 @@
-export type AcceptedImageType = 'image/jpeg' | 'image/png' | 'image/webp';
-
 export const SNAP_ANALYSIS_STATUS = {
   IDLE: 'idle',
   LOADING: 'loading',
   SUCCESS: 'success',
   ERROR: 'error',
 } as const;
-
-export type SnapAnalysisStatus =
-  (typeof SNAP_ANALYSIS_STATUS)[keyof typeof SNAP_ANALYSIS_STATUS];
 
 export const SNAP_HEADING_PHASE = {
   IDLE: 'idle',
@@ -17,8 +12,6 @@ export const SNAP_HEADING_PHASE = {
   SUCCESS: 'success',
   ERROR: 'error',
 } as const;
-
-export type SnapHeadingPhase = (typeof SNAP_HEADING_PHASE)[keyof typeof SNAP_HEADING_PHASE];
 
 export const SNAP_LOCKED_REASON = {
   PLAN: 'plan',
@@ -126,11 +119,11 @@ export const SNAP_ANALYSIS_CARD_SHELL =
 export const SNAP_STAGE_GRID_SHELL =
   'relative grid w-full min-w-0 grid-cols-1 items-start gap-5 [&>*]:min-w-0 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:gap-8' as const;
 
-export const ACCEPTED_IMAGE_TYPES: readonly AcceptedImageType[] = [
+export const ACCEPTED_IMAGE_TYPES = [
   'image/jpeg',
   'image/png',
   'image/webp',
-];
+] as const;
 
 export const ACCEPTED_IMAGE_ACCEPT = ACCEPTED_IMAGE_TYPES.join(',');
 

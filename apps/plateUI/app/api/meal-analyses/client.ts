@@ -72,7 +72,7 @@ async function mealAnalysisRequest<T>({
   }
 }
 
-export type CreatePendingMealAnalysisResult =
+type CreatePendingMealAnalysisResult =
   | Readonly<{ ok: true; item: MealAnalysisItemResponse }>
   | Readonly<{ ok: false; status: number; message?: string }>;
 

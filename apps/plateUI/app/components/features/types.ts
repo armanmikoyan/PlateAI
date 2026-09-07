@@ -1,0 +1,9 @@
+import type { LucideIcon } from 'lucide-react';
+
+export type FeatureCardRow = Readonly<{
+  KEY: string;
+  ICON: LucideIcon;
+  TITLE: string;
+  BODY: string;
+  ICON_SHELL: string;
+}>;

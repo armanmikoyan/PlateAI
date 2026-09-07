@@ -1,8 +1,7 @@
-import type { BillingProvider } from '@/types.js';
+import type { BillingProvider, BillingProviderConfig } from '@/types.js';
 import { createLemonSqueezyProvider } from '@/lemonsqueezy/provider.js';
-import type { LemonSqueezyProviderConfig } from '@/lemonsqueezy/provider.js';
 
-export type BillingProviderConfig = LemonSqueezyProviderConfig;
+export type { BillingProviderConfig } from '@/types.js';
 
 export function createBillingProvider(config: BillingProviderConfig): BillingProvider {
   if (config.id !== 'lemonsqueezy') {

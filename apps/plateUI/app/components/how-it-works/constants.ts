@@ -1,5 +1,7 @@
-import type { LucideIcon } from 'lucide-react';
 import { Camera, CalendarDays, Sparkles } from 'lucide-react';
+import type { HowItWorksStepRow } from './types';
+
+export type { HowItWorksStepRow } from './types';
 
 export const HOW_IT_WORKS = {
   EYEBROW: 'How it works',
@@ -7,14 +9,6 @@ export const HOW_IT_WORKS = {
   SUBTITLE:
     'Point your phone at the plate. PlateAI reads the calories and macros, then shows how the rest of your day can still fit your targets.',
 } as const;
-
-export type HowItWorksStepRow = Readonly<{
-  KEY: string;
-  ICON: LucideIcon;
-  TITLE: string;
-  BODY: string;
-  ICON_SHELL: string;
-}>;
 
 export const HOW_IT_WORKS_STEPS: readonly HowItWorksStepRow[] = [
   {
