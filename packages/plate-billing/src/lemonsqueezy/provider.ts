@@ -1,4 +1,4 @@
-import { createCheckout, getSubscription, listSubscriptions, lemonSqueezySetup } from '@lemonsqueezy/lemonsqueezy.js';
+import { createCheckout, getSubscription, listSubscriptions, getOrder, lemonSqueezySetup } from '@lemonsqueezy/lemonsqueezy.js';
 import { SUBSCRIPTION_PLAN } from '@/constants.js';
 import type { CheckoutResult, CreateCheckoutInput, CustomerPortalResult, BillingProvider, WebhookParseResult } from '@/types.js';
 import { CHECKOUT_ERROR } from '@/constants.js';
@@ -87,13 +87,20 @@ export function createLemonSqueezyProvider(config: LemonSqueezyProviderConfig): 
       lemonSqueezySetup({ apiKey: config.apiKey });
 
       const response = await getSubscription(subscriptionId);
-      const portalUrl = response.data?.data.attributes.urls.customer_portal;
+      const orderId = response.data?.data.attributes.order_id;
 
-      if (response.error !== null || !portalUrl) {
+      if (response.error !== null || !orderId) {
         return { ok: false };
       }
 
-      return { ok: true, url: portalUrl };
+      const order = await getOrder(orderId);
+      const receiptUrl = order.data?.data.attributes.urls.receipt;
+
+      if (order.error !== null || !receiptUrl) {
+        return { ok: false };
+      }
+
+      return { ok: true, url: receiptUrl };
     },
 
     async findCustomerPortalUrlByEmail(email: string): Promise<CustomerPortalResult> {
@@ -111,13 +118,24 @@ export function createLemonSqueezyProvider(config: LemonSqueezyProviderConfig): 
         (sub) => sub.attributes.status === 'active' || sub.attributes.status === 'cancelled',
       );
 
-      const portalUrl = subscription?.attributes.urls.customer_portal;
-
-      if (!subscription || !portalUrl) {
+      if (!subscription) {
         return { ok: false };
       }
 
-      return { ok: true, url: portalUrl };
+      const orderId = subscription.attributes.order_id;
+
+      if (!orderId) {
+        return { ok: false };
+      }
+
+      const order = await getOrder(orderId);
+      const receiptUrl = order.data?.data.attributes.urls.receipt;
+
+      if (order.error !== null || !receiptUrl) {
+        return { ok: false };
+      }
+
+      return { ok: true, url: receiptUrl };
     },
   };
 }
