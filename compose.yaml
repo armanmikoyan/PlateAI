@@ -38,5 +38,6 @@ services:
       PORT: 4000
     volumes:
       - ./apps/plateServer:/app/apps/plateServer
+      - ./packages:/app/packages
       - /app/node_modules
     init: true
