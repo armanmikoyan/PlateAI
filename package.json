@@ -34,10 +34,9 @@
       "oxlint -c .oxlintrc.json --fix",
       "oxfmt --write"
     ],
-    "*.{json,md,yaml,yml}": [
+    "*.{md,yaml,yml}": [
       "oxfmt --write"
-    ],
-    "!package-lock.json": []
+    ]
   },
   "devDependencies": {
     "@types/node": "^20",
