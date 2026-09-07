@@ -36,12 +36,13 @@
     ],
     "*.{json,md,yaml,yml}": [
       "oxfmt --write"
-    ]
+    ],
+    "!package-lock.json": []
   },
   "devDependencies": {
     "@types/node": "^20",
     "husky": "^9.1.7",
-    "lint-staged": "^17.5.0",
+    "lint-staged": "^17.4.0",
     "oxfmt": "^0.65.0",
     "oxlint": "^1.80.0",
     "typescript": "^5",
