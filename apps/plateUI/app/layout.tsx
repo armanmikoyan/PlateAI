@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import { Geist, Geist_Mono } from 'next/font/google';
+import { GoogleAnalytics } from '@next/third-parties/google';
 import './globals.css';
 import { Navbar } from '@/app/components/nav-bar';
 import { Toaster } from '@/app/ui/toast';
@@ -33,7 +34,7 @@ export const metadata: Metadata = {
     },
   },
   icons: {
-    icon: [{ url: '/icons/favicon.png', type: 'image/png',  sizes: '48x48', }],
+    icon: [{ url: '/icons/favicon.png', type: 'image/png', sizes: '48x48' }],
   },
 };
 
@@ -48,6 +49,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <Navbar />
         <main className="flex min-h-0 flex-1 flex-col">{children}</main>
         <Toaster />
+        {process.env.NODE_ENV === 'production' && process.env.NEXT_PUBLIC_GA_ID ? (
+          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
+        ) : null}
       </body>
     </html>
   );

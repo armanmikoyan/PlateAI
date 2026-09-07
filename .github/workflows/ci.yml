@@ -62,6 +62,7 @@ jobs:
           push: true
           build-args: |
             NEXT_PUBLIC_SITE_URL=${{ vars.PRODUCTION_URL }}
+            NEXT_PUBLIC_GA_ID=${{ vars.NEXT_PUBLIC_GA_ID }}
           tags: |
             ${{ env.DOCKER_PLATE_UI_IMAGE }}:latest
             ${{ env.DOCKER_PLATE_UI_IMAGE }}:${{ github.sha }}
