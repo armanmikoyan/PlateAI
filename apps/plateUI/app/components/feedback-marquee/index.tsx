@@ -20,11 +20,7 @@ export default function FeedbackMarquee() {
   }, []);
 
   return (
-    <section
-      id="feedback"
-      className="border-edge/60 scroll-mt-28 border-t bg-surface py-10 sm:py-12"
-      aria-labelledby="feedback-marquee-heading"
-    >
+    <section id="feedback" className="scroll-mt-28 py-10 sm:py-12" aria-labelledby="feedback-marquee-heading">
       <div className="layout-page-shell">
         <div className="text-center">
           <p className="text-content-subtle text-xs font-medium tracking-widest uppercase">

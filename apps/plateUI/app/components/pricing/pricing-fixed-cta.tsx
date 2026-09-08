@@ -6,11 +6,7 @@ import { ShimmerButton } from '@/app/ui/shimmer-button';
 import { PRICING_PAGE, PRICING_SECTION } from './constants';
 import { usePricingActiveTierId, usePricingPurchase } from './hooks';
 import type { PricingFixedCtaProps } from './types';
-import {
-  buildPricingPurchaseCtaLabel,
-  buildPricingUpgradeCtaLabel,
-  getPricingTierById,
-} from './utils';
+import { buildPricingPurchaseCtaLabel, buildPricingUpgradeCtaLabel, getPricingTierById } from './utils';
 
 export function PricingFixedCta({ currentPlanId = null }: PricingFixedCtaProps) {
   const activeTierId = usePricingActiveTierId();

@@ -32,24 +32,15 @@ export default function SiteFooter() {
   return (
     <footer
       id="footer"
-      className="scroll-mt-28 border-t bg-surface py-14 sm:py-16 lg:py-20"
+      className="scroll-mt-28 py-14 sm:py-16 lg:py-20"
       aria-labelledby="site-footer-heading"
     >
       <div className="layout-page-shell">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-10">
           <div className="lg:col-span-4">
-          <Image
-            src="/icons/logo.png"
-            alt="PlateAI Logo"
-            width={200}
-            height={100}
-          />
-            <p className="text-muted-foreground mt-3 max-w-sm text-sm/relaxed">
-              {SITE_FOOTER_MAIN.TAGLINE}
-            </p>
-            <p className="text-muted-foreground mt-2 max-w-sm text-sm/relaxed">
-              {SITE_FOOTER_MAIN.SUBLINE}
-            </p>
+            <Image src="/icons/logo.png" alt="PlateAI Logo" width={200} height={100} />
+            <p className="text-muted-foreground mt-3 max-w-sm text-sm/relaxed">{SITE_FOOTER_MAIN.TAGLINE}</p>
+            <p className="text-muted-foreground mt-2 max-w-sm text-sm/relaxed">{SITE_FOOTER_MAIN.SUBLINE}</p>
             <p className="text-muted-foreground mt-5 max-w-md border-l-2 border-accent/40 pl-4 text-sm/relaxed">
               {SITE_FOOTER_MAIN.CTA_LINE}
             </p>
@@ -102,9 +93,7 @@ export default function SiteFooter() {
               >
                 {SITE_FOOTER_COLUMNS.CONNECT_HEADING}
               </h3>
-              <p className="text-muted-foreground mt-4 text-sm/relaxed">
-                {SITE_FOOTER_CONNECT.BLURB}
-              </p>
+              <p className="text-muted-foreground mt-4 text-sm/relaxed">{SITE_FOOTER_CONNECT.BLURB}</p>
               <div className="mt-5 flex flex-col items-start gap-1">
                 <Button
                   className="h-auto gap-1.5 px-0"
@@ -119,9 +108,7 @@ export default function SiteFooter() {
                 <Button
                   className="h-auto gap-1.5 px-0"
                   nativeButton={false}
-                  render={
-                    <a href={SITE_FOOTER_CONNECT.GITHUB_HREF} rel="noreferrer" target="_blank" />
-                  }
+                  render={<a href={SITE_FOOTER_CONNECT.GITHUB_HREF} rel="noreferrer" target="_blank" />}
                   size="sm"
                   variant="link"
                 >

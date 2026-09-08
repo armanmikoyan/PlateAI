@@ -1,10 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import {
-  RATE_LIMIT_TOAST_TIMEOUT_MS,
-  RATE_LIMIT_TOAST_TITLE,
-} from '@/app/utils/rate-limit/constants';
+import { RATE_LIMIT_TOAST_TIMEOUT_MS, RATE_LIMIT_TOAST_TITLE } from '@/app/utils/rate-limit/constants';
 import { formatRetryDescription } from '@/app/utils/rate-limit/utils';
 import { toast } from '@/app/ui/toast';
 import { CONTACT_SECTION } from './constants';
@@ -133,7 +130,8 @@ export function ContactForm() {
         aria-disabled={sending || checkingAuth || signedOut}
         className="text-button-default-fg inline-flex h-11 items-center justify-center rounded-lg px-5 text-base font-medium disabled:opacity-50"
         style={{
-          background: 'linear-gradient(165deg, var(--color-cta-soft) 0%, var(--color-cta) 48%, var(--color-cta-deep) 100%)',
+          background:
+            'linear-gradient(165deg, var(--color-cta-soft) 0%, var(--color-cta) 48%, var(--color-cta-deep) 100%)',
         }}
       >
         {sending ? CONTACT_SECTION.FORM_SENDING : CONTACT_SECTION.FORM_SUBMIT}

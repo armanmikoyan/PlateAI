@@ -8,7 +8,7 @@ export function FeedbackMarqueeQuoteChip({ quote }: FeedbackMarqueeQuoteChipProp
   return (
     <Badge
       variant="outline"
-      className="h-auto max-w-[min(22rem,85vw)] min-w-0 justify-start whitespace-normal px-4 py-2 text-left text-sm/snug"
+      className="h-auto w-auto justify-start whitespace-normal px-3 py-1.5 text-left text-xs/relaxed sm:text-sm/relaxed"
     >
       {quote}
     </Badge>

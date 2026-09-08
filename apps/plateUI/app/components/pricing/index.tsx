@@ -6,11 +6,7 @@ import type { PricingSectionProps } from './types';
 
 export default function Pricing({ currentPlanId = null }: PricingSectionProps) {
   return (
-    <section
-      id="pricing"
-      className="border-edge scroll-mt-28 border-t bg-canvas py-16 sm:py-20 lg:py-24"
-      aria-labelledby="pricing-heading"
-    >
+    <section id="pricing" className="scroll-mt-28 py-16 sm:py-20 lg:py-24" aria-labelledby="pricing-heading">
       <ScrollEnter
         className="layout-page-shell"
         rows={[

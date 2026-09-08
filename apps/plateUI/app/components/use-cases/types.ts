@@ -6,4 +6,10 @@ export type UseCaseCardRow = Readonly<{
   TITLE: string;
   BODY: string;
   ICON_SHELL: string;
+  GLOW_FROM: string;
+  GLOW_TO: string;
+}>;
+
+export type UseCaseCardProps = Readonly<{
+  card: UseCaseCardRow;
 }>;

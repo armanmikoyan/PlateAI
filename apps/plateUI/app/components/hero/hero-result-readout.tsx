@@ -70,12 +70,8 @@ export default function HeroResultReadout({ meal }: HeroResultReadoutProps) {
 
         <div className="flex flex-col gap-2">
           <div>
-            <p className="font-heading text-sm font-medium tracking-tight">
-              {HERO.NUTRIENTS_SECTION_LABEL}
-            </p>
-            <p className="text-muted-foreground mt-0.5 text-xs/relaxed">
-              {HERO.NUTRIENTS_SCOPE_NOTE}
-            </p>
+            <p className="font-heading text-sm font-medium tracking-tight">{HERO.NUTRIENTS_SECTION_LABEL}</p>
+            <p className="text-muted-foreground mt-0.5 text-xs/relaxed">{HERO.NUTRIENTS_SCOPE_NOTE}</p>
           </div>
 
           <div className="grid min-w-0 grid-cols-2 gap-1.5 *:min-w-0 md:gap-2 @xl/result:grid-cols-4">

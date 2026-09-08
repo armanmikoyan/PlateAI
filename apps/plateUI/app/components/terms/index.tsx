@@ -7,7 +7,7 @@ import { TERMS_CONTENT } from './constants';
 export default function Terms(): ReactNode {
   return (
     <>
-      <div className="border-edge bg-canvas border-t py-16 sm:py-20 lg:py-24">
+      <div className="border-edge border-t py-16 sm:py-20 lg:py-24">
         <div className="layout-page-shell">
           <div className="mx-auto max-w-3xl">
             <p className="text-content-muted font-mono text-[11px] font-medium tracking-widest uppercase sm:text-xs">

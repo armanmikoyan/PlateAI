@@ -1,8 +1,4 @@
-import {
-  PRICING_COMPARISON_ROWS,
-  PRICING_PAGE,
-  PRICING_TIERS,
-} from './constants';
+import { PRICING_COMPARISON_ROWS, PRICING_PAGE, PRICING_TIERS } from './constants';
 
 export function PricingComparisonTable() {
   return (
@@ -28,11 +24,7 @@ export function PricingComparisonTable() {
                 Feature
               </th>
               {PRICING_TIERS.map((tier) => (
-                <th
-                  key={tier.ID}
-                  scope="col"
-                  className="text-content px-4 py-3 font-semibold sm:px-6"
-                >
+                <th key={tier.ID} scope="col" className="text-content px-4 py-3 font-semibold sm:px-6">
                   {tier.NAME}
                 </th>
               ))}

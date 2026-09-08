@@ -13,11 +13,7 @@ import {
   Sprout,
   Wheat,
 } from 'lucide-react';
-import type {
-  HeroStatTileChrome,
-  HeroNutrientMetricRow,
-  HeroMealSlide,
-} from './types';
+import type { HeroStatTileChrome, HeroNutrientMetricRow, HeroMealSlide } from './types';
 
 export type {
   HeroMockMealChipRow,
@@ -32,9 +28,9 @@ export type {
 } from './types';
 
 export const HERO = {
-  HEADING: 'Meal planning that respects your calories and your time.',
+  HEADING: 'Snap your plate. Get your numbers.',
   SUBHEAD:
-    "Upload a shot of your food, see today's calories and macros in seconds, and adjust the rest of your day—without manual logging.",
+    'PlateAI turns one photo into calories, protein, carbs, and fat—and shows how the rest of the day fits. No scales, no manual logging, no guesswork.',
   UPLOAD_IMAGE_SIZES: '(max-width: 1024px) 92vw, 46vw',
   CTA: 'Snap a plate',
   CTA_HREF: '/snap',
@@ -84,8 +80,7 @@ export const HERO_INTRO_LINES = [
     KEY: 'h',
     EL: 'h1',
     ID: 'hero-heading',
-    SHELL:
-      'text-content font-heading text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl',
+    SHELL: 'text-content font-heading text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl',
     CARET: 'animate-caret-blink text-content-muted inline-block align-baseline font-light',
     TEXT: HERO.HEADING,
     MS: 16,

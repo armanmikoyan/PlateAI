@@ -11,23 +11,23 @@ export const FEEDBACK_MARQUEE_SECTION = {
 export const FEEDBACK_MARQUEE_ROW_A_QUOTES: readonly FeedbackMarqueeQuoteRow[] = [
   {
     KEY: 'a1',
-    QUOTE: 'Finally stopped guessing portions after lunch.',
+    QUOTE: 'Stopped guessing portions.',
   },
   {
     KEY: 'a2',
-    QUOTE: 'The photo flow is stupid fast compared to my old app.',
+    QUOTE: 'The photo flow is stupid fast.',
   },
   {
     KEY: 'a3',
-    QUOTE: 'Seeing macros for the whole day in one glance sold me.',
+    QUOTE: 'Whole-day macros sold me.',
   },
   {
     KEY: 'a4',
-    QUOTE: 'I actually log dinner now because it is not a chore.',
+    QUOTE: 'I actually log dinner now.',
   },
   {
     KEY: 'a5',
-    QUOTE: 'Household mode is the only reason my partner is on board.',
+    QUOTE: 'Household mode got my partner on board.',
   },
 ] as const;
 
@@ -35,22 +35,22 @@ export const FEEDBACK_MARQUEE_ROW_A_QUOTES: readonly FeedbackMarqueeQuoteRow[] =
 export const FEEDBACK_MARQUEE_ROW_B_QUOTES: readonly FeedbackMarqueeQuoteRow[] = [
   {
     KEY: 'b1',
-    QUOTE: 'Estimates feel honest—not like everything is 200 calories.',
+    QUOTE: 'Estimates feel honest.',
   },
   {
     KEY: 'b2',
-    QUOTE: 'Love that I can fix one meal without redoing the whole week.',
+    QUOTE: 'Fix one meal, keep the week.',
   },
   {
     KEY: 'b3',
-    QUOTE: 'Shopping list from meals is scary accurate.',
+    QUOTE: 'Shopping list is scary accurate.',
   },
   {
     KEY: 'b4',
-    QUOTE: 'Dark UI + big type = I use it at the table, not later.',
+    QUOTE: 'Dark UI + big type at the table.',
   },
   {
     KEY: 'b5',
-    QUOTE: 'Worth it just to stop flipping between three apps.',
+    QUOTE: 'One app, done.',
   },
 ] as const;

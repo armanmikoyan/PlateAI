@@ -1,11 +1,11 @@
-import { Camera, CalendarDays, Sparkles } from 'lucide-react';
+import { CheckCheck, Camera, Sparkles } from 'lucide-react';
 import type { HowItWorksStepRow } from './types';
 
 export type { HowItWorksStepRow } from './types';
 
 export const HOW_IT_WORKS = {
   EYEBROW: 'How it works',
-  TITLE: 'From photo to plan in three steps',
+  TITLE: 'From photo to numbers in three steps',
   SUBTITLE:
     'Point your phone at the plate. PlateAI reads the calories and macros, then shows how the rest of your day can still fit your targets.',
 } as const;
@@ -13,24 +13,29 @@ export const HOW_IT_WORKS = {
 export const HOW_IT_WORKS_STEPS: readonly HowItWorksStepRow[] = [
   {
     KEY: 'snap',
+    STEP: '01',
     ICON: Camera,
     TITLE: 'Snap your meal',
     BODY: 'One clear photo of the plate is enough—no weighing, no barcode scanning.',
-    ICON_SHELL:
-      'bg-macro-fat-strong/15 text-macro-fat-strong ring-1 ring-macro-fat-strong/25',
+    ICON_SHELL: 'bg-surface-raised text-macro-fat-strong ring-1 ring-macro-fat-strong/25',
+    NODE_SHELL: 'ring-macro-fat-strong/40 bg-surface-overlay text-macro-fat-strong',
   },
   {
     KEY: 'read',
+    STEP: '02',
     ICON: Sparkles,
-    TITLE: 'Get instant numbers',
-    BODY: 'Calories, protein, carbs, and fat surface in seconds so you can decide what to do next.',
-    ICON_SHELL: 'bg-accent/15 text-accent-mid ring-1 ring-accent/25',
+    TITLE: 'Most advanced AI models analyze it',
+    BODY: 'Our most advanced models read every ingredient and estimate its calories and macros in seconds.',
+    ICON_SHELL: 'bg-surface-raised text-accent-mid ring-1 ring-accent/25',
+    NODE_SHELL: 'ring-accent/40 bg-surface-overlay text-accent-mid',
   },
   {
-    KEY: 'plan',
-    ICON: CalendarDays,
-    TITLE: 'Adjust the rest of the day',
-    BODY: 'Same-day totals show what you have left so dinner and snacks stay inside your plan.',
-    ICON_SHELL: 'bg-positive/12 text-positive ring-1 ring-positive/20',
+    KEY: 'numbers',
+    STEP: '03',
+    ICON: CheckCheck,
+    TITLE: 'Your numbers, instantly',
+    BODY: 'Calories, protein, carbs, and fat appear in seconds—clear numbers you can plan around.',
+    ICON_SHELL: 'bg-surface-raised text-positive ring-1 ring-positive/20',
+    NODE_SHELL: 'ring-positive/40 bg-surface-overlay text-positive',
   },
 ];

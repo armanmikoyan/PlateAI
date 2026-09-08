@@ -1,0 +1,33 @@
+@theme inline {
+  --animate-rail-flow: rail-flow 2.4s linear infinite;
+  --animate-rail-flow-vertical: rail-flow-vertical 3.6s linear infinite;
+  --animate-rail-flow-wide: rail-flow 4s linear infinite;
+  --animate-rail-dash: rail-dash 4s linear infinite;
+
+  @keyframes rail-flow {
+    0% {
+      left: -25%;
+    }
+    100% {
+      left: 105%;
+    }
+  }
+
+  @keyframes rail-flow-vertical {
+    0% {
+      top: -50%;
+    }
+    100% {
+      top: 110%;
+    }
+  }
+
+  @keyframes rail-dash {
+    0% {
+      stroke-dashoffset: 0;
+    }
+    100% {
+      stroke-dashoffset: -100;
+    }
+  }
+}

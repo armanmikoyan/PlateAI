@@ -5,11 +5,7 @@ import { FaqList } from './faq-list';
 
 export default function Faq() {
   return (
-    <section
-      id="faq"
-      className="border-edge/60 scroll-mt-28 border-t bg-canvas py-16 sm:py-20 lg:py-24"
-      aria-labelledby="faq-heading"
-    >
+    <section id="faq" className="scroll-mt-28 py-16 sm:py-20 lg:py-24" aria-labelledby="faq-heading">
       <ScrollEnter
         className="layout-page-shell"
         rows={[

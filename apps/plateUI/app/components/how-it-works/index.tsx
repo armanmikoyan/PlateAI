@@ -1,13 +1,14 @@
-import { FeatureCard } from '@/app/components/feature-card';
 import { ScrollEnter } from '@/app/components/scroll';
 import { SectionIntro } from '@/app/components/section-intro';
 import { HOW_IT_WORKS, HOW_IT_WORKS_STEPS } from './constants';
+import { HowItWorksNode } from './how-it-works-node';
+import { MobileRail } from './mobile-rail';
 
 export default function HowItWorks() {
   return (
     <section
       id="how-it-works"
-      className="border-edge/60 scroll-mt-28 border-t bg-canvas py-16 sm:py-20 lg:py-24"
+      className="scroll-mt-28 py-16 sm:py-20 lg:py-24"
       aria-labelledby="how-it-works-heading"
     >
       <ScrollEnter
@@ -25,21 +26,24 @@ export default function HowItWorks() {
             ),
           },
           {
-            KEY: 'cards',
+            KEY: 'rail',
             delayClass: 'motion-safe:delay-100',
             content: (
-              <ol className="mt-10 grid list-none grid-cols-1 gap-4 sm:mt-12 sm:gap-5 lg:grid-cols-3 lg:gap-6">
-                {HOW_IT_WORKS_STEPS.map((step) => (
-                  <li key={step.KEY} className="min-w-0">
-                    <FeatureCard
-                      body={step.BODY}
-                      icon={step.ICON}
-                      iconShell={step.ICON_SHELL}
-                      title={step.TITLE}
-                    />
-                  </li>
-                ))}
-              </ol>
+              <div className="relative mt-10 sm:mt-12 lg:mt-16">
+                <div
+                  aria-hidden
+                  className="from-macro-fat-strong/60 via-accent/50 to-positive/60 absolute top-8 inset-x-[16.66%] hidden h-px overflow-hidden bg-linear-to-r lg:block"
+                >
+                  <span className="animate-rail-flow-wide absolute inset-y-0 w-16 bg-linear-to-r from-transparent via-white/45 to-transparent motion-reduce:animate-none" />
+                </div>
+                <MobileRail>
+                  <ol className="relative grid list-none grid-cols-1 lg:grid-cols-3 lg:gap-10">
+                    {HOW_IT_WORKS_STEPS.map((step) => (
+                      <HowItWorksNode key={step.KEY} step={step} />
+                    ))}
+                  </ol>
+                </MobileRail>
+              </div>
             ),
           },
         ]}

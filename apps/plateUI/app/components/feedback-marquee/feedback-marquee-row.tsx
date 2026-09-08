@@ -16,9 +16,7 @@ function renderChips(quotes: readonly FeedbackMarqueeQuoteRow[]) {
 export function FeedbackMarqueeRow({ quotes, variant }: FeedbackMarqueeRowProps) {
   if (variant === 'static') {
     return (
-      <div className="flex flex-wrap justify-center gap-3 px-2 py-1 sm:gap-4">
-        {renderChips(quotes)}
-      </div>
+      <div className="flex flex-wrap justify-center gap-3 px-2 py-1 sm:gap-4">{renderChips(quotes)}</div>
     );
   }
 

@@ -3,6 +3,7 @@
 @import 'shadcn/tailwind.css';
 @import './ui/shimmer-button.css';
 @import './ui/marquee.css';
+@import './ui/rail.css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -67,8 +68,7 @@
   --color-destructive: var(--color-danger);
 
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-mono:
-    var(--font-geist-mono), ui-monospace, 'SF Mono', 'Menlo', 'Monaco', 'Consolas', monospace;
+  --font-mono: var(--font-geist-mono), ui-monospace, 'SF Mono', 'Menlo', 'Monaco', 'Consolas', monospace;
   --font-heading: var(--font-sans);
 }
 
@@ -90,6 +90,40 @@
 
   body {
     @apply bg-canvas text-content;
+    background-image:
+      linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--color-macro-protein) 1.5%, transparent) 0%,
+        color-mix(in srgb, var(--color-macro-fat-strong) 1.5%, transparent) 30%,
+        color-mix(in srgb, var(--color-accent) 1.2%, transparent) 50%,
+        color-mix(in srgb, var(--color-macro-sat) 1.2%, transparent) 70%,
+        color-mix(in srgb, var(--color-positive) 1.5%, transparent) 100%
+      ),
+      radial-gradient(
+        60rem 38rem at 12% 0%,
+        color-mix(in srgb, var(--color-macro-protein) 6%, transparent),
+        transparent 62%
+      ),
+      radial-gradient(
+        55rem 36rem at 88% 12%,
+        color-mix(in srgb, var(--color-macro-fat-strong) 6%, transparent),
+        transparent 62%
+      ),
+      radial-gradient(
+        48rem 32rem at 10% 40%,
+        color-mix(in srgb, var(--color-accent) 4.5%, transparent),
+        transparent 62%
+      ),
+      radial-gradient(
+        52rem 34rem at 90% 62%,
+        color-mix(in srgb, var(--color-macro-sat) 4.5%, transparent),
+        transparent 62%
+      ),
+      radial-gradient(
+        64rem 42rem at 50% 96%,
+        color-mix(in srgb, var(--color-positive) 5%, transparent),
+        transparent 64%
+      );
   }
 
   html {
