@@ -1,6 +1,7 @@
 import type { SubscriptionPlan, SubscriptionStatus } from '@plate/plate-billing/types';
 import type { SessionDocument } from '@/models/session.js';
 import type { UserDocument } from '@/models/user.js';
+import type { accessCookieOptions, refreshCookieOptions } from '@/routes/auth/utils.js';
 
 export type AuthUser = Readonly<{
   id: string;
@@ -11,6 +12,14 @@ export type AuthUser = Readonly<{
   subscriptionStatus: SubscriptionStatus | null;
   subscriptionRenewsAt: string | null;
   subscriptionEndsAt: string | null;
+}>;
+
+export type LoginSessionResult = Readonly<{
+  user: AuthUser;
+  accessToken: string;
+  refreshToken: string;
+  accessCookieOptions: ReturnType<typeof accessCookieOptions>;
+  refreshCookieOptions: ReturnType<typeof refreshCookieOptions>;
 }>;
 
 export type AuthMeResponse = Readonly<{

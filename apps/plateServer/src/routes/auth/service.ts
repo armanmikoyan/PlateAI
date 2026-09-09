@@ -1,6 +1,5 @@
 import type { Types } from 'mongoose';
 import type { UserDocument } from '@/models/user.js';
-import { AUTH } from '@/routes/auth/constants.js';
 import {
   createSession,
   findActiveSessionById,
@@ -9,40 +8,17 @@ import {
   revokeSessionByRefreshHash,
   updateSessionRefreshToken,
 } from '@/routes/auth/repository.js';
-import type { ActiveSession, AuthUser } from '@/routes/auth/types.js';
+import type { ActiveSession, LoginSessionResult } from '@/routes/auth/types.js';
 import {
   accessCookieOptions,
   generateRefreshToken,
   hashRefreshToken,
   refreshCookieOptions,
+  refreshExpiresAt,
   signAccessToken,
+  toAuthUser,
 } from '@/routes/auth/utils.js';
 import type { ServerConfig } from '@/config/types.js';
-
-export function toAuthUser(user: UserDocument): AuthUser {
-  return {
-    id: user._id.toString(),
-    email: user.email,
-    name: user.name,
-    image: user.image ?? null,
-    subscriptionPlan: user.subscriptionPlan ?? null,
-    subscriptionStatus: user.subscriptionStatus ?? null,
-    subscriptionRenewsAt: user.subscriptionRenewsAt ?? null,
-    subscriptionEndsAt: user.subscriptionEndsAt ?? null,
-  };
-}
-
-export type LoginSessionResult = Readonly<{
-  user: AuthUser;
-  accessToken: string;
-  refreshToken: string;
-  accessCookieOptions: ReturnType<typeof accessCookieOptions>;
-  refreshCookieOptions: ReturnType<typeof refreshCookieOptions>;
-}>;
-
-function refreshExpiresAt(): Date {
-  return new Date(Date.now() + AUTH.REFRESH_TOKEN_TTL_MS);
-}
 
 export async function createLoginSession(
   config: ServerConfig,
@@ -97,13 +73,9 @@ export async function rotateSession(
     return null;
   }
 
-  const nextRefreshToken = generateRefreshToken();
-  const nextExpiresAt = refreshExpiresAt();
-
   const updated = await updateSessionRefreshToken({
     sessionId: session._id.toString(),
-    refreshTokenHash: hashRefreshToken(nextRefreshToken),
-    expiresAt: nextExpiresAt,
+    expiresAt: refreshExpiresAt(),
   });
 
   if (!updated) {
@@ -118,7 +90,7 @@ export async function rotateSession(
   return {
     user: toAuthUser(user),
     accessToken,
-    refreshToken: nextRefreshToken,
+    refreshToken: currentRefreshToken,
     accessCookieOptions: accessCookieOptions(config),
     refreshCookieOptions: refreshCookieOptions(config),
   };

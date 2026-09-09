@@ -1,8 +1,8 @@
 import type { Request, Response, NextFunction } from 'express';
 import { AUTH_ERRORS } from '@/routes/auth/constants.js';
-import { resolveActiveSession, toAuthUser } from '@/routes/auth/service.js';
+import { resolveActiveSession } from '@/routes/auth/service.js';
 import type { AuthUser } from '@/routes/auth/types.js';
-import { readAccessTokenFromCookies, verifyAccessToken } from '@/routes/auth/utils.js';
+import { readAccessTokenFromCookies, toAuthUser, verifyAccessToken } from '@/routes/auth/utils.js';
 import type { ServerConfig } from '@/config/types.js';
 
 /* eslint-disable @typescript-eslint/no-namespace */

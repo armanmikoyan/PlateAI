@@ -1,8 +1,26 @@
 import { createHash, randomBytes } from 'node:crypto';
 import { SignJWT, jwtVerify } from 'jose';
 import { AUTH } from '@/routes/auth/constants.js';
-import type { AccessTokenClaims } from '@/routes/auth/types.js';
+import type { AccessTokenClaims, AuthUser } from '@/routes/auth/types.js';
+import type { UserDocument } from '@/models/user.js';
 import type { ServerConfig } from '@/config/types.js';
+
+export function toAuthUser(user: UserDocument): AuthUser {
+  return {
+    id: user._id.toString(),
+    email: user.email,
+    name: user.name,
+    image: user.image ?? null,
+    subscriptionPlan: user.subscriptionPlan ?? null,
+    subscriptionStatus: user.subscriptionStatus ?? null,
+    subscriptionRenewsAt: user.subscriptionRenewsAt ?? null,
+    subscriptionEndsAt: user.subscriptionEndsAt ?? null,
+  };
+}
+
+export function refreshExpiresAt(): Date {
+  return new Date(Date.now() + AUTH.REFRESH_TOKEN_TTL_MS);
+}
 
 function secretKey(config: ServerConfig): Uint8Array {
   return new TextEncoder().encode(config.JWT_SECRET);

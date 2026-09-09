@@ -6,9 +6,12 @@ export async function findUserById(id: string): Promise<UserDocument | null> {
   return User.findById(id).exec();
 }
 
-export async function upsertUserByGoogleProfile(
-  profile: { googleId: string; email: string; name: string; image: string | null },
-): Promise<UserDocument | null> {
+export async function upsertUserByGoogleProfile(profile: {
+  googleId: string;
+  email: string;
+  name: string;
+  image: string | null;
+}): Promise<UserDocument | null> {
   return User.findOneAndUpdate(
     { googleId: profile.googleId },
     {
@@ -59,13 +62,11 @@ export async function findActiveSessionById(sessionId: string): Promise<SessionD
 
 export async function updateSessionRefreshToken(input: {
   sessionId: string;
-  refreshTokenHash: string;
   expiresAt: Date;
 }): Promise<SessionDocument | null> {
   return Session.findByIdAndUpdate(
     new Types.ObjectId(input.sessionId),
     {
-      refreshTokenHash: input.refreshTokenHash,
       expiresAt: input.expiresAt,
       lastUsedAt: new Date(),
     },
