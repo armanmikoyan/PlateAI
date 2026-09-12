@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { isActivePaidPlan } from '@plate/plate-billing/utils';
 import { getAuthSession } from '@/app/api/auth/utils';
 import Contact from '@/app/components/contact';
+import Demo from '@/app/components/demo';
 import Faq from '@/app/components/faq';
 import FeedbackMarquee from '@/app/components/feedback-marquee';
 import Features from '@/app/components/features';
@@ -14,10 +15,7 @@ import UseCases from '@/app/components/use-cases';
 
 export default async function Page(): Promise<ReactNode> {
   const pageHeaders = await headers();
-  const session = await getAuthSession(
-    pageHeaders.get('cookie'),
-    pageHeaders.get('x-forwarded-for'),
-  );
+  const session = await getAuthSession(pageHeaders.get('cookie'), pageHeaders.get('x-forwarded-for'));
   const currentPlanId =
     session && isActivePaidPlan(session.subscriptionPlan, session.subscriptionStatus)
       ? session.subscriptionPlan
@@ -26,6 +24,7 @@ export default async function Page(): Promise<ReactNode> {
   return (
     <>
       <Hero />
+      <Demo />
       <HowItWorks />
       <Features />
       <UseCases />
