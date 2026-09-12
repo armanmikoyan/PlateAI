@@ -4,6 +4,7 @@
 @import './ui/shimmer-button.css';
 @import './ui/marquee.css';
 @import './ui/rail.css';
+@import './components/product-hunt-badge/product-hunt-badge.css';
 
 @custom-variant dark (&:is(.dark *));
 

@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import { GoogleAnalytics } from '@next/third-parties/google';
 import './globals.css';
 import { Navbar } from '@/app/components/nav-bar';
+import ProductHuntBadge from '@/app/components/product-hunt-badge';
 import { Toaster } from '@/app/ui/toast';
 import { readSiteUrl } from '@/app/utils/site/url';
 
@@ -47,6 +48,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
     >
       <body className="flex min-h-full flex-col font-sans" suppressHydrationWarning>
         <Navbar />
+        <ProductHuntBadge />
         <main className="flex min-h-0 flex-1 flex-col">{children}</main>
         <Toaster />
         {process.env.NODE_ENV === 'production' && process.env.NEXT_PUBLIC_GA_ID ? (
