@@ -43,6 +43,9 @@ export const metadata: Metadata = {
       'Snap a photo of any meal and get instant AI-powered calorie, protein, carb, and fat analysis.',
     images: ['https://plateai.fit/images/og-image.jpg'],
   },
+  alternates: {
+    canonical: '/',
+  },
   robots: {
     index: true,
     follow: true,
