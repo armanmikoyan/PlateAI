@@ -24,8 +24,25 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: readSiteUrl(),
-  title: 'PlateAI',
-  description: 'Photo-first nutrition from a snap of your plate.',
+  title: 'PlateAI | Snap a Meal. Get Instant AI Nutrition.',
+  description:
+    'Photo-first nutrition from a snap of your plate. Snap any meal and instantly get calories, protein, carbs, and fat from a single AI photo analysis.',
+  openGraph: {
+    title: 'Plate AI — Snap a Meal. Get Instant Nutrition.',
+    description:
+      'Snap a photo of any meal and get instant AI-powered calorie, protein, carb, and fat analysis.',
+    url: 'https://plateai.fit/',
+    type: 'website',
+    images: [{ url: 'https://plateai.fit/images/og-image.jpg', alt: 'PlateAI', width: 1200, height: 630 }],
+    siteName: 'PlateAI',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Plate AI — Snap a Meal. Get Instant Nutrition.',
+    description:
+      'Snap a photo of any meal and get instant AI-powered calorie, protein, carb, and fat analysis.',
+    images: ['https://plateai.fit/images/og-image.jpg'],
+  },
   robots: {
     index: true,
     follow: true,
