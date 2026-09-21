@@ -5,12 +5,7 @@ import { Button } from '@/app/ui/button';
 import { SNAP } from './constants';
 import type { SnapPhotoActionsProps } from './types';
 
-export function SnapPhotoActions({
-  disabled,
-  onCamera,
-  onRemove,
-  onReplace,
-}: SnapPhotoActionsProps) {
+export function SnapPhotoActions({ disabled, onCamera, onRemove, onReplace }: SnapPhotoActionsProps) {
   return (
     <div className="flex w-full max-w-52 flex-col gap-2">
       <Button type="button" variant="secondary" disabled={disabled} onClick={onReplace}>

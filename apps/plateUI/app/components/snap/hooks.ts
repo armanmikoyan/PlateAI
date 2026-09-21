@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { useSearchParams } from 'next/navigation';
 import { MEAL_ANALYSIS_STATUS } from '@plate/plate-ai/constants';
+import { isLockedMealAnalysis } from '@plate/plate-ai/utils';
 import { readSnapSavedMealCache, writeSnapSavedMealCache } from '@/app/utils/meal-analyses/session-cache';
 import { mealAnalysisImageUrl } from '@/app/utils/meal-analyses/image';
 import { trackAnalysisComplete } from '@/app/utils/analytics';
@@ -15,13 +16,12 @@ import { snapAnalysisAtom, snapPhotoAtom, snapResumeAnalysisIdAtom } from './sta
 import type {
   SavedMealPayload,
   SnapAnalyzeErrorResponse,
-  SnapAnalyzeLockedResponse,
   SnapAnalyzeSuccessResponse,
   UseSnapAnalyzeResult,
   UseSnapPhotoResult,
   UseSnapSavedMealLoaderResult,
 } from './types';
-import { compressImageFile, toSnapSavedMealCache, waitForSnapLockedPreviewDelay } from './utils';
+import { compressImageFile, toSnapSavedMealCache } from './utils';
 
 export function useSnapPhoto(): UseSnapPhotoResult {
   const photo = useAtomValue(snapPhotoAtom);
@@ -96,6 +96,18 @@ export function useSnapSavedMealLoader(): UseSnapSavedMealLoaderResult {
 
       if (item.status === MEAL_ANALYSIS_STATUS.DONE && item.analysis) {
         setResumeAnalysisId(null);
+
+        if (isLockedMealAnalysis(item.analysis)) {
+          setAnalysis({
+            STATUS: SNAP_ANALYSIS_STATUS.SUCCESS,
+            LOCKED: true,
+            LOCKED_REASON: SNAP_LOCKED_REASON.PLAN,
+            ANALYSIS_ID: item.id,
+            ANALYSIS: item.analysis,
+          });
+          return;
+        }
+
         setAnalysis({
           STATUS: SNAP_ANALYSIS_STATUS.SUCCESS,
           LOCKED: false,
@@ -180,19 +192,6 @@ export function useSnapAnalyze(): UseSnapAnalyzeResult {
     setResumeAnalysisId(null);
   }, [setAnalysisState, setResumeAnalysisId]);
 
-  const showLockedAnalysis = useCallback(
-    async (analysisId: string, startedAtMs: number) => {
-      await waitForSnapLockedPreviewDelay(startedAtMs);
-      setAnalysisState({
-        STATUS: SNAP_ANALYSIS_STATUS.SUCCESS,
-        LOCKED: true,
-        LOCKED_REASON: SNAP_LOCKED_REASON.PLAN,
-        ANALYSIS_ID: analysisId,
-      });
-    },
-    [setAnalysisState],
-  );
-
   const showDailyLimitLockedAnalysis = useCallback(
     (analysisId: string) => {
       setAnalysisState({
@@ -205,10 +204,35 @@ export function useSnapAnalyze(): UseSnapAnalyzeResult {
     [setAnalysisState],
   );
 
+  const applyPendingAnalysis = useCallback(
+    (body: SnapAnalyzeSuccessResponse) => {
+      setResumeAnalysisId(null);
+
+      if (isLockedMealAnalysis(body.analysis)) {
+        setAnalysisState({
+          STATUS: SNAP_ANALYSIS_STATUS.SUCCESS,
+          LOCKED: true,
+          LOCKED_REASON: SNAP_LOCKED_REASON.PLAN,
+          ANALYSIS_ID: body.id,
+          ANALYSIS: body.analysis,
+        });
+        return;
+      }
+
+      trackAnalysisComplete(body.analysis.confidence);
+      setAnalysisState({
+        STATUS: SNAP_ANALYSIS_STATUS.SUCCESS,
+        LOCKED: false,
+        ANALYSIS: body.analysis,
+        ANALYSIS_ID: body.id,
+      });
+    },
+    [setAnalysisState, setResumeAnalysisId],
+  );
+
   const completePendingAnalysis = useCallback(
     async (analysisId: string) => {
       setAnalysisState({ STATUS: SNAP_ANALYSIS_STATUS.LOADING });
-      const startedAtMs = Date.now();
 
       try {
         const response = await fetch(`/api/meal-analyses/${analysisId}/complete`, {
@@ -217,11 +241,6 @@ export function useSnapAnalyze(): UseSnapAnalyzeResult {
 
         if (response.status === 401) {
           setAnalysisState({ STATUS: SNAP_ANALYSIS_STATUS.ERROR, MESSAGE: SNAP.SIGN_IN_REQUIRED });
-          return;
-        }
-
-        if (response.status === 403) {
-          await showLockedAnalysis(analysisId, startedAtMs);
           return;
         }
 
@@ -253,6 +272,7 @@ export function useSnapAnalyze(): UseSnapAnalyzeResult {
 
         if (!response.ok) {
           const body = (await response.json().catch(() => null)) as SnapAnalyzeErrorResponse | null;
+          setResumeAnalysisId(body?.id ?? analysisId);
           setAnalysisState({
             STATUS: SNAP_ANALYSIS_STATUS.ERROR,
             MESSAGE: body?.error ?? SNAP.ANALYSIS_ERROR,
@@ -261,18 +281,13 @@ export function useSnapAnalyze(): UseSnapAnalyzeResult {
         }
 
         const body = (await response.json()) as SnapAnalyzeSuccessResponse;
-        setResumeAnalysisId(null);
-        setAnalysisState({
-          STATUS: SNAP_ANALYSIS_STATUS.SUCCESS,
-          LOCKED: false,
-          ANALYSIS: body.analysis,
-          ANALYSIS_ID: body.id,
-        });
+        applyPendingAnalysis(body);
       } catch {
+        setResumeAnalysisId(analysisId);
         setAnalysisState({ STATUS: SNAP_ANALYSIS_STATUS.ERROR, MESSAGE: SNAP.ANALYSIS_ERROR });
       }
     },
-    [setAnalysisState, setResumeAnalysisId, showDailyLimitLockedAnalysis, showLockedAnalysis],
+    [applyPendingAnalysis, setAnalysisState, setResumeAnalysisId, showDailyLimitLockedAnalysis],
   );
 
   const analyzePhoto = useCallback(async () => {
@@ -291,8 +306,6 @@ export function useSnapAnalyze(): UseSnapAnalyzeResult {
     }
 
     setAnalysisState({ STATUS: SNAP_ANALYSIS_STATUS.LOADING });
-
-    const startedAtMs = Date.now();
 
     if (!photo.FILE) {
       setAnalysisState({ STATUS: SNAP_ANALYSIS_STATUS.ERROR, MESSAGE: SNAP.ANALYSIS_ERROR });
@@ -314,14 +327,19 @@ export function useSnapAnalyze(): UseSnapAnalyzeResult {
         return;
       }
 
-      if (response.status === 403) {
-        const body = (await response.json()) as SnapAnalyzeLockedResponse;
-        await showLockedAnalysis(body.id, startedAtMs);
-        return;
-      }
-
       if (response.status === 429) {
         const body = (await response.json().catch(() => null)) as SnapAnalyzeErrorResponse | null;
+
+        if (body?.planRequired) {
+          toast.add({
+            title: SNAP.FREE_LIMIT_TITLE,
+            description: body.error ?? SNAP.FREE_LIMIT_REACHED,
+            type: 'error',
+            timeout: SNAP.DAILY_LIMIT_TOAST_TIMEOUT_MS,
+          });
+          setAnalysisState({ STATUS: SNAP_ANALYSIS_STATUS.PLAN_REQUIRED });
+          return;
+        }
 
         if (body?.pendingLimit) {
           toast.add({
@@ -362,6 +380,9 @@ export function useSnapAnalyze(): UseSnapAnalyzeResult {
 
       if (!response.ok) {
         const body = (await response.json().catch(() => null)) as SnapAnalyzeErrorResponse | null;
+        if (body?.id) {
+          setResumeAnalysisId(body.id);
+        }
         setAnalysisState({
           STATUS: SNAP_ANALYSIS_STATUS.ERROR,
           MESSAGE: body?.error ?? SNAP.ANALYSIS_ERROR,
@@ -370,26 +391,19 @@ export function useSnapAnalyze(): UseSnapAnalyzeResult {
       }
 
       const body = (await response.json()) as SnapAnalyzeSuccessResponse;
-      setResumeAnalysisId(null);
-      trackAnalysisComplete(body.analysis.confidence);
-      setAnalysisState({
-        STATUS: SNAP_ANALYSIS_STATUS.SUCCESS,
-        LOCKED: false,
-        ANALYSIS: body.analysis,
-        ANALYSIS_ID: body.id,
-      });
+      applyPendingAnalysis(body);
     } catch {
       setAnalysisState({ STATUS: SNAP_ANALYSIS_STATUS.ERROR, MESSAGE: SNAP.ANALYSIS_ERROR });
     }
   }, [
     analysisState,
+    applyPendingAnalysis,
     completePendingAnalysis,
     photo,
     resumeAnalysisId,
     setAnalysisState,
     setResumeAnalysisId,
     showDailyLimitLockedAnalysis,
-    showLockedAnalysis,
   ]);
 
   return { analysisState, analyzePhoto, completePendingAnalysis, resetAnalysis };

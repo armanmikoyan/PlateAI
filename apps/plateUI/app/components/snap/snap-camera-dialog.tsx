@@ -18,12 +18,7 @@ import { SNAP, SNAP_CAMERA_BACK, SNAP_CAMERA_CAPTURE_FILE, SNAP_CAMERA_FRONT } f
 import type { SnapCameraDialogProps, SnapCameraFacing } from './types';
 import { fileFromJpegDataUrl } from './utils';
 
-export function SnapCameraDialog({
-  allowBackCamera,
-  onCapture,
-  onOpenChange,
-  open,
-}: SnapCameraDialogProps) {
+export function SnapCameraDialog({ allowBackCamera, onCapture, onOpenChange, open }: SnapCameraDialogProps) {
   const webcamRef = useRef<Webcam>(null);
   const [phoneFacing, setPhoneFacing] = useState<SnapCameraFacing>(SNAP_CAMERA_BACK);
   const [error, setError] = useState<string | null>(null);

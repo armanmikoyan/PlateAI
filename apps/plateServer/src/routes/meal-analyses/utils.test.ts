@@ -6,7 +6,6 @@ import {
   formatDailyLimitReachedMessage,
   formatPendingLimitReachedMessage,
   hasSnapAnalysisAccess,
-  isSnapAnalysisLocked,
 } from './utils.js';
 
 describe('snap analysis entitlements', () => {
@@ -38,15 +37,6 @@ describe('snap analysis entitlements', () => {
         subscriptionStatus: null,
       }),
     ).toBe(false);
-  });
-
-  it('isSnapAnalysisLocked is the inverse of hasSnapAnalysisAccess', () => {
-    const input = {
-      subscriptionPlan: SUBSCRIPTION_PLAN.PRO,
-      subscriptionStatus: SUBSCRIPTION_STATUS.ACTIVE,
-    };
-
-    expect(isSnapAnalysisLocked(input)).toBe(!hasSnapAnalysisAccess(input));
   });
 });
 

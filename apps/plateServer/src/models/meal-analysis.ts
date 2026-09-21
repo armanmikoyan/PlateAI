@@ -8,6 +8,11 @@ const mealAnalysisResultSchema = new Schema(
     proteinG: { type: Number, required: true },
     carbsG: { type: Number, required: true },
     fatG: { type: Number, required: true },
+    satFatG: { type: Number, required: true },
+    fiberG: { type: Number, required: true },
+    potassiumMg: { type: Number, required: true },
+    sodiumMg: { type: Number, required: true },
+    sugarG: { type: Number, required: true },
     confidence: {
       type: String,
       enum: Object.values(MEAL_ANALYSIS_CONFIDENCE),

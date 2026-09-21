@@ -1,12 +1,12 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { IMAGE_ANALYSIS_PROVIDER, MEAL_IMAGE_ANALYSIS_PROMPT } from '@/constants.js';
+import {
+  IMAGE_ANALYSIS_PROVIDER,
+  MEAL_IMAGE_ANALYSIS_PROMPT,
+  MEAL_IMAGE_ANALYSIS_REQUEST_TIMEOUT_MS,
+} from '@/constants.js';
 import { AiProviderError } from '@/errors.js';
 import { parseMealImageAnalysis } from '@/utils.js';
-import type {
-  ImageAnalysisProvider,
-  ImageAnalysisProviderConfig,
-  MealImageAnalysisInput,
-} from '@/types.js';
+import type { ImageAnalysisProvider, ImageAnalysisProviderConfig, MealImageAnalysisInput } from '@/types.js';
 
 function providerErrorMessage(error: unknown): string {
   return error instanceof Error ? error.message : 'Gemini request failed.';
@@ -29,15 +29,18 @@ export function createGeminiImageAnalysisProvider(
           },
         });
 
-        const result = await model.generateContent([
-          MEAL_IMAGE_ANALYSIS_PROMPT,
-          {
-            inlineData: {
-              mimeType: input.mimeType,
-              data: input.imageBase64,
+        const result = await model.generateContent(
+          [
+            MEAL_IMAGE_ANALYSIS_PROMPT,
+            {
+              inlineData: {
+                mimeType: input.mimeType,
+                data: input.imageBase64,
+              },
             },
-          },
-        ]);
+          ],
+          { timeout: MEAL_IMAGE_ANALYSIS_REQUEST_TIMEOUT_MS },
+        );
 
         const text = result.response.text().trim();
 

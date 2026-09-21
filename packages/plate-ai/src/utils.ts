@@ -12,11 +12,19 @@ import type {
   ImageAnalysisProviderConfig,
   ImageAnalysisProviderId,
   MealAnalysisConfidence,
+  MealAnalysisLockedResult,
+  MealAnalysisPreview,
   MealAnalysisResult,
 } from '@/types.js';
 
 function isConfidence(value: unknown): value is MealAnalysisConfidence {
   return typeof value === 'string' && MEAL_ANALYSIS_CONFIDENCE_VALUES.some((entry) => entry === value);
+}
+
+export function isLockedMealAnalysis(
+  analysis: MealAnalysisPreview | null | undefined,
+): analysis is MealAnalysisLockedResult {
+  return analysis != null && 'locked' in analysis;
 }
 
 function nonNegativeInteger(value: unknown, field: string): number {
@@ -62,6 +70,11 @@ export function parseMealImageAnalysis(rawText: string): MealAnalysisResult {
     proteinG: nonNegativeInteger(parsed.proteinG, 'proteinG'),
     carbsG: nonNegativeInteger(parsed.carbsG, 'carbsG'),
     fatG: nonNegativeInteger(parsed.fatG, 'fatG'),
+    satFatG: nonNegativeInteger(parsed.satFatG, 'satFatG'),
+    fiberG: nonNegativeInteger(parsed.fiberG, 'fiberG'),
+    potassiumMg: nonNegativeInteger(parsed.potassiumMg, 'potassiumMg'),
+    sodiumMg: nonNegativeInteger(parsed.sodiumMg, 'sodiumMg'),
+    sugarG: nonNegativeInteger(parsed.sugarG, 'sugarG'),
     confidence: parsed.confidence,
     notes: optionalNote(parsed.notes),
   };

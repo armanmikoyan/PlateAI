@@ -8,9 +8,7 @@ import {
   sleep,
 } from '@/utils.js';
 
-export async function analyzeMealImage(
-  input: MealImageAnalysisInput,
-): Promise<MealAnalysisResult> {
+export async function analyzeMealImage(input: MealImageAnalysisInput): Promise<MealAnalysisResult> {
   if (readImageAnalysisTestMode()) {
     await sleep(readImageAnalysisTestDelayMs());
     return MEAL_IMAGE_ANALYSIS_TEST_FIXTURE;

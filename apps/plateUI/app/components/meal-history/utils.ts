@@ -1,8 +1,5 @@
 import { MEAL_ANALYSIS_STATUS } from '@plate/plate-ai/constants';
-import type {
-  MealAnalysisListResponse,
-  MealAnalysisSummary,
-} from '@plate/plate-ai/types';
+import type { MealAnalysisListResponse, MealAnalysisSummary } from '@plate/plate-ai/types';
 import { mealAnalysisImageUrl } from '@/app/utils/meal-analyses/image';
 import type { SnapSavedMealCache } from '@/app/utils/meal-analyses/types';
 
@@ -28,7 +25,8 @@ export function analysesCountToday(items: readonly MealAnalysisSummary[], now = 
   startOfDay.setUTCHours(0, 0, 0, 0);
 
   return items.filter(
-    (item) => item.status === MEAL_ANALYSIS_STATUS.DONE && new Date(item.createdAt).getTime() >= startOfDay.getTime(),
+    (item) =>
+      item.status === MEAL_ANALYSIS_STATUS.DONE && new Date(item.createdAt).getTime() >= startOfDay.getTime(),
   ).length;
 }
 

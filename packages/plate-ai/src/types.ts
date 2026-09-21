@@ -1,10 +1,8 @@
 import type { MEAL_ANALYSIS_CONFIDENCE, MEAL_ANALYSIS_STATUS } from '@/constants.js';
 
-export type MealAnalysisConfidence =
-  (typeof MEAL_ANALYSIS_CONFIDENCE)[keyof typeof MEAL_ANALYSIS_CONFIDENCE];
+export type MealAnalysisConfidence = (typeof MEAL_ANALYSIS_CONFIDENCE)[keyof typeof MEAL_ANALYSIS_CONFIDENCE];
 
-export type MealAnalysisStatus =
-  (typeof MEAL_ANALYSIS_STATUS)[keyof typeof MEAL_ANALYSIS_STATUS];
+export type MealAnalysisStatus = (typeof MEAL_ANALYSIS_STATUS)[keyof typeof MEAL_ANALYSIS_STATUS];
 
 export type MealAnalysisResult = Readonly<{
   mealName: string;
@@ -12,14 +10,35 @@ export type MealAnalysisResult = Readonly<{
   proteinG: number;
   carbsG: number;
   fatG: number;
+  satFatG: number;
+  fiberG: number;
+  potassiumMg: number;
+  sodiumMg: number;
+  sugarG: number;
   confidence: MealAnalysisConfidence;
   notes: string | null;
 }>;
 
+export type MealAnalysisLockedResult = Readonly<{
+  locked: true;
+  mealName: string;
+  carbsG: number;
+  fatG: number;
+  satFatG: number;
+  fiberG: number;
+  potassiumMg: number;
+  sodiumMg: number;
+  sugarG: number;
+  confidence: MealAnalysisConfidence;
+  notes: string | null;
+}>;
+
+export type MealAnalysisPreview = MealAnalysisResult | MealAnalysisLockedResult;
+
 export type MealAnalysisSummary = Readonly<{
   id: string;
   status: MealAnalysisStatus;
-  analysis: MealAnalysisResult | null;
+  analysis: MealAnalysisPreview | null;
   errorMessage: string | null;
   createdAt: string;
   updatedAt: string;

@@ -3,7 +3,12 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { LoaderCircle, ExternalLink } from 'lucide-react';
-import { isPaidPlan, getDailyAnalysisLimit, hasUnlimitedDailyAnalyses } from '@plate/plate-billing/utils';
+import {
+  isPaidPlan,
+  getDailyAnalysisLimit,
+  hasUnlimitedDailyAnalyses,
+  isActivePaidPlan,
+} from '@plate/plate-billing/utils';
 import { SUBSCRIPTION_STATUS } from '@plate/plate-billing/constants';
 import { Badge } from '@/app/ui/badge';
 import { Button } from '@/app/ui/button';
@@ -22,6 +27,7 @@ export default function MealHistory({ user, justPurchased = false }: MealHistory
     user?.subscriptionPlan != null ? MEAL_HISTORY_PLAN_LABELS[user.subscriptionPlan] : MEAL_HISTORY.PLAN_NONE;
   const paid = user?.subscriptionPlan != null && isPaidPlan(user.subscriptionPlan);
   const isActive = paid && user.subscriptionStatus === SUBSCRIPTION_STATUS.ACTIVE;
+  const canDelete = isActivePaidPlan(user?.subscriptionPlan ?? null, user?.subscriptionStatus ?? null);
   const isCancelled = user?.subscriptionStatus === SUBSCRIPTION_STATUS.CANCELLED;
   const isExpired =
     user?.subscriptionStatus === SUBSCRIPTION_STATUS.EXPIRED ||
@@ -197,7 +203,7 @@ export default function MealHistory({ user, justPurchased = false }: MealHistory
         </p>
       ) : null}
       {items.map((item) => (
-        <MealHistoryRow key={item.id} item={item} onDelete={handleDeleteItem} />
+        <MealHistoryRow key={item.id} item={item} onDelete={canDelete ? handleDeleteItem : undefined} />
       ))}
     </div>
   );

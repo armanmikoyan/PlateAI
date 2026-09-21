@@ -1,7 +1,4 @@
-import type {
-  MealAnalysisResult,
-  MealAnalysisStatus,
-} from '@plate/plate-ai/types';
+import type { MealAnalysisResult, MealAnalysisStatus } from '@plate/plate-ai/types';
 import type { SubscriptionPlan, SubscriptionStatus } from '@plate/plate-billing/types';
 import type { MealAnalysisDocument } from '@/models/meal-analysis.js';
 
@@ -10,9 +7,9 @@ export type SubscriptionEntitlementInput = Readonly<{
   subscriptionStatus: SubscriptionStatus | null;
 }>;
 
-export type MealAnalysisLockedResponse = Readonly<{
+export type MealAnalysisPlanRequiredResponse = Readonly<{
   error: string;
-  locked: true;
+  planRequired: true;
 }>;
 
 export type CreateMealAnalysisBody = Readonly<{

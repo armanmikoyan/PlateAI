@@ -67,7 +67,10 @@ describe('snapHeadingCopy', () => {
 
   it('uses photo ready copy when a photo is waiting to analyze', () => {
     expect(
-      snapHeadingPhase({ FILE: new File([], 'plate.jpg'), PREVIEW_URL: 'blob:test' }, { STATUS: SNAP_ANALYSIS_STATUS.IDLE }),
+      snapHeadingPhase(
+        { FILE: new File([], 'plate.jpg'), PREVIEW_URL: 'blob:test' },
+        { STATUS: SNAP_ANALYSIS_STATUS.IDLE },
+      ),
     ).toBe(SNAP_HEADING_PHASE.PHOTO_READY);
 
     expect(
@@ -79,19 +82,29 @@ describe('snapHeadingCopy', () => {
     ).toBe(SNAP.HEADING_PHOTO_READY_TITLE);
   });
 
-  it('uses analyzing copy while loading', () => {
+  it('uses free-limit copy when a plan is required', () => {
     const photo = { FILE: new File([], 'plate.jpg'), PREVIEW_URL: 'blob:test' };
 
     expect(
-      snapHeadingCopy(photo, { STATUS: SNAP_ANALYSIS_STATUS.LOADING }, DEVICE_TYPE.DESKTOP),
+      snapHeadingCopy(photo, { STATUS: SNAP_ANALYSIS_STATUS.PLAN_REQUIRED }, DEVICE_TYPE.DESKTOP),
     ).toEqual({
+      PHASE: SNAP_HEADING_PHASE.PHOTO_READY,
+      TITLE: SNAP.HEADING_FREE_LIMIT_TITLE,
+      SUBTITLE: SNAP.HEADING_FREE_LIMIT_SUBTITLE,
+    });
+  });
+
+  it('uses analyzing copy while loading', () => {
+    const photo = { FILE: new File([], 'plate.jpg'), PREVIEW_URL: 'blob:test' };
+
+    expect(snapHeadingCopy(photo, { STATUS: SNAP_ANALYSIS_STATUS.LOADING }, DEVICE_TYPE.DESKTOP)).toEqual({
       PHASE: SNAP_HEADING_PHASE.LOADING,
       TITLE: SNAP.HEADING_LOADING_TITLE,
       SUBTITLE: SNAP.HEADING_LOADING_SUBTITLE,
     });
   });
 
-  it('uses locked copy after success', () => {
+  it('shows the detected meal name for a locked (plan) result', () => {
     const photo = { FILE: new File([], 'plate.jpg'), PREVIEW_URL: 'blob:test' };
 
     expect(
@@ -102,12 +115,25 @@ describe('snapHeadingCopy', () => {
           LOCKED: true,
           LOCKED_REASON: SNAP_LOCKED_REASON.PLAN,
           ANALYSIS_ID: 'abc',
+          ANALYSIS: {
+            locked: true,
+            mealName: 'Grilled salmon',
+            carbsG: 18,
+            fatG: 46,
+            satFatG: 16,
+            fiberG: 6,
+            sugarG: 8,
+            sodiumMg: 520,
+            potassiumMg: 980,
+            confidence: 'high',
+            notes: null,
+          },
         },
         DEVICE_TYPE.DESKTOP,
       ),
     ).toEqual({
       PHASE: SNAP_HEADING_PHASE.SUCCESS,
-      TITLE: SNAP.HEADING_LOCKED_TITLE,
+      TITLE: 'Grilled salmon',
       SUBTITLE: SNAP.HEADING_LOCKED_SUBTITLE,
     });
   });
@@ -149,6 +175,11 @@ describe('snapHeadingCopy', () => {
             proteinG: 42,
             carbsG: 38,
             fatG: 18,
+            satFatG: 4,
+            fiberG: 6,
+            potassiumMg: 640,
+            sodiumMg: 780,
+            sugarG: 7,
             confidence: 'high',
             notes: null,
           },

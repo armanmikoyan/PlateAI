@@ -1,6 +1,18 @@
-import { createCheckout, getSubscription, listSubscriptions, getOrder, lemonSqueezySetup } from '@lemonsqueezy/lemonsqueezy.js';
+import {
+  createCheckout,
+  getSubscription,
+  listSubscriptions,
+  getOrder,
+  lemonSqueezySetup,
+} from '@lemonsqueezy/lemonsqueezy.js';
 import { SUBSCRIPTION_PLAN } from '@/constants.js';
-import type { CheckoutResult, CreateCheckoutInput, CustomerPortalResult, BillingProvider, WebhookParseResult } from '@/types.js';
+import type {
+  CheckoutResult,
+  CreateCheckoutInput,
+  CustomerPortalResult,
+  BillingProvider,
+  WebhookParseResult,
+} from '@/types.js';
 import { CHECKOUT_ERROR } from '@/constants.js';
 import {
   buildVariantPlanMap,

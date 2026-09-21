@@ -24,6 +24,8 @@ export const PENDING_ANALYSIS_LIMITS = {
 
 export const NO_PLAN_PENDING_ANALYSIS_LIMIT = 3 as const;
 
+export const NO_PLAN_TOTAL_ANALYSIS_LIMIT = 1 as const;
+
 export const PLAN_RANK = {
   [SUBSCRIPTION_PLAN.BASIC]: 1,
   [SUBSCRIPTION_PLAN.PRO]: 2,

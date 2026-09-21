@@ -58,7 +58,7 @@ export function MealHistoryRow({ item, onDelete }: MealHistoryRowProps) {
   }
 
   async function handleDelete() {
-    if (removing) return;
+    if (removing || !onDelete) return;
     setRemoving(true);
     try {
       await onDelete(item.id);
@@ -92,25 +92,24 @@ export function MealHistoryRow({ item, onDelete }: MealHistoryRowProps) {
             <p className="font-heading mt-2 truncate text-base font-semibold tracking-tight">
               {mealHistoryRowTitle(item)}
             </p>
-            {item.analysis ? (
-              <p className="text-muted-foreground mt-1 text-sm">
-                {item.analysis.calories} kcal · {item.analysis.proteinG}g protein
-              </p>
+            {item.status === MEAL_ANALYSIS_STATUS.FAILED && item.errorMessage ? (
+              <p className="text-destructive mt-1 text-sm">{item.errorMessage}</p>
             ) : null}
-            {item.errorMessage ? <p className="text-destructive mt-1 text-sm">{item.errorMessage}</p> : null}
           </div>
         </div>
 
         <div className="flex shrink-0 flex-wrap items-center gap-2">
-          <Button
-            variant="ghost"
-            size="icon-xs"
-            disabled={removing}
-            aria-label={MEAL_HISTORY.REMOVE}
-            onClick={handleDelete}
-          >
-            {removing ? <LoaderCircle className="size-3 animate-spin" aria-hidden /> : <Trash2 />}
-          </Button>
+          {onDelete ? (
+            <Button
+              variant="ghost"
+              size="icon-xs"
+              disabled={removing}
+              aria-label={MEAL_HISTORY.REMOVE}
+              onClick={handleDelete}
+            >
+              {removing ? <LoaderCircle className="size-3 animate-spin" aria-hidden /> : <Trash2 />}
+            </Button>
+          ) : null}
           <Button
             className="shrink-0"
             nativeButton={false}

@@ -120,6 +120,14 @@ export const HERO_CALORIES_TILE: HeroStatTileChrome = {
   ICON_BG_CLASS: 'bg-accent/18',
 };
 
+export const HERO_PROTEIN_TILE: HeroStatTileChrome = {
+  ICON: Beef,
+  LABEL: HERO.PROTEIN_STAT_LABEL,
+  UNIT: HERO.PROTEIN_UNIT,
+  ICON_CLASS: 'text-macro-protein/95',
+  ICON_BG_CLASS: 'bg-macro-protein/12 ring-1 ring-macro-protein/15',
+};
+
 export const HERO_NUTRIENT_METRIC_ROWS: readonly HeroNutrientMetricRow[] = [
   {
     KEY: 'PROTEIN',

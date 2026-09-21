@@ -1,12 +1,10 @@
 import type { NextFunction, Request, Response } from 'express';
 import { MEAL_ANALYSIS_STATUS } from '@plate/plate-ai/constants';
-import type {
-  MealAnalysisItemResponse,
-  MealAnalysisListResponse,
-} from '@plate/plate-ai/types';
+import type { MealAnalysisItemResponse, MealAnalysisListResponse } from '@plate/plate-ai/types';
 import { MEAL_ANALYSIS_ERRORS } from '@/routes/meal-analyses/constants.js';
 import { analyzeMeal } from '@/routes/meal-analyses/service.js';
 import {
+  countForUser,
   countPendingForUser,
   createPending,
   findByIdForUser,
@@ -15,14 +13,15 @@ import {
   removeForUser,
   updateForUser,
 } from '@/routes/meal-analyses/repository.js';
-import { getPendingAnalysisLimit } from '@plate/plate-billing/utils';
+import { canCreateAnalysis, getPendingAnalysisLimit } from '@plate/plate-billing/utils';
 import type {
-  MealAnalysisLockedResponse,
+  MealAnalysisPlanRequiredResponse,
   UpdateMealAnalysisBody,
 } from '@/routes/meal-analyses/types.js';
 import {
   canSavePendingAnalysis,
   formatPendingLimitReachedMessage,
+  hasSnapAnalysisAccess,
   isMealAnalysisResult,
   parseCreateMealAnalysisBody,
   toMealAnalysisSummary,
@@ -35,10 +34,11 @@ export async function listMealAnalyses(
 ): Promise<void> {
   try {
     const userId = request.authUser!.id;
+    const locked = !hasSnapAnalysisAccess(request.authUser!);
     const documents = await listForUser(userId);
 
     response.json({
-      items: documents.map(toMealAnalysisSummary),
+      items: documents.map((document) => toMealAnalysisSummary(document, locked)),
     } satisfies MealAnalysisListResponse);
   } catch (error) {
     next(error);
@@ -52,6 +52,7 @@ export async function getMealAnalysis(
 ): Promise<void> {
   try {
     const userId = request.authUser!.id;
+    const locked = !hasSnapAnalysisAccess(request.authUser!);
     const document = await findByIdForUser(userId, request.params.id);
 
     if (!document) {
@@ -60,7 +61,7 @@ export async function getMealAnalysis(
     }
 
     response.json({
-      item: toMealAnalysisSummary(document),
+      item: toMealAnalysisSummary(document, locked),
     } satisfies MealAnalysisItemResponse);
   } catch (error) {
     next(error);
@@ -96,7 +97,8 @@ export async function createMealAnalysis(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const userId = request.authUser!.id;
+    const user = request.authUser!;
+    const userId = user.id;
     const body = parseCreateMealAnalysisBody(request.body);
 
     if (!body) {
@@ -104,25 +106,31 @@ export async function createMealAnalysis(
       return;
     }
 
-    const pendingCount = await countPendingForUser(userId);
+    if (hasSnapAnalysisAccess(user)) {
+      const pendingCount = await countPendingForUser(userId);
 
-    if (!canSavePendingAnalysis(pendingCount, request.authUser!.subscriptionPlan)) {
-      response.status(429).json({
-        error: formatPendingLimitReachedMessage(
-          getPendingAnalysisLimit(request.authUser!.subscriptionPlan),
-        ),
-      });
-      return;
+      if (!canSavePendingAnalysis(pendingCount, user.subscriptionPlan)) {
+        response.status(429).json({
+          error: formatPendingLimitReachedMessage(getPendingAnalysisLimit(user.subscriptionPlan)),
+        });
+        return;
+      }
+    } else {
+      const totalCount = await countForUser(userId);
+
+      if (!canCreateAnalysis(totalCount, user.subscriptionPlan, user.subscriptionStatus)) {
+        response.status(429).json({
+          error: MEAL_ANALYSIS_ERRORS.FREE_LIMIT_REACHED,
+          planRequired: true,
+        } satisfies MealAnalysisPlanRequiredResponse);
+        return;
+      }
     }
 
-    const document = await createPending(
-      userId,
-      Buffer.from(body.imageBase64, 'base64'),
-      body.imageMimeType,
-    );
+    const document = await createPending(userId, Buffer.from(body.imageBase64, 'base64'), body.imageMimeType);
 
     response.status(201).json({
-      item: toMealAnalysisSummary(document),
+      item: toMealAnalysisSummary(document, !hasSnapAnalysisAccess(user)),
     } satisfies MealAnalysisItemResponse);
   } catch (error) {
     next(error);
@@ -156,7 +164,7 @@ export async function patchMealAnalysis(
     }
 
     response.json({
-      item: toMealAnalysisSummary(document),
+      item: toMealAnalysisSummary(document, !hasSnapAnalysisAccess(request.authUser!)),
     } satisfies MealAnalysisItemResponse);
   } catch (error) {
     next(error);
@@ -169,17 +177,13 @@ export async function analyzeMealAnalysis(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const result = await analyzeMeal(request.authUser!, request.params.id);
+    const user = request.authUser!;
+    const result = await analyzeMeal(user, request.params.id);
 
     if (result.ok) {
-      response.json({ item: toMealAnalysisSummary(result.document) } satisfies MealAnalysisItemResponse);
-      return;
-    }
-
-    if (result.status === 403) {
-      response
-        .status(403)
-        .json({ error: result.error, locked: true } satisfies MealAnalysisLockedResponse);
+      response.json({
+        item: toMealAnalysisSummary(result.document, !hasSnapAnalysisAccess(user)),
+      } satisfies MealAnalysisItemResponse);
       return;
     }
 

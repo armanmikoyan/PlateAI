@@ -11,7 +11,7 @@ import {
 import {
   canAnalyzeToday,
   formatDailyLimitReachedMessage,
-  isSnapAnalysisLocked,
+  hasSnapAnalysisAccess,
 } from '@/routes/meal-analyses/utils.js';
 import type { SubscriptionEntitlementInput } from '@/routes/meal-analyses/types.js';
 import type { SubscriptionPlan } from '@plate/plate-billing/types';
@@ -21,20 +21,18 @@ export async function analyzeMeal(
   user: SubscriptionEntitlementInput & { id: string; subscriptionPlan: SubscriptionPlan | null },
   analysisId: string,
 ): Promise<AnalyzeMealResult> {
-  if (isSnapAnalysisLocked(user)) {
-    return { ok: false, status: 403, error: MEAL_ANALYSIS_ERRORS.LOCKED };
-  }
+  if (hasSnapAnalysisAccess(user)) {
+    const startOfDay = new Date();
+    startOfDay.setUTCHours(0, 0, 0, 0);
+    const todayCount = await countAnalysesSince(user.id, startOfDay);
 
-  const startOfDay = new Date();
-  startOfDay.setUTCHours(0, 0, 0, 0);
-  const todayCount = await countAnalysesSince(user.id, startOfDay);
-
-  if (!canAnalyzeToday(todayCount, user.subscriptionPlan)) {
-    return {
-      ok: false,
-      status: 429,
-      error: formatDailyLimitReachedMessage(todayCount, getDailyAnalysisLimit(user.subscriptionPlan)),
-    };
+    if (!canAnalyzeToday(todayCount, user.subscriptionPlan)) {
+      return {
+        ok: false,
+        status: 429,
+        error: formatDailyLimitReachedMessage(todayCount, getDailyAnalysisLimit(user.subscriptionPlan)),
+      };
+    }
   }
 
   const document = await findByIdWithImageForUser(user.id, analysisId);
@@ -47,10 +45,7 @@ export async function analyzeMeal(
     return { ok: true, document };
   }
 
-  if (
-    document.status !== MEAL_ANALYSIS_STATUS.PENDING &&
-    document.status !== MEAL_ANALYSIS_STATUS.FAILED
-  ) {
+  if (document.status !== MEAL_ANALYSIS_STATUS.PENDING && document.status !== MEAL_ANALYSIS_STATUS.FAILED) {
     return { ok: false, status: 409, error: MEAL_ANALYSIS_ERRORS.CANNOT_COMPLETE };
   }
 
@@ -80,6 +75,7 @@ export async function analyzeMeal(
   const updated = await updateForUser(user.id, analysisId, {
     status: MEAL_ANALYSIS_STATUS.DONE,
     analysis,
+    errorMessage: null,
   });
 
   if (!updated) {

@@ -108,6 +108,12 @@ export async function countAnalysesSince(userId: string, since: Date): Promise<n
   }).exec();
 }
 
+export async function countForUser(userId: string): Promise<number> {
+  return MealAnalysis.countDocuments({
+    userId: new Types.ObjectId(userId),
+  }).exec();
+}
+
 export async function countPendingForUser(userId: string): Promise<number> {
   return MealAnalysis.countDocuments({
     userId: new Types.ObjectId(userId),

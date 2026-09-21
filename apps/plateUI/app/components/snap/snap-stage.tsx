@@ -5,14 +5,15 @@ import { HeroBetweenCardsArrow } from '@/app/components/hero/hero-between-cards-
 import { SnapMealPhotoCard } from './snap-meal-photo-card';
 import { SnapAnalysisReadout } from './snap-analysis-readout';
 import { SnapAnalyzeCta } from './snap-analyze-cta';
-import type { SnapAnalysisStageProps, SnapPhotoStageProps, SnapStageGridProps } from './types';
+import { SnapPlanRequiredCta } from './snap-plan-required-cta';
+import type {
+  SnapAnalysisStageProps,
+  SnapPhotoStageProps,
+  SnapPlanRequiredStageProps,
+  SnapStageGridProps,
+} from './types';
 
-function SnapStageGrid({
-  photo,
-  right,
-  photoActions,
-  photoActionsDisabled,
-}: SnapStageGridProps) {
+function SnapStageGrid({ photo, right, photoActions, photoActionsDisabled }: SnapStageGridProps) {
   return (
     <div className={SNAP_STAGE_GRID_SHELL}>
       <div className="relative z-0 w-full min-w-0">
@@ -41,18 +42,23 @@ export function SnapPhotoStage({ photo, onAnalyze, photoActions }: SnapPhotoStag
   );
 }
 
+export function SnapPlanRequiredStage({ photo, photoActions }: SnapPlanRequiredStageProps) {
+  return <SnapStageGrid photo={photo} photoActions={photoActions} right={<SnapPlanRequiredCta />} />;
+}
+
 export function SnapAnalysisStage({
   analysisState,
   photo,
   photoActions,
   photoActionsDisabled,
+  onRetry,
 }: SnapAnalysisStageProps) {
   return (
     <SnapStageGrid
       photo={photo}
       photoActions={photoActions}
       photoActionsDisabled={photoActionsDisabled}
-      right={<SnapAnalysisReadout analysisState={analysisState} photo={photo} />}
+      right={<SnapAnalysisReadout analysisState={analysisState} photo={photo} onRetry={onRetry} />}
     />
   );
 }

@@ -1,13 +1,8 @@
 import { analyzeMealAnalysis, createPendingMealAnalysis } from '@/app/api/meal-analyses/client';
-import type { MealAnalysisResult } from '@plate/plate-ai/types';
+import type { MealAnalysisPreview } from '@plate/plate-ai/types';
 
 type AnalyzeSuccessResponse = Readonly<{
-  analysis: MealAnalysisResult;
-  id: string;
-}>;
-
-type AnalyzeLockedResponse = Readonly<{
-  locked: true;
+  analysis: MealAnalysisPreview;
   id: string;
 }>;
 
@@ -16,6 +11,7 @@ type AnalyzeErrorResponse = Readonly<{
   id?: string;
   retryAfterSeconds?: number;
   pendingLimit?: true;
+  planRequired?: true;
 }>;
 
 function imageMimeForAnalysis(file: Pick<File, 'name' | 'type'>): string {
@@ -63,6 +59,16 @@ export async function POST(request: Request) {
     const created = await createPendingMealAnalysis(cookieHeader, imageBase64, mimeType, forwardedFor);
 
     if (!created.ok) {
+      if (created.status === 429 && created.planRequired) {
+        return Response.json(
+          {
+            error: created.message ?? 'Upgrade to a paid plan to analyze more plates.',
+            planRequired: true,
+          } satisfies AnalyzeErrorResponse,
+          { status: 429 },
+        );
+      }
+
       if (created.status === 429) {
         return Response.json(
           {
@@ -80,17 +86,11 @@ export async function POST(request: Request) {
     const result = await analyzeMealAnalysis(cookieHeader, analysisId, forwardedFor);
 
     if (!result.ok) {
-      if (result.locked) {
-        return Response.json(
-          { locked: true, id: analysisId } satisfies AnalyzeLockedResponse,
-          { status: 403 },
-        );
-      }
-
       if (result.status === 429) {
         return Response.json(
           {
-            error: result.message ?? 'Daily analysis limit reached. New analyses unlock after midnight (UTC).',
+            error:
+              result.message ?? 'Daily analysis limit reached. New analyses unlock after midnight (UTC).',
             id: analysisId,
             ...(result.retryAfterSeconds ? { retryAfterSeconds: result.retryAfterSeconds } : {}),
           } satisfies AnalyzeErrorResponse,
@@ -98,13 +98,25 @@ export async function POST(request: Request) {
         );
       }
 
-      return errorResponse('Could not analyze that photo. Try a clearer shot.', 502);
+      return Response.json(
+        {
+          error: 'Could not analyze that photo. Try a clearer shot.',
+          id: analysisId,
+        } satisfies AnalyzeErrorResponse,
+        { status: 502 },
+      );
     }
 
     const analysis = result.item.analysis;
 
     if (!analysis) {
-      return errorResponse('Could not analyze that photo. Try a clearer shot.', 502);
+      return Response.json(
+        {
+          error: 'Could not analyze that photo. Try a clearer shot.',
+          id: analysisId,
+        } satisfies AnalyzeErrorResponse,
+        { status: 502 },
+      );
     }
 
     return Response.json({ analysis, id: analysisId } satisfies AnalyzeSuccessResponse);

@@ -1,12 +1,12 @@
 import OpenAI from 'openai';
-import { IMAGE_ANALYSIS_PROVIDER, MEAL_IMAGE_ANALYSIS_PROMPT } from '@/constants.js';
+import {
+  IMAGE_ANALYSIS_PROVIDER,
+  MEAL_IMAGE_ANALYSIS_PROMPT,
+  MEAL_IMAGE_ANALYSIS_REQUEST_TIMEOUT_MS,
+} from '@/constants.js';
 import { AiProviderError } from '@/errors.js';
 import { parseMealImageAnalysis } from '@/utils.js';
-import type {
-  ImageAnalysisProvider,
-  ImageAnalysisProviderConfig,
-  MealImageAnalysisInput,
-} from '@/types.js';
+import type { ImageAnalysisProvider, ImageAnalysisProviderConfig, MealImageAnalysisInput } from '@/types.js';
 
 function providerErrorMessage(error: unknown): string {
   return error instanceof Error ? error.message : 'OpenAI request failed.';
@@ -15,7 +15,11 @@ function providerErrorMessage(error: unknown): string {
 export function createOpenAiImageAnalysisProvider(
   config: ImageAnalysisProviderConfig,
 ): ImageAnalysisProvider {
-  const client = new OpenAI({ apiKey: config.apiKey });
+  const client = new OpenAI({
+    apiKey: config.apiKey,
+    timeout: MEAL_IMAGE_ANALYSIS_REQUEST_TIMEOUT_MS,
+    maxRetries: 1,
+  });
 
   return {
     id: IMAGE_ANALYSIS_PROVIDER.OPENAI,

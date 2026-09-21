@@ -1,6 +1,6 @@
 import { isActivePaidPlan, getDailyAnalysisLimit, getPendingAnalysisLimit } from '@plate/plate-billing/utils';
 import { MEAL_ANALYSIS_ERRORS } from '@/routes/meal-analyses/constants.js';
-import type { MealAnalysisResult } from '@plate/plate-ai/types';
+import type { MealAnalysisPreview, MealAnalysisResult } from '@plate/plate-ai/types';
 import type { MealAnalysisDocument } from '@/models/meal-analysis.js';
 import type { SubscriptionEntitlementInput } from '@/routes/meal-analyses/types.js';
 import type { SubscriptionPlan } from '@plate/plate-billing/types';
@@ -31,29 +31,51 @@ export function hasSnapAnalysisAccess(subscription: SubscriptionEntitlementInput
   return isActivePaidPlan(subscription.subscriptionPlan, subscription.subscriptionStatus);
 }
 
-export function isSnapAnalysisLocked(subscription: SubscriptionEntitlementInput): boolean {
-  return !hasSnapAnalysisAccess(subscription);
-}
-
-export function toMealAnalysisResult(
-  analysis: NonNullable<MealAnalysisDocument['analysis']>,
-): MealAnalysisResult {
+function toMealAnalysisResult(analysis: NonNullable<MealAnalysisDocument['analysis']>): MealAnalysisResult {
   return {
     mealName: analysis.mealName,
     calories: analysis.calories,
     proteinG: analysis.proteinG,
     carbsG: analysis.carbsG,
     fatG: analysis.fatG,
+    satFatG: analysis.satFatG,
+    fiberG: analysis.fiberG,
+    potassiumMg: analysis.potassiumMg,
+    sodiumMg: analysis.sodiumMg,
+    sugarG: analysis.sugarG,
     confidence: analysis.confidence,
     notes: analysis.notes ?? null,
   };
 }
 
-export function toMealAnalysisSummary(document: MealAnalysisDocument): MealAnalysisSummary {
+export function toMealAnalysisPreview(
+  analysis: NonNullable<MealAnalysisDocument['analysis']>,
+  locked: boolean,
+): MealAnalysisPreview {
+  if (locked) {
+    return {
+      locked: true,
+      mealName: analysis.mealName,
+      carbsG: analysis.carbsG,
+      fatG: analysis.fatG,
+      satFatG: analysis.satFatG,
+      fiberG: analysis.fiberG,
+      potassiumMg: analysis.potassiumMg,
+      sodiumMg: analysis.sodiumMg,
+      sugarG: analysis.sugarG,
+      confidence: analysis.confidence,
+      notes: analysis.notes ?? null,
+    };
+  }
+
+  return toMealAnalysisResult(analysis);
+}
+
+export function toMealAnalysisSummary(document: MealAnalysisDocument, locked: boolean): MealAnalysisSummary {
   return {
     id: document._id.toString(),
     status: document.status,
-    analysis: document.analysis ? toMealAnalysisResult(document.analysis) : null,
+    analysis: document.analysis ? toMealAnalysisPreview(document.analysis, locked) : null,
     errorMessage: document.errorMessage ?? null,
     createdAt: document.createdAt.toISOString(),
     updatedAt: document.updatedAt.toISOString(),
@@ -73,6 +95,11 @@ export function isMealAnalysisResult(value: unknown): value is MealAnalysisResul
     typeof candidate.proteinG === 'number' &&
     typeof candidate.carbsG === 'number' &&
     typeof candidate.fatG === 'number' &&
+    typeof candidate.satFatG === 'number' &&
+    typeof candidate.fiberG === 'number' &&
+    typeof candidate.potassiumMg === 'number' &&
+    typeof candidate.sodiumMg === 'number' &&
+    typeof candidate.sugarG === 'number' &&
     typeof candidate.confidence === 'string' &&
     (typeof candidate.notes === 'string' || candidate.notes === null)
   );

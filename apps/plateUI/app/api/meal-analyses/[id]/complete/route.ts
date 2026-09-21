@@ -1,14 +1,13 @@
 import { analyzeMealAnalysis } from '@/app/api/meal-analyses/client';
-import type { MealAnalysisResult } from '@plate/plate-ai/types';
+import type { MealAnalysisPreview } from '@plate/plate-ai/types';
 
 type CompleteMealAnalysisResponse = Readonly<{
-  analysis: MealAnalysisResult;
+  analysis: MealAnalysisPreview;
   id: string;
 }>;
 
 type CompleteMealAnalysisErrorResponse = Readonly<{
   error: string;
-  locked?: true;
   retryAfterSeconds?: number;
 }>;
 
@@ -16,30 +15,22 @@ type CompleteMealAnalysisRouteContext = Readonly<{
   params: Promise<{ id: string }>;
 }>;
 
-function errorResponse(message: string, status: number, extra?: { locked?: true; retryAfterSeconds?: number }) {
+function errorResponse(message: string, status: number, extra?: { retryAfterSeconds?: number }) {
   return Response.json(
     {
       error: message,
-      ...(extra?.locked ? { locked: true } : {}),
       ...(extra?.retryAfterSeconds ? { retryAfterSeconds: extra.retryAfterSeconds } : {}),
     } satisfies CompleteMealAnalysisErrorResponse,
     { status },
   );
 }
 
-export async function POST(
-  request: Request,
-  context: CompleteMealAnalysisRouteContext,
-): Promise<Response> {
+export async function POST(request: Request, context: CompleteMealAnalysisRouteContext): Promise<Response> {
   const { id } = await context.params;
   const cookieHeader = request.headers.get('cookie');
   const result = await analyzeMealAnalysis(cookieHeader, id, request.headers.get('x-forwarded-for'));
 
   if (!result.ok) {
-    if (result.locked) {
-      return errorResponse('Paid plan required to analyze this meal.', 403, { locked: true });
-    }
-
     if (result.status === 404) {
       return errorResponse('Meal analysis not found.', 404);
     }

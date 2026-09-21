@@ -1,11 +1,9 @@
 'use client';
 
 import Image from 'next/image';
-import Link from 'next/link';
-import { LoaderCircle } from 'lucide-react';
-import { SUBSCRIPTION_PLAN } from '@plate/plate-billing/constants';
-import { buildPricingTierHref } from '@/app/components/pricing/utils';
+import { LoaderCircle, RefreshCw } from 'lucide-react';
 import { Badge } from '@/app/ui/badge';
+import { Button } from '@/app/ui/button';
 import { Card, CardContent } from '@/app/ui/card';
 import { cn } from '@/app/utils/cn';
 import {
@@ -13,15 +11,18 @@ import {
   SNAP_ANALYSIS_STATUS,
   SNAP_ANALYSIS_CARD_SHELL,
   SNAP_LOCKED_DECOY,
+  SNAP_LOCKED_REASON,
   SNAP_PHOTO_CARD_SHELL,
 } from './constants';
 import { SnapAnalysisLockedPreview } from './snap-analysis-locked-preview';
-import { SnapAnalysisUnlockCta } from './snap-analysis-unlock-cta';
 import { SnapAnalysisUnlockedReadout } from './snap-analysis-unlocked-readout';
 import { SnapLockedPlaceholder } from './snap-locked-placeholder';
-import type { SnapAnalysisReadoutProps } from './types';
+import type { SnapAnalysisReadoutProps, SnapAnalysisState } from './types';
 
-function SnapAnalysisLockedHeader({ previewUrl }: Readonly<{ previewUrl: string }>) {
+function SnapAnalysisLockedHeader({
+  previewUrl,
+  mealName,
+}: Readonly<{ previewUrl: string; mealName: string | null }>) {
   return (
     <div className="border-edge flex shrink-0 min-w-0 items-start gap-3 border-b px-4 py-3 sm:px-5">
       <span className="relative size-14 shrink-0 overflow-hidden rounded-lg sm:size-16">
@@ -37,7 +38,7 @@ function SnapAnalysisLockedHeader({ previewUrl }: Readonly<{ previewUrl: string 
       <div className="min-w-0 flex-1 pt-0.5">
         <Badge variant="ghost">{SNAP.ANALYSIS_DETECTED}</Badge>
         <p className="font-heading mt-1.5 text-base font-semibold tracking-tight sm:text-lg">
-          <SnapLockedPlaceholder value={SNAP_LOCKED_DECOY.MEAL_NAME} />
+          {mealName ? mealName : <SnapLockedPlaceholder value={SNAP_LOCKED_DECOY.MEAL_NAME} />}
         </p>
       </div>
     </div>
@@ -59,36 +60,48 @@ function SnapAnalysisLoadingCard() {
   );
 }
 
-function SnapAnalysisLockedCard({ photo }: Readonly<{ photo: SnapAnalysisReadoutProps['photo'] }>) {
+function SnapAnalysisLockedCard({
+  photo,
+  analysisState,
+}: Readonly<{
+  photo: SnapAnalysisReadoutProps['photo'];
+  analysisState: SnapAnalysisState;
+}>) {
+  const analysis =
+    analysisState.STATUS === SNAP_ANALYSIS_STATUS.SUCCESS &&
+    analysisState.LOCKED === true &&
+    analysisState.LOCKED_REASON === SNAP_LOCKED_REASON.PLAN
+      ? analysisState.ANALYSIS
+      : null;
+
   return (
     <Card
-      className={cn(
-        '@container/result flex w-full cursor-pointer flex-col transition-shadow motion-reduce:transition-none hover:shadow-md',
-        SNAP_ANALYSIS_CARD_SHELL,
-      )}
+      className={cn('@container/result flex w-full flex-col', SNAP_ANALYSIS_CARD_SHELL)}
       aria-live="polite"
     >
-      <CardContent className="relative flex flex-col gap-0 p-0">
-        <SnapAnalysisLockedHeader previewUrl={photo.PREVIEW_URL} />
-        <SnapAnalysisLockedPreview />
-
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-background/40">
-          <SnapAnalysisUnlockCta />
-        </div>
+      <CardContent className="flex flex-col gap-0 p-0">
+        <SnapAnalysisLockedHeader previewUrl={photo.PREVIEW_URL} mealName={analysis?.mealName ?? null} />
+        <SnapAnalysisLockedPreview analysis={analysis} />
       </CardContent>
     </Card>
   );
 }
 
-export function SnapAnalysisReadout({ analysisState, photo }: SnapAnalysisReadoutProps) {
+export function SnapAnalysisReadout({ analysisState, photo, onRetry }: SnapAnalysisReadoutProps) {
   if (analysisState.STATUS === SNAP_ANALYSIS_STATUS.ERROR) {
     return (
       <Card
         className={cn('@container/result flex h-full w-full flex-col', SNAP_PHOTO_CARD_SHELL)}
         aria-live="polite"
       >
-        <CardContent className="flex flex-1 items-center justify-center p-6 text-center text-sm text-destructive">
-          {analysisState.MESSAGE}
+        <CardContent className="flex flex-1 flex-col items-center justify-center gap-4 p-6 text-center">
+          <p className="text-destructive text-sm">{analysisState.MESSAGE}</p>
+          {onRetry ? (
+            <Button type="button" variant="outline" onClick={onRetry}>
+              <RefreshCw />
+              {SNAP.ANALYSIS_RETRY}
+            </Button>
+          ) : null}
         </CardContent>
       </Card>
     );
@@ -102,6 +115,10 @@ export function SnapAnalysisReadout({ analysisState, photo }: SnapAnalysisReadou
     return <SnapAnalysisLoadingCard />;
   }
 
+  if (analysisState.STATUS !== SNAP_ANALYSIS_STATUS.SUCCESS) {
+    return null;
+  }
+
   if (analysisState.LOCKED === false) {
     return (
       <Card
@@ -109,22 +126,20 @@ export function SnapAnalysisReadout({ analysisState, photo }: SnapAnalysisReadou
         aria-live="polite"
       >
         <CardContent className="flex flex-col gap-0 p-0">
-          <SnapAnalysisUnlockedReadout
-            analysis={analysisState.ANALYSIS}
-            previewUrl={photo.PREVIEW_URL}
-          />
+          <SnapAnalysisUnlockedReadout analysis={analysisState.ANALYSIS} previewUrl={photo.PREVIEW_URL} />
         </CardContent>
       </Card>
     );
   }
 
   return (
-    <Link
-      href={buildPricingTierHref(SUBSCRIPTION_PLAN.PRO)}
-      aria-label={SNAP.PAYWALL_ARIA}
-      className="block w-full rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+    <Card
+      className={cn('@container/result flex w-full flex-col', SNAP_ANALYSIS_CARD_SHELL)}
+      aria-live="polite"
     >
-      <SnapAnalysisLockedCard photo={photo} />
-    </Link>
+      <CardContent className="flex flex-col gap-0 p-0">
+        <SnapAnalysisLockedCard photo={photo} analysisState={analysisState} />
+      </CardContent>
+    </Card>
   );
 }

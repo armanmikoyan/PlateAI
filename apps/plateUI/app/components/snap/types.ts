@@ -1,22 +1,28 @@
 import type { ReactNode } from 'react';
-import type { MealAnalysisResult, MealAnalysisStatus } from '@plate/plate-ai/types';
+import type {
+  MealAnalysisLockedResult,
+  MealAnalysisPreview,
+  MealAnalysisResult,
+  MealAnalysisStatus,
+} from '@plate/plate-ai/types';
 import type { HeroStatTileChrome } from '@/app/components/hero/constants';
 import { SNAP_ANALYSIS_STATUS, SNAP_HEADING_PHASE, SNAP_LOCKED_REASON } from './constants';
 
 export type AcceptedImageType = 'image/jpeg' | 'image/png' | 'image/webp';
 
-export type SnapAnalysisStatus =
-  (typeof SNAP_ANALYSIS_STATUS)[keyof typeof SNAP_ANALYSIS_STATUS];
+export type SnapAnalysisStatus = (typeof SNAP_ANALYSIS_STATUS)[keyof typeof SNAP_ANALYSIS_STATUS];
 
 export type SnapHeadingPhase = (typeof SNAP_HEADING_PHASE)[keyof typeof SNAP_HEADING_PHASE];
-
-export type SnapLockedReason = (typeof SNAP_LOCKED_REASON)[keyof typeof SNAP_LOCKED_REASON];
 
 export type SavedMealPayload = Readonly<{
   id: string;
   status: MealAnalysisStatus;
-  analysis: MealAnalysisResult | null;
+  analysis: MealAnalysisPreview | null;
 }>;
+
+export type SnapNutrientValues = Readonly<
+  Pick<MealAnalysisResult, 'carbsG' | 'fatG' | 'satFatG' | 'fiberG' | 'sugarG' | 'sodiumMg' | 'potassiumMg'>
+>;
 
 export type SnapPhoto = Readonly<{
   FILE: File | null;
@@ -43,7 +49,14 @@ export type SnapAnalysisState =
   | Readonly<{
       STATUS: typeof SNAP_ANALYSIS_STATUS.SUCCESS;
       LOCKED: true;
-      LOCKED_REASON: SnapLockedReason;
+      LOCKED_REASON: typeof SNAP_LOCKED_REASON.PLAN;
+      ANALYSIS_ID: string;
+      ANALYSIS: MealAnalysisLockedResult;
+    }>
+  | Readonly<{
+      STATUS: typeof SNAP_ANALYSIS_STATUS.SUCCESS;
+      LOCKED: true;
+      LOCKED_REASON: typeof SNAP_LOCKED_REASON.DAILY_LIMIT;
       ANALYSIS_ID: string;
     }>
   | Readonly<{
@@ -52,7 +65,8 @@ export type SnapAnalysisState =
       ANALYSIS: MealAnalysisResult;
       ANALYSIS_ID: string;
     }>
-  | Readonly<{ STATUS: typeof SNAP_ANALYSIS_STATUS.ERROR; MESSAGE: string }>;
+  | Readonly<{ STATUS: typeof SNAP_ANALYSIS_STATUS.ERROR; MESSAGE: string }>
+  | Readonly<{ STATUS: typeof SNAP_ANALYSIS_STATUS.PLAN_REQUIRED }>;
 
 export type UseSnapAnalyzeResult = Readonly<{
   analysisState: SnapAnalysisState;
@@ -66,12 +80,7 @@ export type UseSnapSavedMealLoaderResult = Readonly<{
 }>;
 
 export type SnapAnalyzeSuccessResponse = Readonly<{
-  analysis: MealAnalysisResult;
-  id: string;
-}>;
-
-export type SnapAnalyzeLockedResponse = Readonly<{
-  locked: true;
+  analysis: MealAnalysisPreview;
   id: string;
 }>;
 
@@ -80,21 +89,18 @@ export type SnapAnalyzeErrorResponse = Readonly<{
   id?: string;
   retryAfterSeconds?: number;
   pendingLimit?: true;
+  planRequired?: true;
 }>;
 
 export type SnapAnalysisReadoutProps = Readonly<{
   analysisState: SnapAnalysisState;
   photo: SnapPhoto;
+  onRetry?: () => void;
 }>;
 
 export type SnapAnalysisUnlockedReadoutProps = Readonly<{
   analysis: MealAnalysisResult;
   previewUrl: string;
-}>;
-
-export type SnapAnalysisPaywallProps = Readonly<{
-  children: ReactNode;
-  className?: string;
 }>;
 
 export type SnapLockedPlaceholderProps = Readonly<{
@@ -141,11 +147,17 @@ export type SnapPhotoStageProps = Readonly<{
   photoActions: Omit<SnapPhotoActionsProps, 'disabled'>;
 }>;
 
+export type SnapPlanRequiredStageProps = Readonly<{
+  photo: SnapPhoto;
+  photoActions: Omit<SnapPhotoActionsProps, 'disabled'>;
+}>;
+
 export type SnapAnalysisStageProps = Readonly<{
   analysisState: SnapAnalysisState;
   photo: SnapPhoto;
   photoActions: Omit<SnapPhotoActionsProps, 'disabled'>;
   photoActionsDisabled: boolean;
+  onRetry?: () => void;
 }>;
 
 export type SnapHeadingCopy = Readonly<{

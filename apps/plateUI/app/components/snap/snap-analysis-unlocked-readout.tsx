@@ -8,15 +8,14 @@ import type { SnapAnalysisUnlockedReadoutProps } from './types';
 import {
   snapCaloriesTileForAnalysis,
   snapConfidenceLabel,
-  snapMacroTilesForAnalysis,
+  snapNutrientTilesForAnalysis,
+  snapProteinTileForAnalysis,
 } from './utils';
 
-export function SnapAnalysisUnlockedReadout({
-  analysis,
-  previewUrl,
-}: SnapAnalysisUnlockedReadoutProps) {
+export function SnapAnalysisUnlockedReadout({ analysis, previewUrl }: SnapAnalysisUnlockedReadoutProps) {
   const caloriesTile = snapCaloriesTileForAnalysis(analysis);
-  const nutrientTiles = snapMacroTilesForAnalysis(analysis);
+  const proteinTile = snapProteinTileForAnalysis(analysis);
+  const nutrientTiles = snapNutrientTilesForAnalysis(analysis);
 
   return (
     <div className="flex flex-col">
@@ -53,9 +52,7 @@ export function SnapAnalysisUnlockedReadout({
 
       <div className="flex flex-col gap-3 px-4 py-3 pb-4 sm:px-5 sm:pb-5">
         <div>
-          <p className="font-heading text-sm font-medium tracking-tight">
-            {HERO.NUTRIENTS_SECTION_LABEL}
-          </p>
+          <p className="font-heading text-sm font-medium tracking-tight">{HERO.NUTRIENTS_SECTION_LABEL}</p>
           <p className="text-muted-foreground mt-0.5 text-xs/relaxed">{SNAP.ANALYSIS_SCOPE}</p>
         </div>
 
@@ -63,6 +60,7 @@ export function SnapAnalysisUnlockedReadout({
           <div className="col-span-2 @xl/result:col-span-4">
             <HeroNutrientTile {...caloriesTile} />
           </div>
+          <HeroNutrientTile {...proteinTile} />
           {nutrientTiles.map((row) => (
             <HeroNutrientTile key={row.KEY} {...row} />
           ))}

@@ -1,22 +1,17 @@
-import type {
-  MealAnalysisResult,
-  MealAnalysisStatus,
-  MealAnalysisSummary,
-} from '@plate/plate-ai/types';
+import type { MealAnalysisPreview, MealAnalysisStatus, MealAnalysisSummary } from '@plate/plate-ai/types';
 
 export type SnapSavedMealCache = Readonly<{
   id: string;
   status: MealAnalysisStatus;
-  analysis: MealAnalysisResult | null;
+  analysis: MealAnalysisPreview | null;
 }>;
 
 export type AnalyzeResult =
-  | { ok: true; locked: false; item: MealAnalysisSummary }
-  | { ok: false; locked: true; status: 403 }
+  | { ok: true; item: MealAnalysisSummary }
   | {
       ok: false;
-      locked: false;
       status: number;
       message?: string;
       retryAfterSeconds?: number;
+      planRequired?: boolean;
     };

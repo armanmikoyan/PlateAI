@@ -5,6 +5,7 @@ import type { SnapSavedMealCache } from '@/app/utils/meal-analyses/types';
 import {
   HERO_CALORIES_TILE,
   HERO_NUTRIENT_METRIC_ROWS,
+  HERO_PROTEIN_TILE,
   type HeroNutrientMetricRow,
   type HeroNutrientTileRowModel,
   type HeroStatTileChrome,
@@ -17,12 +18,26 @@ import {
   SNAP_CONFIDENCE_LABELS,
   SNAP_HEADING_PHASE,
   SNAP_IMAGE_COMPRESSION,
-  SNAP_LOCKED_PREVIEW_DELAY_MS_PRESET,
   SNAP_LOCKED_REASON,
 } from './constants';
-import type { SavedMealPayload, SnapAnalysisState, SnapHeadingCopy, SnapHeadingPhase, SnapPhoto } from './types';
+import type {
+  SavedMealPayload,
+  SnapAnalysisState,
+  SnapHeadingCopy,
+  SnapHeadingPhase,
+  SnapNutrientValues,
+  SnapPhoto,
+} from './types';
 
-const SNAP_MACRO_ROW_KEYS = new Set<HeroNutrientMetricRow['KEY']>(['PROTEIN', 'CARBS', 'FAT']);
+const SNAP_RESULT_ROW_KEYS = new Set<HeroNutrientMetricRow['KEY']>([
+  'CARBS',
+  'FAT',
+  'SAT_FAT',
+  'FIBER',
+  'SUGAR',
+  'SODIUM',
+  'POTASSIUM',
+]);
 
 export function toSnapSavedMealCache(item: SavedMealPayload): SnapSavedMealCache {
   return {
@@ -71,6 +86,14 @@ export function snapHeadingCopy(
   }
 
   if (phase === SNAP_HEADING_PHASE.PHOTO_READY) {
+    if (analysisState.STATUS === SNAP_ANALYSIS_STATUS.PLAN_REQUIRED) {
+      return {
+        PHASE: phase,
+        TITLE: SNAP.HEADING_FREE_LIMIT_TITLE,
+        SUBTITLE: SNAP.HEADING_FREE_LIMIT_SUBTITLE,
+      };
+    }
+
     return {
       PHASE: phase,
       TITLE: SNAP.HEADING_PHOTO_READY_TITLE,
@@ -87,14 +110,23 @@ export function snapHeadingCopy(
   }
 
   if (phase === SNAP_HEADING_PHASE.SUCCESS) {
-    if (
-      analysisState.STATUS === SNAP_ANALYSIS_STATUS.SUCCESS &&
-      analysisState.LOCKED === false
-    ) {
+    if (analysisState.STATUS === SNAP_ANALYSIS_STATUS.SUCCESS && analysisState.LOCKED === false) {
       return {
         PHASE: phase,
         TITLE: analysisState.ANALYSIS.mealName,
         SUBTITLE: SNAP.ANALYSIS_SCOPE,
+      };
+    }
+
+    if (
+      analysisState.STATUS === SNAP_ANALYSIS_STATUS.SUCCESS &&
+      analysisState.LOCKED === true &&
+      analysisState.LOCKED_REASON === SNAP_LOCKED_REASON.PLAN
+    ) {
+      return {
+        PHASE: phase,
+        TITLE: analysisState.ANALYSIS.mealName,
+        SUBTITLE: SNAP.HEADING_LOCKED_SUBTITLE,
       };
     }
 
@@ -112,8 +144,8 @@ export function snapHeadingCopy(
 
     return {
       PHASE: phase,
-      TITLE: SNAP.HEADING_LOCKED_TITLE,
-      SUBTITLE: SNAP.HEADING_LOCKED_SUBTITLE,
+      TITLE: SNAP.TITLE,
+      SUBTITLE: SNAP.ANALYSIS_SCOPE,
     };
   }
 
@@ -132,6 +164,45 @@ export function snapHeadingCopy(
   };
 }
 
+function snapNutrientValueForAnalysis(
+  key: HeroNutrientMetricRow['KEY'],
+  analysis: SnapNutrientValues,
+): string {
+  switch (key) {
+    case 'CARBS':
+      return String(analysis.carbsG);
+    case 'FAT':
+      return String(analysis.fatG);
+    case 'SAT_FAT':
+      return String(analysis.satFatG);
+    case 'FIBER':
+      return String(analysis.fiberG);
+    case 'SUGAR':
+      return String(analysis.sugarG);
+    case 'SODIUM':
+      return String(analysis.sodiumMg);
+    case 'POTASSIUM':
+      return String(analysis.potassiumMg);
+    default:
+      throw new Error(`Unexpected nutrient tile key: ${key}`);
+  }
+}
+
+export function snapNutrientTilesForAnalysis(
+  analysis: SnapNutrientValues,
+): readonly HeroNutrientTileRowModel[] {
+  return HERO_NUTRIENT_METRIC_ROWS.filter((row) => SNAP_RESULT_ROW_KEYS.has(row.KEY)).map((row) => {
+    return {
+      ...row,
+      VALUE: snapNutrientValueForAnalysis(row.KEY, analysis),
+    };
+  });
+}
+
+export function snapLockedNutrientTiles(): readonly HeroNutrientMetricRow[] {
+  return HERO_NUTRIENT_METRIC_ROWS.filter((row) => SNAP_RESULT_ROW_KEYS.has(row.KEY));
+}
+
 export function snapCaloriesTileForAnalysis(analysis: MealAnalysisResult): HeroStatTileModel {
   return {
     ...HERO_CALORIES_TILE,
@@ -139,25 +210,19 @@ export function snapCaloriesTileForAnalysis(analysis: MealAnalysisResult): HeroS
   };
 }
 
-export function snapMacroTilesForAnalysis(
-  analysis: MealAnalysisResult,
-): readonly HeroNutrientTileRowModel[] {
-  const values = {
-    PROTEIN: String(analysis.proteinG),
-    CARBS: String(analysis.carbsG),
-    FAT: String(analysis.fatG),
-  } as const;
+export function snapProteinTileForAnalysis(analysis: MealAnalysisResult): HeroStatTileModel {
+  return {
+    ...HERO_PROTEIN_TILE,
+    VALUE: String(analysis.proteinG),
+  };
+}
 
-  return HERO_NUTRIENT_METRIC_ROWS.filter((row) => SNAP_MACRO_ROW_KEYS.has(row.KEY)).map((row) => {
-    if (row.KEY !== 'PROTEIN' && row.KEY !== 'CARBS' && row.KEY !== 'FAT') {
-      throw new Error(`Unexpected macro key: ${row.KEY}`);
-    }
+export function snapLockedCaloriesTile(): HeroStatTileChrome {
+  return HERO_CALORIES_TILE;
+}
 
-    return {
-      ...row,
-      VALUE: values[row.KEY],
-    };
-  });
+export function snapLockedProteinTile(): HeroStatTileChrome {
+  return HERO_PROTEIN_TILE;
 }
 
 export function firstAcceptedImageFile(files: FileList | null): File | null {
@@ -234,32 +299,4 @@ const SNAP_CONFIDENCE_LABEL_BY_VALUE: Record<MealAnalysisConfidence, string> = {
 
 export function snapConfidenceLabel(confidence: MealAnalysisConfidence): string {
   return SNAP_CONFIDENCE_LABEL_BY_VALUE[confidence];
-}
-
-export function snapLockedCaloriesTile(): HeroStatTileChrome {
-  return HERO_CALORIES_TILE;
-}
-
-export function snapLockedNutrientTiles(): readonly HeroNutrientMetricRow[] {
-  return HERO_NUTRIENT_METRIC_ROWS;
-}
-
-export function snapLockedPreviewDelayMs(): number {
-  const { MIN, MAX } = SNAP_LOCKED_PREVIEW_DELAY_MS_PRESET;
-  return MIN + Math.floor(Math.random() * (MAX - MIN + 1));
-}
-
-function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
-}
-
-export async function waitForSnapLockedPreviewDelay(startedAtMs: number): Promise<void> {
-  const elapsedMs = Date.now() - startedAtMs;
-  const remainingMs = snapLockedPreviewDelayMs() - elapsedMs;
-
-  if (remainingMs > 0) {
-    await sleep(remainingMs);
-  }
 }

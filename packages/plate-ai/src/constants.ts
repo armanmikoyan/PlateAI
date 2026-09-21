@@ -1,8 +1,4 @@
-import type {
-  ImageAnalysisProviderId,
-  MealAnalysisConfidence,
-  MealAnalysisResult,
-} from '@/types.js';
+import type { ImageAnalysisProviderId, MealAnalysisConfidence, MealAnalysisResult } from '@/types.js';
 
 export const MEAL_ANALYSIS_STATUS = {
   PENDING: 'pending',
@@ -16,9 +12,8 @@ export const MEAL_ANALYSIS_CONFIDENCE = {
   HIGH: 'high',
 } as const;
 
-export const MEAL_ANALYSIS_CONFIDENCE_VALUES: readonly MealAnalysisConfidence[] = Object.values(
-  MEAL_ANALYSIS_CONFIDENCE,
-);
+export const MEAL_ANALYSIS_CONFIDENCE_VALUES: readonly MealAnalysisConfidence[] =
+  Object.values(MEAL_ANALYSIS_CONFIDENCE);
 
 export const IMAGE_ANALYSIS_PROVIDER = {
   GEMINI: 'gemini',
@@ -30,9 +25,7 @@ export const DEFAULT_IMAGE_ANALYSIS_MODEL = {
   OPENAI: 'gpt-4o-mini',
 } as const;
 
-export const DEFAULT_IMAGE_ANALYSIS_MODELS: Readonly<
-  Record<ImageAnalysisProviderId, string>
-> = {
+export const DEFAULT_IMAGE_ANALYSIS_MODELS: Readonly<Record<ImageAnalysisProviderId, string>> = {
   [IMAGE_ANALYSIS_PROVIDER.GEMINI]: DEFAULT_IMAGE_ANALYSIS_MODEL.GEMINI,
   [IMAGE_ANALYSIS_PROVIDER.OPENAI]: DEFAULT_IMAGE_ANALYSIS_MODEL.OPENAI,
 };
@@ -46,13 +39,18 @@ Return ONLY valid JSON with this exact shape:
   "proteinG": number,
   "carbsG": number,
   "fatG": number,
+  "satFatG": number,
+  "fiberG": number,
+  "potassiumMg": number,
+  "sodiumMg": number,
+  "sugarG": number,
   "confidence": "low" | "medium" | "high",
   "notes": string | null
 }
 
 Rules:
 - mealName: short label for the main dish (e.g. "Grilled salmon bowl").
-- calories, proteinG, carbsG, fatG: non-negative numbers; round to whole numbers.
+- calories, proteinG, carbsG, fatG, satFatG, fiberG, potassiumMg, sodiumMg, sugarG: non-negative numbers; round to whole numbers. Units: grams (G) except potassiumMg and sodiumMg in milligrams (Mg).
 - confidence: how sure you are from the photo alone.
 - notes: one short sentence about uncertainty, or null if none.
 - Do not wrap JSON in markdown fences.` as const;
@@ -63,6 +61,11 @@ export const MEAL_IMAGE_ANALYSIS_TEST_FIXTURE: MealAnalysisResult = {
   proteinG: 42,
   carbsG: 38,
   fatG: 18,
+  satFatG: 4,
+  fiberG: 6,
+  potassiumMg: 640,
+  sodiumMg: 780,
+  sugarG: 7,
   confidence: 'high' satisfies MealAnalysisConfidence,
   notes: 'Test mode — sample analysis, no API call.',
 };
@@ -71,3 +74,6 @@ export const MEAL_IMAGE_ANALYSIS_TEST_DELAY_MS = {
   MIN: 3000,
   MAX: 4000,
 } as const;
+
+/** Upper bound for a single AI provider request; analyses may take up to ~1min. */
+export const MEAL_IMAGE_ANALYSIS_REQUEST_TIMEOUT_MS = 120_000 as const;

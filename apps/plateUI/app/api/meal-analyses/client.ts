@@ -1,12 +1,7 @@
 import { readPlateServerUrl } from '@/app/api/auth/utils';
-import type {
-  MealAnalysisItemResponse,
-  MealAnalysisListResponse,
-  MealAnalysisResult,
-} from '@plate/plate-ai/types';
+import type { MealAnalysisItemResponse, MealAnalysisListResponse } from '@plate/plate-ai/types';
 import { retryAfterSecondsFromHeader } from '@/app/utils/rate-limit/utils';
 import type { AnalyzeResult } from '@/app/utils/meal-analyses/types';
-import { MEAL_ANALYSIS_STATUS } from '@plate/plate-ai/constants';
 
 type MealAnalysisRequestOptions = Readonly<{
   cookieHeader: string | null;
@@ -21,6 +16,7 @@ type MealAnalysisRequestFailure = Readonly<{
   status: number;
   message?: string;
   retryAfterSeconds?: number;
+  planRequired?: boolean;
 }>;
 
 type MealAnalysisRequestResult<T> = Readonly<{ ok: true; data: T }> | MealAnalysisRequestFailure;
@@ -51,13 +47,16 @@ async function mealAnalysisRequest<T>({
     const response = await fetch(`${readPlateServerUrl()}/meal-analyses${path}`, init);
 
     if (!response.ok) {
-      const message = (await response.json().catch(() => null))
-        ?.error as string | undefined;
+      const payload = (await response.json().catch(() => null)) as {
+        error?: string;
+        planRequired?: boolean;
+      } | null;
       return {
         ok: false,
         status: response.status,
-        message,
+        message: payload?.error,
         retryAfterSeconds: retryAfterSecondsFromHeader(response.headers.get('retry-after')),
+        planRequired: payload?.planRequired === true,
       };
     }
 
@@ -74,7 +73,7 @@ async function mealAnalysisRequest<T>({
 
 type CreatePendingMealAnalysisResult =
   | Readonly<{ ok: true; item: MealAnalysisItemResponse }>
-  | Readonly<{ ok: false; status: number; message?: string }>;
+  | Readonly<{ ok: false; status: number; message?: string; planRequired?: boolean }>;
 
 export async function createPendingMealAnalysis(
   cookieHeader: string | null,
@@ -91,7 +90,12 @@ export async function createPendingMealAnalysis(
   });
 
   if (!result.ok) {
-    return { ok: false, status: result.status, message: result.message };
+    return {
+      ok: false,
+      status: result.status,
+      message: result.message,
+      planRequired: result.planRequired,
+    };
   }
 
   return { ok: true, item: result.data };
@@ -126,46 +130,6 @@ export async function getMealAnalysis(
   return result.ok ? result.data : null;
 }
 
-export async function markMealAnalysisDone(
-  cookieHeader: string | null,
-  analysisId: string,
-  analysis: MealAnalysisResult,
-  forwardedFor?: string | null,
-): Promise<MealAnalysisItemResponse | null> {
-  const result = await mealAnalysisRequest<MealAnalysisItemResponse>({
-    cookieHeader,
-    forwardedFor,
-    method: 'PATCH',
-    path: `/${analysisId}`,
-    body: {
-      status: MEAL_ANALYSIS_STATUS.DONE,
-      analysis,
-    },
-  });
-
-  return result.ok ? result.data : null;
-}
-
-export async function markMealAnalysisFailed(
-  cookieHeader: string | null,
-  analysisId: string,
-  errorMessage: string,
-  forwardedFor?: string | null,
-): Promise<MealAnalysisItemResponse | null> {
-  const result = await mealAnalysisRequest<MealAnalysisItemResponse>({
-    cookieHeader,
-    forwardedFor,
-    method: 'PATCH',
-    path: `/${analysisId}`,
-    body: {
-      status: MEAL_ANALYSIS_STATUS.FAILED,
-      errorMessage,
-    },
-  });
-
-  return result.ok ? result.data : null;
-}
-
 export async function deleteMealAnalysis(
   cookieHeader: string | null,
   analysisId: string,
@@ -187,7 +151,7 @@ export async function analyzeMealAnalysis(
   forwardedFor?: string | null,
 ): Promise<AnalyzeResult> {
   if (!cookieHeader) {
-    return { ok: false, locked: false, status: 401 };
+    return { ok: false, status: 401 };
   }
 
   const result = await mealAnalysisRequest<MealAnalysisItemResponse>({
@@ -198,18 +162,13 @@ export async function analyzeMealAnalysis(
   });
 
   if (!result.ok) {
-    if (result.status === 403) {
-      return { ok: false, locked: true, status: 403 };
-    }
-
     return {
       ok: false,
-      locked: false,
       status: result.status,
       message: result.message,
       retryAfterSeconds: result.retryAfterSeconds,
     };
   }
 
-  return { ok: true, locked: false, item: result.data.item };
+  return { ok: true, item: result.data.item };
 }

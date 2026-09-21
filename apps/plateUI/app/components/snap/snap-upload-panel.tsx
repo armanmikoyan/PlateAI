@@ -11,7 +11,7 @@ import { useDeviceType } from '@/app/utils/device-detection/use-device-type';
 import { trackSnapPhoto } from '@/app/utils/analytics';
 import { ACCEPTED_IMAGE_ACCEPT, SNAP, SNAP_ANALYSIS_STATUS } from './constants';
 import { useSnapAnalyze, useSnapPhoto, useSnapSavedMealLoader } from './hooks';
-import { SnapAnalysisStage, SnapPhotoStage } from './snap-stage';
+import { SnapAnalysisStage, SnapPhotoStage, SnapPlanRequiredStage } from './snap-stage';
 import { SnapCameraDialog } from './snap-camera-dialog';
 import { canUseCameraStream, firstAcceptedImageFile } from './utils';
 
@@ -27,8 +27,13 @@ export function SnapUploadPanel() {
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const showAnalysisLayout = Boolean(photo) && analysisState.STATUS !== SNAP_ANALYSIS_STATUS.IDLE;
-  const photoActionsDisabled = analysisState.STATUS === SNAP_ANALYSIS_STATUS.LOADING;
+  const showAnalysisLayout =
+    Boolean(photo) &&
+    analysisState.STATUS !== SNAP_ANALYSIS_STATUS.IDLE &&
+    analysisState.STATUS !== SNAP_ANALYSIS_STATUS.PLAN_REQUIRED;
+  const photoActionsDisabled =
+    analysisState.STATUS === SNAP_ANALYSIS_STATUS.LOADING ||
+    (analysisState.STATUS === SNAP_ANALYSIS_STATUS.SUCCESS && analysisState.LOCKED === true);
 
   function applyFile(file: File | null) {
     if (!file) {
@@ -136,8 +141,13 @@ export function SnapUploadPanel() {
         photo={photo}
         photoActions={photoActions}
         photoActionsDisabled={photoActionsDisabled}
+        onRetry={() => {
+          analyzePhoto();
+        }}
       />
     );
+  } else if (photo && analysisState.STATUS === SNAP_ANALYSIS_STATUS.PLAN_REQUIRED) {
+    mainContent = <SnapPlanRequiredStage photo={photo} photoActions={photoActions} />;
   } else if (photo) {
     mainContent = (
       <SnapPhotoStage

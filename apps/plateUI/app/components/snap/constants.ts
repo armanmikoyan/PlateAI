@@ -3,6 +3,7 @@ export const SNAP_ANALYSIS_STATUS = {
   LOADING: 'loading',
   SUCCESS: 'success',
   ERROR: 'error',
+  PLAN_REQUIRED: 'plan_required',
 } as const;
 
 export const SNAP_HEADING_PHASE = {
@@ -43,38 +44,44 @@ export const SNAP = {
   ERROR_TITLE: 'Could not add that photo',
   ERROR_TYPE: 'Use a PNG, JPG, or WebP image.',
   ERROR_CAMERA: 'Could not open the camera. Allow access, or choose a photo instead.',
-  ERROR_CAMERA_SECURE:
-    'Live camera needs HTTPS. On this site, tap Choose photo to use your camera instead.',
+  ERROR_CAMERA_SECURE: 'Live camera needs HTTPS. On this site, tap Choose photo to use your camera instead.',
   ANALYZE: 'Analyze plate',
   ANALYZE_CTA: 'Tap to analyze',
+  ANALYSIS_RETRY: 'Try again',
   LOADING_SAVED_MEAL: 'Loading your saved meal photo…',
   ANALYZING: 'Analyzing your plate…',
   SIGN_IN_REQUIRED: 'Sign in to analyze your photo.',
-  ANALYSIS_ERROR: 'Could not analyze that photo. Try again with a clearer shot.',
+  ANALYSIS_ERROR: 'Could not analyze that photo. Try a clearer shot.',
   DAILY_LIMIT_TITLE: 'Daily analysis limit reached',
   DAILY_LIMIT_REACHED: 'All daily analyses used. New analyses unlock after midnight (UTC).',
   DAILY_LIMIT_TOAST_TIMEOUT_MS: 10000,
   PENDING_LIMIT_TITLE: 'Pending analysis limit reached',
-  PENDING_LIMIT_REACHED: 'You have reached the limit of saved analyses. Analyze or clear pending photos to upload more.',
+  PENDING_LIMIT_REACHED:
+    'You have reached the limit of saved analyses. Analyze or clear pending photos to upload more.',
   ANALYSIS_DETECTED: 'Detected meal',
   ANALYSIS_SCOPE: 'Estimated from your photo',
   CONFIDENCE_LOW: 'Low confidence',
   CONFIDENCE_MEDIUM: 'Medium confidence',
   CONFIDENCE_HIGH: 'High confidence',
   HEADING_PHOTO_READY_TITLE: 'Photo ready',
-  HEADING_PHOTO_READY_SUBTITLE: 'Tap Analyze plate to estimate calories and macros.',
+  HEADING_PHOTO_READY_SUBTITLE: 'Tap Analyze plate to estimate carbs, fat, and micronutrients.',
+  HEADING_FREE_LIMIT_TITLE: 'Free plate used',
+  HEADING_FREE_LIMIT_SUBTITLE:
+    'You have used your free plate. Upgrade to a paid plan to analyze more and unlock full results.',
   HEADING_LOADING_TITLE: 'Analyzing your plate',
   HEADING_LOADING_SUBTITLE: 'Reading nutrition from your photo…',
-  HEADING_LOCKED_TITLE: 'Paid plan required to unlock results',
-  HEADING_LOCKED_SUBTITLE:
-    'Your photo is ready. Upgrade to Pro to see calories, macros, and the full breakdown.',
+  HEADING_LOCKED_SUBTITLE: 'Upgrade to a paid plan to see calories and protein, and analyze more plates.',
   HEADING_DAILY_LIMIT_TITLE: 'Daily analysis limit reached',
   HEADING_DAILY_LIMIT_SUBTITLE:
     'You have used all your analyses for today. Upgrade to Pro for more, or new analyses unlock after midnight (UTC).',
   HEADING_SHELL: 'min-h-[8.75rem] sm:min-h-[9.25rem]',
   HEADING_ERROR_TITLE: 'Analysis failed',
   HEADING_ERROR_SUBTITLE: 'We could not analyze that photo. Try again, or upload a clearer shot.',
+  FREE_LIMIT_TITLE: 'Free plate used',
+  FREE_LIMIT_REACHED:
+    'You have used your free plate. Upgrade to a paid plan to analyze more and unlock full results.',
   PAYWALL_CTA: 'See plans',
+  UNLOCK_CTA: 'Unlock results',
   PAYWALL_ARIA: 'Nutrition analysis locked — view pricing plans',
   PAYWALL_CTA_SHIMMER_BACKGROUND:
     'linear-gradient(165deg, var(--color-cta-soft) 0%, var(--color-cta) 48%, var(--color-cta-deep) 100%)',
@@ -91,7 +98,6 @@ export const SNAP_LOCKED_DECOY = {
   MEAL_NAME: '00000000',
   CONFIDENCE: '000000',
   NOTES: '0000000000000000000',
-  CALORIES: '0',
   NUTRIENT: '0',
 } as const;
 
@@ -105,25 +111,15 @@ export const SNAP_CAMERA_BACK = 'environment' as const;
 export const SNAP_CAMERA_FRONT = 'user' as const;
 export const SNAP_CAMERA_CAPTURE_FILE = 'plate.jpg' as const;
 
-export const SNAP_LOCKED_PREVIEW_DELAY_MS_PRESET = {
-  MIN: 3000,
-  MAX: 4000,
-} as const;
-
 export const SNAP_PHOTO_CARD_SHELL =
   'relative h-72 w-full gap-0 overflow-hidden py-0 sm:h-80 lg:h-128' as const;
 
-export const SNAP_ANALYSIS_CARD_SHELL =
-  'relative w-full gap-0 overflow-hidden py-0' as const;
+export const SNAP_ANALYSIS_CARD_SHELL = 'relative w-full gap-0 overflow-hidden py-0' as const;
 
 export const SNAP_STAGE_GRID_SHELL =
   'relative grid w-full min-w-0 grid-cols-1 items-start gap-5 [&>*]:min-w-0 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:gap-8' as const;
 
-export const ACCEPTED_IMAGE_TYPES = [
-  'image/jpeg',
-  'image/png',
-  'image/webp',
-] as const;
+export const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'] as const;
 
 export const ACCEPTED_IMAGE_ACCEPT = ACCEPTED_IMAGE_TYPES.join(',');
 

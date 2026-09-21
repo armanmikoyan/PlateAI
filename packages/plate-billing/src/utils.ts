@@ -1,6 +1,7 @@
 import {
   DAILY_ANALYSIS_LIMITS,
   NO_PLAN_PENDING_ANALYSIS_LIMIT,
+  NO_PLAN_TOTAL_ANALYSIS_LIMIT,
   PENDING_ANALYSIS_LIMITS,
   PLAN_RANK,
   SUBSCRIPTION_PLAN,
@@ -49,4 +50,19 @@ export function getPendingAnalysisLimit(plan: SubscriptionPlan | null): number {
     return NO_PLAN_PENDING_ANALYSIS_LIMIT;
   }
   return PENDING_ANALYSIS_LIMITS[plan] ?? NO_PLAN_PENDING_ANALYSIS_LIMIT;
+}
+
+export function getTotalAnalysisLimit(
+  plan: SubscriptionPlan | null,
+  status: SubscriptionStatus | null,
+): number {
+  return isActivePaidPlan(plan, status) ? Infinity : NO_PLAN_TOTAL_ANALYSIS_LIMIT;
+}
+
+export function canCreateAnalysis(
+  totalCount: number,
+  plan: SubscriptionPlan | null,
+  status: SubscriptionStatus | null,
+): boolean {
+  return totalCount < getTotalAnalysisLimit(plan, status);
 }
