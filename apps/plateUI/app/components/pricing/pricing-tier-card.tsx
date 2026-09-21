@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useLayoutEffect, useRef } from 'react';
 import { SUBSCRIPTION_PLAN } from '@plate/plate-billing/constants';
 import { isPaidPlan, isPlanUpgrade, isPurchasablePlan } from '@plate/plate-billing/utils';
 import { cn } from '@/app/utils/cn';
@@ -44,7 +45,7 @@ export function PricingTierCard({
   const showSelectedHighlight = isSelected && !isCurrentPlan;
 
   const cardClassName = cn(
-    'flex w-full flex-col transition-shadow motion-reduce:transition-none',
+    'flex w-full flex-col transition-[box-shadow,translate] duration-300 ease-out motion-reduce:transition-none',
     variant === 'preview' && 'h-full',
     variant === 'detail' &&
       showSelectedHighlight &&
@@ -56,9 +57,54 @@ export function PricingTierCard({
       'ring-accent/35 md:-translate-y-3 md:ring-2',
     variant === 'preview' && showPopularHighlight && 'ring-accent/35 md:-translate-y-3 md:ring-2',
     variant === 'preview' && 'group-hover:shadow-md',
-    variant === 'detail' && !showSelectedHighlight && 'hover:shadow-md motion-reduce:transition-none',
+    variant === 'detail' && !showSelectedHighlight && 'hover:shadow-md',
   );
   const shellClassName = cn('flex flex-col', variant === 'detail' && 'flex-1');
+
+  const detailRegionRef = useRef<HTMLDivElement>(null);
+  const detailContentRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    const region = detailRegionRef.current;
+    const content = detailContentRef.current;
+    if (!region || !content) {
+      return;
+    }
+
+    const target = isSelected ? region.scrollHeight : 0;
+    region.style.height = `${Math.ceil(target)}px`;
+
+    if (!isSelected) {
+      return;
+    }
+
+    const sync = () => {
+      const next = Math.max(
+        region.scrollHeight,
+        content.scrollHeight,
+        content.getBoundingClientRect().height,
+      );
+      region.style.height = `${Math.ceil(next)}px`;
+    };
+
+    const observer = new ResizeObserver(sync);
+    observer.observe(region);
+    observer.observe(content);
+
+    let disposed = false;
+    if (document.fonts?.ready) {
+      document.fonts.ready.then(() => {
+        if (!disposed) {
+          sync();
+        }
+      });
+    }
+
+    return () => {
+      disposed = true;
+      observer.disconnect();
+    };
+  }, [isSelected]);
 
   const cardBody = (
     <>
@@ -145,26 +191,44 @@ export function PricingTierCard({
         <div data-pricing-tier-shell={true} className={shellClassName}>
           {cardBody}
         </div>
-        <div
-          className={cn(
-            'grid px-(--card-spacing) transition-[grid-template-rows] duration-300 ease-out motion-reduce:transition-none',
-            isSelected ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]',
-          )}
-        >
-          <div className="min-h-0 overflow-hidden">
-            <PricingTierCardDetail tier={tier} />
-          </div>
-        </div>
       </button>
-      {isSelected ? (
-        <div className="flex flex-col gap-3 px-(--card-spacing) pb-(--card-spacing)">
-          {isCurrentPlan ? (
-            <>
-              <p className="text-muted-foreground text-center text-xs" role="status">
-                {error ?? PRICING_SECTION.CURRENT_PLAN_NOTE}
-              </p>
-              <p className="text-muted-foreground text-center text-xs">{PRICING_SECTION.CANCEL_MANAGE}</p>
-              {currentPlanId === SUBSCRIPTION_PLAN.BASIC ? (
+      <div
+        ref={detailRegionRef}
+        inert={!isSelected}
+        data-pricing-tier-region={variant === 'detail' ? true : undefined}
+        className="overflow-hidden transition-[height] duration-300 ease-out motion-reduce:transition-none"
+      >
+        <div ref={detailContentRef} className="px-(--card-spacing)">
+          <PricingTierCardDetail tier={tier} />
+          <div className="mt-6 flex flex-col gap-3 pb-(--card-spacing)">
+            {isCurrentPlan ? (
+              <>
+                <p className="text-muted-foreground text-center text-xs" role="status">
+                  {error ?? PRICING_SECTION.CURRENT_PLAN_NOTE}
+                </p>
+                <p className="text-muted-foreground text-center text-xs">{PRICING_SECTION.CANCEL_MANAGE}</p>
+                {currentPlanId === SUBSCRIPTION_PLAN.BASIC ? (
+                  <ShimmerButton
+                    type="button"
+                    background={PRICING_PAGE.FIXED_CTA_SHIMMER_BACKGROUND}
+                    shimmerColor={PRICING_PAGE.FIXED_CTA_SHIMMER_COLOR}
+                    shimmerSize="2px"
+                    disabled={isPurchasing}
+                    aria-disabled={isPurchasing}
+                    aria-label={buildPricingUpgradeCtaLabel(upgradeTier)}
+                    className="text-button-default-fg h-11 gap-2 px-5 text-base"
+                    onClick={() => {
+                      purchase(upgradeTier);
+                    }}
+                  >
+                    <span aria-live="polite">
+                      {isPurchasing ? 'Redirecting to checkout…' : buildPricingUpgradeCtaLabel(upgradeTier)}
+                    </span>
+                  </ShimmerButton>
+                ) : null}
+              </>
+            ) : isPurchasablePlan(tier.ID) && canPurchaseUpgrade ? (
+              <>
                 <ShimmerButton
                   type="button"
                   background={PRICING_PAGE.FIXED_CTA_SHIMMER_BACKGROUND}
@@ -172,57 +236,37 @@ export function PricingTierCard({
                   shimmerSize="2px"
                   disabled={isPurchasing}
                   aria-disabled={isPurchasing}
-                  aria-label={buildPricingUpgradeCtaLabel(upgradeTier)}
+                  aria-label={buildPricingPurchaseCtaLabel(tier)}
                   className="text-button-default-fg h-11 gap-2 px-5 text-base"
                   onClick={() => {
-                    purchase(upgradeTier);
+                    purchase(tier);
                   }}
                 >
                   <span aria-live="polite">
-                    {isPurchasing ? 'Redirecting to checkout…' : buildPricingUpgradeCtaLabel(upgradeTier)}
+                    {isPurchasing ? 'Redirecting to checkout…' : buildPricingPurchaseCtaLabel(tier)}
                   </span>
                 </ShimmerButton>
-              ) : null}
-            </>
-          ) : isPurchasablePlan(tier.ID) && canPurchaseUpgrade ? (
-            <>
-              <ShimmerButton
-                type="button"
-                background={PRICING_PAGE.FIXED_CTA_SHIMMER_BACKGROUND}
-                shimmerColor={PRICING_PAGE.FIXED_CTA_SHIMMER_COLOR}
-                shimmerSize="2px"
-                disabled={isPurchasing}
-                aria-disabled={isPurchasing}
-                aria-label={buildPricingPurchaseCtaLabel(tier)}
-                className="text-button-default-fg h-11 gap-2 px-5 text-base"
-                onClick={() => {
-                  purchase(tier);
-                }}
+                <p className="text-muted-foreground text-center text-xs" role="status">
+                  {error ?? PRICING_SECTION.CHECKOUT_NOTE}
+                </p>
+                <p className="text-muted-foreground text-center text-xs">{PRICING_SECTION.CANCEL_ANYTIME}</p>
+              </>
+            ) : isPurchasablePlan(tier.ID) ? (
+              <p className="text-muted-foreground text-center text-xs">{PRICING_SECTION.ALREADY_INCLUDED}</p>
+            ) : isPaidPlan(tier.ID) ? (
+              <a
+                href={PRICING_SECTION.CONTACT_US_HREF}
+                className="text-button-default-fg inline-flex h-11 w-full items-center justify-center rounded-lg px-5 text-base font-medium"
+                style={{ background: PRICING_PAGE.FIXED_CTA_SHIMMER_BACKGROUND }}
               >
-                <span aria-live="polite">
-                  {isPurchasing ? 'Redirecting to checkout…' : buildPricingPurchaseCtaLabel(tier)}
-                </span>
-              </ShimmerButton>
-              <p className="text-muted-foreground text-center text-xs" role="status">
-                {error ?? PRICING_SECTION.CHECKOUT_NOTE}
-              </p>
-              <p className="text-muted-foreground text-center text-xs">{PRICING_SECTION.CANCEL_ANYTIME}</p>
-            </>
-          ) : isPurchasablePlan(tier.ID) ? (
-            <p className="text-muted-foreground text-center text-xs">{PRICING_SECTION.ALREADY_INCLUDED}</p>
-          ) : isPaidPlan(tier.ID) ? (
-            <a
-              href={PRICING_SECTION.CONTACT_US_HREF}
-              className="text-button-default-fg inline-flex h-11 w-full items-center justify-center rounded-lg px-5 text-base font-medium"
-              style={{ background: PRICING_PAGE.FIXED_CTA_SHIMMER_BACKGROUND }}
-            >
-              {PRICING_SECTION.CONTACT_US}
-            </a>
-          ) : (
-            <p className="text-muted-foreground text-center text-xs">{PRICING_SECTION.FREE_PLAN_CTA}</p>
-          )}
+                {PRICING_SECTION.CONTACT_US}
+              </a>
+            ) : (
+              <p className="text-muted-foreground text-center text-xs">{PRICING_SECTION.FREE_PLAN_CTA}</p>
+            )}
+          </div>
         </div>
-      ) : null}
+      </div>
     </Card>
   );
 }

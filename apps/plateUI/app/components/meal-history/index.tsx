@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { LoaderCircle, ExternalLink } from 'lucide-react';
-import { isPaidPlan, getDailyAnalysisLimit } from '@plate/plate-billing/utils';
+import { isPaidPlan, getDailyAnalysisLimit, hasUnlimitedDailyAnalyses } from '@plate/plate-billing/utils';
 import { SUBSCRIPTION_STATUS } from '@plate/plate-billing/constants';
 import { Badge } from '@/app/ui/badge';
 import { Button } from '@/app/ui/button';
@@ -15,7 +15,7 @@ import type { MealHistoryProps } from './types';
 import { analysesCountToday, formatPlanDate } from './utils';
 
 export default function MealHistory({ user, justPurchased = false }: MealHistoryProps) {
-  const { items, loading, error, refresh } = useMealHistory(justPurchased);
+  const { items, loading, error, removeItem } = useMealHistory(justPurchased);
   const [portalLoading, setPortalLoading] = useState(false);
 
   const planLabel =
@@ -25,7 +25,9 @@ export default function MealHistory({ user, justPurchased = false }: MealHistory
   const isCancelled = user?.subscriptionStatus === SUBSCRIPTION_STATUS.CANCELLED;
   const isExpired =
     user?.subscriptionStatus === SUBSCRIPTION_STATUS.EXPIRED ||
-    (isCancelled && user.subscriptionEndsAt != null && new Date(user.subscriptionEndsAt).getTime() <= Date.now());
+    (isCancelled &&
+      user.subscriptionEndsAt != null &&
+      new Date(user.subscriptionEndsAt).getTime() <= Date.now());
 
   const statusLabel = isExpired
     ? MEAL_HISTORY_STATUS_LABELS[SUBSCRIPTION_STATUS.EXPIRED]
@@ -50,11 +52,19 @@ export default function MealHistory({ user, justPurchased = false }: MealHistory
 
   const dailyLimit = paid && !isExpired ? getDailyAnalysisLimit(user.subscriptionPlan) : 0;
   const usedToday = analysesCountToday(items);
-  const dailyLimitReached = paid && !isExpired && usedToday >= dailyLimit;
+  const unlimitedDailyAnalyses = paid && !isExpired && hasUnlimitedDailyAnalyses(user.subscriptionPlan);
+  const dailyLimitReached = paid && !isExpired && !unlimitedDailyAnalyses && usedToday >= dailyLimit;
 
   async function handleDeleteItem(analysisId: string) {
-    await fetch(`/api/meal-analyses/${encodeURIComponent(analysisId)}`, { method: 'DELETE' });
-    await refresh();
+    const response = await fetch(`/api/meal-analyses/${encodeURIComponent(analysisId)}`, {
+      method: 'DELETE',
+    });
+
+    if (!response.ok) {
+      throw new Error('Delete failed');
+    }
+
+    removeItem(analysisId);
   }
 
   async function handleManageSubscription() {
@@ -85,9 +95,7 @@ export default function MealHistory({ user, justPurchased = false }: MealHistory
         {paid && dailyLimitReached ? (
           <p className="text-warning text-sm">{MEAL_HISTORY.DAILY_USAGE_FULL}</p>
         ) : null}
-        {isExpired ? (
-          <p className="text-muted-foreground text-sm">Your subscription has expired.</p>
-        ) : null}
+        {isExpired ? <p className="text-muted-foreground text-sm">Your subscription has expired.</p> : null}
       </div>
       {isExpired ? (
         <Button
@@ -108,16 +116,15 @@ export default function MealHistory({ user, justPurchased = false }: MealHistory
           {dailyLimit > 0 ? (
             <span className="text-sm">
               <span className="text-muted-foreground">{MEAL_HISTORY.DAILY_USAGE_LABEL}: </span>
-              <span className="font-semibold">{usedToday} / {dailyLimit}</span>
+              <span className="font-semibold">
+                {unlimitedDailyAnalyses
+                  ? `${usedToday} / ${MEAL_HISTORY.DAILY_USAGE_UNLIMITED}`
+                  : `${usedToday} / ${dailyLimit}`}
+              </span>
             </span>
           ) : null}
           {isActive || isCancelled ? (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleManageSubscription}
-              disabled={portalLoading}
-            >
+            <Button variant="ghost" size="sm" onClick={handleManageSubscription} disabled={portalLoading}>
               {portalLoading ? (
                 <LoaderCircle className="size-4 animate-spin" />
               ) : (

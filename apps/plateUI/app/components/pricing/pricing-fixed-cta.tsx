@@ -41,8 +41,6 @@ export function PricingFixedCta({ currentPlanId = null }: PricingFixedCtaProps) 
     ctaLabel = PRICING_SECTION.FREE_PLAN_CTA;
   }
 
-  const showCheckoutNote = ctaMode === 'button';
-
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center px-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
       <div className="pointer-events-auto flex flex-col items-center gap-1.5">
@@ -75,9 +73,11 @@ export function PricingFixedCta({ currentPlanId = null }: PricingFixedCtaProps) 
             <span aria-live="polite">{isPurchasing ? 'Redirecting to checkout…' : ctaLabel}</span>
           </ShimmerButton>
         )}
-        <p className="text-muted-foreground text-center text-xs" role="status">
-          {error ?? (showCheckoutNote ? PRICING_SECTION.CHECKOUT_NOTE : null)}
-        </p>
+        {error ? (
+          <p className="text-muted-foreground text-center text-xs" role="status">
+            {error}
+          </p>
+        ) : null}
       </div>
     </div>
   );

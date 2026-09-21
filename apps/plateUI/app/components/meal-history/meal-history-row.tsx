@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ChevronRight, Clock3, Trash2 } from 'lucide-react';
+import { ChevronRight, Clock3, LoaderCircle, Trash2 } from 'lucide-react';
 import { MEAL_ANALYSIS_STATUS } from '@plate/plate-ai/constants';
 import { writeSnapSavedMealCache } from '@/app/utils/meal-analyses/session-cache';
 import { Badge } from '@/app/ui/badge';
@@ -60,7 +60,11 @@ export function MealHistoryRow({ item, onDelete }: MealHistoryRowProps) {
   async function handleDelete() {
     if (removing) return;
     setRemoving(true);
-    await onDelete(item.id);
+    try {
+      await onDelete(item.id);
+    } catch {
+      setRemoving(false);
+    }
   }
 
   return (
@@ -93,9 +97,7 @@ export function MealHistoryRow({ item, onDelete }: MealHistoryRowProps) {
                 {item.analysis.calories} kcal · {item.analysis.proteinG}g protein
               </p>
             ) : null}
-            {item.errorMessage ? (
-              <p className="text-destructive mt-1 text-sm">{item.errorMessage}</p>
-            ) : null}
+            {item.errorMessage ? <p className="text-destructive mt-1 text-sm">{item.errorMessage}</p> : null}
           </div>
         </div>
 
@@ -107,7 +109,7 @@ export function MealHistoryRow({ item, onDelete }: MealHistoryRowProps) {
             aria-label={MEAL_HISTORY.REMOVE}
             onClick={handleDelete}
           >
-            <Trash2 />
+            {removing ? <LoaderCircle className="size-3 animate-spin" aria-hidden /> : <Trash2 />}
           </Button>
           <Button
             className="shrink-0"

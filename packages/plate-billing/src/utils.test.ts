@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { SUBSCRIPTION_PLAN } from '@/constants.js';
-import { getPendingAnalysisLimit, isPlanUpgrade } from './utils.js';
+import {
+  getDailyAnalysisLimit,
+  getPendingAnalysisLimit,
+  hasUnlimitedDailyAnalyses,
+  isPlanUpgrade,
+} from './utils.js';
 
 describe('isPlanUpgrade', () => {
   it('is false when there is no current plan', () => {
@@ -18,6 +23,30 @@ describe('isPlanUpgrade', () => {
     expect(isPlanUpgrade(SUBSCRIPTION_PLAN.BASIC, SUBSCRIPTION_PLAN.BASIC)).toBe(false);
     expect(isPlanUpgrade(SUBSCRIPTION_PLAN.BASIC, SUBSCRIPTION_PLAN.PRO)).toBe(false);
     expect(isPlanUpgrade(SUBSCRIPTION_PLAN.PRO, SUBSCRIPTION_PLAN.PRO)).toBe(false);
+  });
+});
+
+describe('getDailyAnalysisLimit', () => {
+  it('returns 0 for free users', () => {
+    expect(getDailyAnalysisLimit(null)).toBe(0);
+  });
+
+  it('returns 10 for basic and 50 for pro', () => {
+    expect(getDailyAnalysisLimit(SUBSCRIPTION_PLAN.BASIC)).toBe(10);
+    expect(getDailyAnalysisLimit(SUBSCRIPTION_PLAN.PRO)).toBe(50);
+  });
+
+  it('is infinite for individual', () => {
+    expect(getDailyAnalysisLimit(SUBSCRIPTION_PLAN.INDIVIDUAL)).toBe(Infinity);
+  });
+});
+
+describe('hasUnlimitedDailyAnalyses', () => {
+  it('is true only for individual', () => {
+    expect(hasUnlimitedDailyAnalyses(null)).toBe(false);
+    expect(hasUnlimitedDailyAnalyses(SUBSCRIPTION_PLAN.BASIC)).toBe(false);
+    expect(hasUnlimitedDailyAnalyses(SUBSCRIPTION_PLAN.PRO)).toBe(false);
+    expect(hasUnlimitedDailyAnalyses(SUBSCRIPTION_PLAN.INDIVIDUAL)).toBe(true);
   });
 });
 

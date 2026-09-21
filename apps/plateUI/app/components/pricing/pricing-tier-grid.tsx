@@ -27,6 +27,7 @@ export function PricingTierGrid({ variant, currentPlanId = null }: PricingTierGr
         <li
           key={tier.ID}
           id={variant === 'detail' ? buildPricingPlanCardId(tier.ID) : undefined}
+          data-pricing-tier-card={variant === 'detail' ? true : undefined}
           className={variant === 'detail' ? 'min-w-0 scroll-mt-28' : 'h-full min-w-0 scroll-mt-28'}
         >
           <PricingTierCard

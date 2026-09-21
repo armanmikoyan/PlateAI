@@ -13,7 +13,7 @@ export const FAQ_ITEMS: readonly FaqItemRow[] = [
     KEY: 'accuracy',
     QUESTION: 'How accurate are photo-based estimates?',
     ANSWER:
-      'PlateAI is built for fast, honest ranges—not lab precision. You get calories and macros you can act on, then adjust portions or ingredients when you want tighter numbers.',
+      'PlateAI turns photos into calories and macros you can act on. Basic plans land around 75% estimate accuracy; Pro pushes that closer to 99%. They are ranges to guide your day—still adjust when you know exact ingredients.',
   },
   {
     KEY: 'privacy',

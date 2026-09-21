@@ -51,24 +51,23 @@ describe('snap analysis entitlements', () => {
 });
 
 describe('canAnalyzeToday', () => {
-  it('allows basic plan up to 3 analyses', () => {
+  it('allows basic plan up to 10 analyses', () => {
     expect(canAnalyzeToday(0, SUBSCRIPTION_PLAN.BASIC)).toBe(true);
-    expect(canAnalyzeToday(2, SUBSCRIPTION_PLAN.BASIC)).toBe(true);
-    expect(canAnalyzeToday(3, SUBSCRIPTION_PLAN.BASIC)).toBe(false);
-    expect(canAnalyzeToday(5, SUBSCRIPTION_PLAN.BASIC)).toBe(false);
+    expect(canAnalyzeToday(9, SUBSCRIPTION_PLAN.BASIC)).toBe(true);
+    expect(canAnalyzeToday(10, SUBSCRIPTION_PLAN.BASIC)).toBe(false);
+    expect(canAnalyzeToday(12, SUBSCRIPTION_PLAN.BASIC)).toBe(false);
   });
 
-  it('allows pro plan up to 15 analyses', () => {
+  it('allows pro plan up to 50 analyses', () => {
     expect(canAnalyzeToday(0, SUBSCRIPTION_PLAN.PRO)).toBe(true);
-    expect(canAnalyzeToday(14, SUBSCRIPTION_PLAN.PRO)).toBe(true);
-    expect(canAnalyzeToday(15, SUBSCRIPTION_PLAN.PRO)).toBe(false);
-    expect(canAnalyzeToday(20, SUBSCRIPTION_PLAN.PRO)).toBe(false);
+    expect(canAnalyzeToday(49, SUBSCRIPTION_PLAN.PRO)).toBe(true);
+    expect(canAnalyzeToday(50, SUBSCRIPTION_PLAN.PRO)).toBe(false);
+    expect(canAnalyzeToday(60, SUBSCRIPTION_PLAN.PRO)).toBe(false);
   });
 
-  it('allows individual plan up to 15 analyses', () => {
+  it('allows individual plan unlimited analyses', () => {
     expect(canAnalyzeToday(0, SUBSCRIPTION_PLAN.INDIVIDUAL)).toBe(true);
-    expect(canAnalyzeToday(14, SUBSCRIPTION_PLAN.INDIVIDUAL)).toBe(true);
-    expect(canAnalyzeToday(15, SUBSCRIPTION_PLAN.INDIVIDUAL)).toBe(false);
+    expect(canAnalyzeToday(100_000, SUBSCRIPTION_PLAN.INDIVIDUAL)).toBe(true);
   });
 
   it('denies analyses for null plan', () => {

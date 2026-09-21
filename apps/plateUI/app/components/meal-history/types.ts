@@ -18,4 +18,5 @@ export type UseMealHistoryResult = Readonly<{
   loading: boolean;
   error: string | null;
   refresh: () => Promise<void>;
+  removeItem: (analysisId: string) => void;
 }>;

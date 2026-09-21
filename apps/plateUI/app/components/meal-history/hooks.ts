@@ -93,11 +93,16 @@ export function useMealHistory(justPurchased = false): UseMealHistoryResult {
     };
   }, [justPurchased]);
 
+  const removeItem = useCallback((analysisId: string) => {
+    setItems((current) => current.filter((item) => item.id !== analysisId));
+  }, []);
+
   return {
     items,
     pendingCount: pendingMealCount(items),
     loading,
     error,
     refresh,
+    removeItem,
   };
 }

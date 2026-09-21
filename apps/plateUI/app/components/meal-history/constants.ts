@@ -30,6 +30,7 @@ export const MEAL_HISTORY = {
   RESUBSCRIBE: 'Resubscribe',
   DAILY_USAGE_LABEL: 'Daily analyses',
   DAILY_USAGE_FULL: 'Daily limit reached. New analyses unlock after midnight (UTC).',
+  DAILY_USAGE_UNLIMITED: 'Unlimited',
   REMOVE: 'Remove',
 } as const;
 

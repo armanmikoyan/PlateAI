@@ -1,11 +1,24 @@
-import { DAILY_ANALYSIS_LIMITS, NO_PLAN_PENDING_ANALYSIS_LIMIT, PENDING_ANALYSIS_LIMITS, PLAN_RANK, SUBSCRIPTION_PLAN, SUBSCRIPTION_STATUS } from '@/constants.js';
+import {
+  DAILY_ANALYSIS_LIMITS,
+  NO_PLAN_PENDING_ANALYSIS_LIMIT,
+  PENDING_ANALYSIS_LIMITS,
+  PLAN_RANK,
+  SUBSCRIPTION_PLAN,
+  SUBSCRIPTION_STATUS,
+} from '@/constants.js';
 import type { SubscriptionPlan, SubscriptionStatus } from '@/types.js';
 
 export function isPaidPlan(plan: string | null | undefined): plan is SubscriptionPlan {
-  return plan === SUBSCRIPTION_PLAN.BASIC || plan === SUBSCRIPTION_PLAN.PRO || plan === SUBSCRIPTION_PLAN.INDIVIDUAL;
+  return (
+    plan === SUBSCRIPTION_PLAN.BASIC ||
+    plan === SUBSCRIPTION_PLAN.PRO ||
+    plan === SUBSCRIPTION_PLAN.INDIVIDUAL
+  );
 }
 
-export function isPurchasablePlan(plan: string | null | undefined): plan is Exclude<SubscriptionPlan, 'individual'> {
+export function isPurchasablePlan(
+  plan: string | null | undefined,
+): plan is Exclude<SubscriptionPlan, 'individual'> {
   return plan === SUBSCRIPTION_PLAN.BASIC || plan === SUBSCRIPTION_PLAN.PRO;
 }
 
@@ -22,6 +35,13 @@ export function getDailyAnalysisLimit(plan: SubscriptionPlan | null): number {
     return 0;
   }
   return DAILY_ANALYSIS_LIMITS[plan] ?? 0;
+}
+
+export function hasUnlimitedDailyAnalyses(plan: SubscriptionPlan | null | undefined): boolean {
+  if (!plan) {
+    return false;
+  }
+  return !Number.isFinite(DAILY_ANALYSIS_LIMITS[plan] ?? 0);
 }
 
 export function getPendingAnalysisLimit(plan: SubscriptionPlan | null): number {
