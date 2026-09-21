@@ -11,7 +11,7 @@ export default function PricingPage({ currentPlanId = null }: PricingPageProps) 
   return (
     <>
       <PricingUrlSync />
-      <div className="border-edge bg-canvas border-t py-16 sm:py-20 lg:py-24">
+      <div className="border-edge bg-canvas border-t py-16 sm:py-20 lg:py-20">
         <ScrollEnter
           className="layout-page-shell"
           rows={[
@@ -26,7 +26,7 @@ export default function PricingPage({ currentPlanId = null }: PricingPageProps) 
       </div>
 
       <section
-        className="border-edge scroll-mt-28 border-t bg-surface py-16 sm:py-20 lg:py-24"
+        className="border-edge scroll-mt-28 border-t bg-surface py-16 sm:py-20 lg:py-20"
         aria-labelledby="pricing-comparison-heading"
       >
         <ScrollEnter

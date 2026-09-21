@@ -13,6 +13,8 @@ const PRICING_TIER_SHELL_SELECTOR = '[data-pricing-tier-shell]';
 const PRICING_TIER_CARD_SELECTOR = '[data-pricing-tier-card]';
 const PRICING_TIER_REGION_SELECTOR = '[data-pricing-tier-region]';
 
+const MD_VIEWPORT_QUERY = '(min-width: 48rem)';
+
 export function usePricingSelectedTierId(): string | null {
   return useAtomValue(pricingSelectedTierIdAtom);
 }
@@ -82,14 +84,17 @@ export function usePricingTierShellMinHeight(gridRef: RefObject<HTMLElement | nu
     }
 
     const grid = gridRef.current;
+    const mq = window.matchMedia(MD_VIEWPORT_QUERY);
     let disposed = false;
-    let lastWidth = grid.getBoundingClientRect().width;
 
-    const getCards = () =>
-      Array.from(grid.children).filter(
-        (child): child is HTMLElement =>
-          child instanceof HTMLElement && child.matches(PRICING_TIER_CARD_SELECTOR),
-      );
+    const clearLocks = () => {
+      grid.querySelectorAll<HTMLElement>(PRICING_TIER_CARD_SELECTOR).forEach((card) => {
+        card.style.minHeight = '';
+      });
+      grid.querySelectorAll<HTMLElement>(PRICING_TIER_SHELL_SELECTOR).forEach((shell) => {
+        shell.style.minHeight = '';
+      });
+    };
 
     const equalizeShells = () => {
       const shells = grid.querySelectorAll<HTMLElement>(PRICING_TIER_SHELL_SELECTOR);
@@ -106,50 +111,53 @@ export function usePricingTierShellMinHeight(gridRef: RefObject<HTMLElement | nu
     };
 
     const lockCardHeight = () => {
-      const cards = getCards();
+      const cards = Array.from(grid.children).filter(
+        (child): child is HTMLElement =>
+          child instanceof HTMLElement && child.matches(PRICING_TIER_CARD_SELECTOR),
+      );
       let cardMax = 0;
 
-      cards.forEach((li) => {
-        const region = li.querySelector<HTMLElement>(PRICING_TIER_REGION_SELECTOR);
-        if (!region) {
-          return;
-        }
-        const cardHeight = li.getBoundingClientRect().height;
-        const regionHeight = region.getBoundingClientRect().height;
-        cardMax = Math.max(cardMax, cardHeight - regionHeight + region.scrollHeight);
+      cards.forEach((card) => {
+        cardMax = Math.max(cardMax, card.getBoundingClientRect().height);
       });
 
       if (cardMax > 0) {
-        cards.forEach((li) => {
-          li.style.minHeight = `${cardMax}px`;
+        cards.forEach((card) => {
+          card.style.minHeight = `${cardMax}px`;
         });
       }
     };
 
-    equalizeShells();
-    lockCardHeight();
-
-    const measureOnWidthChange = () => {
-      const width = grid.getBoundingClientRect().width;
-      if (width === lastWidth) {
+    const applyLocks = () => {
+      if (!mq.matches) {
+        clearLocks();
         return;
       }
-      lastWidth = width;
+
       equalizeShells();
       lockCardHeight();
     };
 
-    const resizeObserver = new ResizeObserver(measureOnWidthChange);
+    applyLocks();
+
+    const resizeObserver = new ResizeObserver(applyLocks);
     resizeObserver.observe(grid);
     grid.querySelectorAll(PRICING_TIER_SHELL_SELECTOR).forEach((shell) => {
       resizeObserver.observe(shell);
     });
+    grid.querySelectorAll(PRICING_TIER_REGION_SELECTOR).forEach((region) => {
+      resizeObserver.observe(region);
+    });
+
+    const onMqChange = () => {
+      applyLocks();
+    };
+    mq.addEventListener('change', onMqChange);
 
     if (document.fonts?.ready) {
       document.fonts.ready.then(() => {
         if (!disposed) {
-          equalizeShells();
-          lockCardHeight();
+          applyLocks();
         }
       });
     }
@@ -157,6 +165,7 @@ export function usePricingTierShellMinHeight(gridRef: RefObject<HTMLElement | nu
     return () => {
       disposed = true;
       resizeObserver.disconnect();
+      mq.removeEventListener('change', onMqChange);
     };
   }, [enabled, gridRef]);
 }
