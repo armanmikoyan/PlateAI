@@ -14,6 +14,20 @@ export const SNAP_HEADING_PHASE = {
   ERROR: 'error',
 } as const;
 
+export const SNAP_ORB = {
+  STATE: 'solving',
+  TUNED_SIZE: 64,
+  FILL: 0.9,
+  MAX_SIZE: 560,
+  DPR_CAP: 2,
+  GROW_MS: 900,
+} as const;
+
+export const SNAP_ANALYSIS_PLACEHOLDER = {
+  TITLE: 'Meal analysis',
+  BODY: 'Tap Analyze plate — calories, protein, and carbs appear here.',
+} as const;
+
 export const SNAP_LOCKED_REASON = {
   PLAN: 'plan',
   DAILY_LIMIT: 'daily-limit',

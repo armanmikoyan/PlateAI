@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, type RefObject } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { useSearchParams } from 'next/navigation';
 import { MEAL_ANALYSIS_STATUS } from '@plate/plate-ai/constants';
@@ -11,7 +11,7 @@ import { trackAnalysisComplete } from '@/app/utils/analytics';
 import { RATE_LIMIT_TOAST_TIMEOUT_MS, RATE_LIMIT_TOAST_TITLE } from '@/app/utils/rate-limit/constants';
 import { formatRetryDescription } from '@/app/utils/rate-limit/utils';
 import { toast } from '@/app/ui/toast';
-import { SNAP, SNAP_ANALYSIS_STATUS, SNAP_LOCKED_REASON } from './constants';
+import { SNAP, SNAP_ANALYSIS_STATUS, SNAP_LOCKED_REASON, SNAP_ORB } from './constants';
 import { snapAnalysisAtom, snapPhotoAtom, snapResumeAnalysisIdAtom } from './state';
 import type {
   SavedMealPayload,
@@ -22,6 +22,32 @@ import type {
   UseSnapSavedMealLoaderResult,
 } from './types';
 import { compressImageFile, toSnapSavedMealCache } from './utils';
+
+export function useSnapOrbSize(containerRef: RefObject<HTMLDivElement | null>): number {
+  const [size, setSize] = useState(0);
+
+  useEffect(() => {
+    const element = containerRef.current;
+
+    if (!element) {
+      return;
+    }
+
+    const computeSize = () => {
+      const fit = Math.min(element.clientWidth, element.clientHeight) * SNAP_ORB.FILL;
+      setSize(Math.max(0, Math.min(SNAP_ORB.MAX_SIZE, fit)));
+    };
+
+    computeSize();
+
+    const observer = new ResizeObserver(computeSize);
+    observer.observe(element);
+
+    return () => observer.disconnect();
+  }, [containerRef]);
+
+  return size;
+}
 
 export function useSnapPhoto(): UseSnapPhotoResult {
   const photo = useAtomValue(snapPhotoAtom);

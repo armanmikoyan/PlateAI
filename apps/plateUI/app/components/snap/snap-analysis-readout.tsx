@@ -1,13 +1,16 @@
 'use client';
 
 import Image from 'next/image';
-import { LoaderCircle, RefreshCw } from 'lucide-react';
+import type { ReactNode } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
+import { RefreshCw, ScanLine } from 'lucide-react';
 import { Badge } from '@/app/ui/badge';
 import { Button } from '@/app/ui/button';
 import { Card, CardContent } from '@/app/ui/card';
 import { cn } from '@/app/utils/cn';
 import {
   SNAP,
+  SNAP_ANALYSIS_PLACEHOLDER,
   SNAP_ANALYSIS_STATUS,
   SNAP_ANALYSIS_CARD_SHELL,
   SNAP_LOCKED_DECOY,
@@ -17,6 +20,7 @@ import {
 import { SnapAnalysisLockedPreview } from './snap-analysis-locked-preview';
 import { SnapAnalysisUnlockedReadout } from './snap-analysis-unlocked-readout';
 import { SnapLockedPlaceholder } from './snap-locked-placeholder';
+import { SnapOrbLoader } from './snap-orb-loader';
 import type { SnapAnalysisReadoutProps, SnapAnalysisState } from './types';
 
 function SnapAnalysisLockedHeader({
@@ -42,21 +46,6 @@ function SnapAnalysisLockedHeader({
         </p>
       </div>
     </div>
-  );
-}
-
-function SnapAnalysisLoadingCard() {
-  return (
-    <Card
-      className={cn('@container/result flex h-full w-full flex-col', SNAP_PHOTO_CARD_SHELL)}
-      aria-live="polite"
-      aria-busy
-    >
-      <CardContent className="flex h-full flex-col items-center justify-center gap-3 p-6 text-center">
-        <LoaderCircle className="text-muted-foreground size-8 animate-spin" aria-hidden />
-        <p className="text-muted-foreground text-sm">{SNAP.ANALYZING}</p>
-      </CardContent>
-    </Card>
   );
 }
 
@@ -87,9 +76,41 @@ function SnapAnalysisLockedCard({
   );
 }
 
+function SnapAnalysisPlaceholderCard() {
+  return (
+    <Card
+      className={cn(
+        '@container/result flex h-full w-full flex-col items-center justify-center gap-3 p-6 text-center',
+        SNAP_PHOTO_CARD_SHELL,
+      )}
+    >
+      <ScanLine className="text-content-subtle size-8" aria-hidden />
+      <p className="font-heading text-content text-base font-semibold tracking-tight">
+        {SNAP_ANALYSIS_PLACEHOLDER.TITLE}
+      </p>
+      <p className="text-muted-foreground max-w-56 text-sm">{SNAP_ANALYSIS_PLACEHOLDER.BODY}</p>
+    </Card>
+  );
+}
+
+function snapReadoutStageKey(analysisState: SnapAnalysisState): string {
+  switch (analysisState.STATUS) {
+    case SNAP_ANALYSIS_STATUS.LOADING:
+      return 'loading';
+    case SNAP_ANALYSIS_STATUS.ERROR:
+      return 'error';
+    case SNAP_ANALYSIS_STATUS.SUCCESS:
+      return 'success';
+    default:
+      return 'idle';
+  }
+}
+
 export function SnapAnalysisReadout({ analysisState, photo, onRetry }: SnapAnalysisReadoutProps) {
+  let content: ReactNode | null = null;
+
   if (analysisState.STATUS === SNAP_ANALYSIS_STATUS.ERROR) {
-    return (
+    content = (
       <Card
         className={cn('@container/result flex h-full w-full flex-col', SNAP_PHOTO_CARD_SHELL)}
         aria-live="polite"
@@ -105,22 +126,10 @@ export function SnapAnalysisReadout({ analysisState, photo, onRetry }: SnapAnaly
         </CardContent>
       </Card>
     );
-  }
-
-  if (analysisState.STATUS === SNAP_ANALYSIS_STATUS.IDLE) {
-    return null;
-  }
-
-  if (analysisState.STATUS === SNAP_ANALYSIS_STATUS.LOADING) {
-    return <SnapAnalysisLoadingCard />;
-  }
-
-  if (analysisState.STATUS !== SNAP_ANALYSIS_STATUS.SUCCESS) {
-    return null;
-  }
-
-  if (analysisState.LOCKED === false) {
-    return (
+  } else if (analysisState.STATUS === SNAP_ANALYSIS_STATUS.LOADING) {
+    content = <SnapOrbLoader />;
+  } else if (analysisState.STATUS === SNAP_ANALYSIS_STATUS.SUCCESS && analysisState.LOCKED === false) {
+    content = (
       <Card
         className={cn('@container/result flex w-full flex-col', SNAP_ANALYSIS_CARD_SHELL)}
         aria-live="polite"
@@ -130,16 +139,35 @@ export function SnapAnalysisReadout({ analysisState, photo, onRetry }: SnapAnaly
         </CardContent>
       </Card>
     );
+  } else if (analysisState.STATUS === SNAP_ANALYSIS_STATUS.SUCCESS) {
+    content = (
+      <Card
+        className={cn('@container/result flex w-full flex-col', SNAP_ANALYSIS_CARD_SHELL)}
+        aria-live="polite"
+      >
+        <CardContent className="flex flex-col gap-0 p-0">
+          <SnapAnalysisLockedCard photo={photo} analysisState={analysisState} />
+        </CardContent>
+      </Card>
+    );
+  } else {
+    content = <SnapAnalysisPlaceholderCard />;
   }
 
   return (
-    <Card
-      className={cn('@container/result flex w-full flex-col', SNAP_ANALYSIS_CARD_SHELL)}
-      aria-live="polite"
-    >
-      <CardContent className="flex flex-col gap-0 p-0">
-        <SnapAnalysisLockedCard photo={photo} analysisState={analysisState} />
-      </CardContent>
-    </Card>
+    <AnimatePresence initial={false} mode="wait">
+      {content ? (
+        <motion.div
+          key={snapReadoutStageKey(analysisState)}
+          className="flex w-full min-w-0"
+          initial={{ opacity: 0, scale: 0.94 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.9 }}
+          transition={{ duration: 0.2, ease: 'easeOut' }}
+        >
+          {content}
+        </motion.div>
+      ) : null}
+    </AnimatePresence>
   );
 }
