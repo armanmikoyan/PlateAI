@@ -14,12 +14,12 @@ const buttonVariants = cva(
           'bg-button-secondary-bg text-button-secondary-fg hover:bg-button-secondary-hover aria-expanded:bg-button-secondary-hover',
         ghost:
           'text-button-ghost-fg hover:bg-button-ghost-hover aria-expanded:bg-button-ghost-hover dark:hover:bg-button-ghost-hover/80',
+        cta: 'bg-cta text-button-default-fg hover:bg-cta-soft',
         destructive: 'bg-danger/10 text-danger hover:bg-danger/20 focus-visible:ring-danger/30',
         link: 'text-button-link-fg underline-offset-4 hover:underline',
       },
       size: {
-        default:
-          'h-8 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2',
+        default: 'h-8 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2',
         xs: "h-6 gap-1 rounded-md px-2 text-xs in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3",
         sm: "h-7 gap-1 rounded-md px-2.5 text-[0.8rem] in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3.5",
         lg: 'h-9 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2',

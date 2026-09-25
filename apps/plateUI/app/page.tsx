@@ -9,6 +9,7 @@ import FeedbackMarquee from '@/app/components/feedback-marquee';
 import Features from '@/app/components/features';
 import Hero from '@/app/components/hero';
 import HowItWorks from '@/app/components/how-it-works';
+import MealScan from '@/app/components/meal-scan';
 import Pricing from '@/app/components/pricing';
 import SiteFooter from '@/app/components/site-footer';
 import UseCases from '@/app/components/use-cases';
@@ -24,6 +25,7 @@ export default async function Page(): Promise<ReactNode> {
   return (
     <>
       <Hero />
+      <MealScan />
       <Demo />
       <HowItWorks />
       <Features />
