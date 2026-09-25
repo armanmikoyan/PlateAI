@@ -21,6 +21,7 @@ export const SNAP_ORB = {
   MAX_SIZE: 560,
   DPR_CAP: 2,
   GROW_MS: 900,
+  TINT: { r: 240, g: 196, b: 0 },
 } as const;
 
 export const SNAP_ANALYSIS_PLACEHOLDER = {

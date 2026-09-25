@@ -51,7 +51,7 @@ export function SnapOrbLoader() {
       context.translate(size / 2, size / 2);
       context.scale(ratio * grow, ratio * grow);
       context.translate(-SNAP_ORB.TUNED_SIZE / 2, -SNAP_ORB.TUNED_SIZE / 2);
-      paintFrame(context, frame(SNAP_ORB.TUNED_SIZE, t, resolved.opts), true, undefined);
+      paintFrame(context, frame(SNAP_ORB.TUNED_SIZE, t, resolved.opts), true, SNAP_ORB.TINT);
       context.restore();
     };
 
