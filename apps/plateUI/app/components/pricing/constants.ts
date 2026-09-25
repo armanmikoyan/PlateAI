@@ -36,6 +36,10 @@ export const PRICING_PAGE = {
   FIXED_CTA_SHIMMER_COLOR: 'var(--color-content)',
 } as const;
 
+export const PRICING_TIER_ANIM = {
+  MAX_TILT_DEG: 6,
+} as const;
+
 export const PRICING_TIERS = [
   {
     ID: SUBSCRIPTION_PLAN.BASIC,

@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { useLayoutEffect, useRef } from 'react';
+import { useCallback, useLayoutEffect, useRef, type PointerEvent as ReactPointerEvent } from 'react';
+import { motion, useMotionValue, useReducedMotion, useSpring } from 'motion/react';
 import { SUBSCRIPTION_PLAN } from '@plate/plate-billing/constants';
 import { isPaidPlan, isPlanUpgrade, isPurchasablePlan } from '@plate/plate-billing/utils';
 import { cn } from '@/app/utils/cn';
@@ -16,7 +17,7 @@ import {
   CardTitle,
 } from '@/app/ui/card';
 import { ShimmerButton } from '@/app/ui/shimmer-button';
-import { PRICING_PAGE, PRICING_SECTION } from './constants';
+import { PRICING_PAGE, PRICING_SECTION, PRICING_TIER_ANIM } from './constants';
 import { usePricingPurchase, usePricingSelectTier } from './hooks';
 import { PricingTierCardDetail } from './pricing-tier-card-detail';
 import { PricingTierFeatureList } from './pricing-tier-feature-list';
@@ -44,8 +45,44 @@ export function PricingTierCard({
   const showPopularHighlight = tier.HIGHLIGHT && !isCurrentPlan && !hasActiveSelection;
   const showSelectedHighlight = isSelected && !isCurrentPlan;
 
+  const reduceMotion = useReducedMotion() === true;
+  const frameRef = useRef<HTMLDivElement>(null);
+  const rotateX = useSpring(useMotionValue(0), { stiffness: 220, damping: 20 });
+  const rotateY = useSpring(useMotionValue(0), { stiffness: 220, damping: 20 });
+
+  const handlePointerMove = useCallback(
+    (event: ReactPointerEvent<HTMLDivElement>) => {
+      const element = frameRef.current;
+      if (!element || reduceMotion) {
+        return;
+      }
+      const rect = element.getBoundingClientRect();
+      const px = (event.clientX - rect.left) / rect.width;
+      const py = (event.clientY - rect.top) / rect.height;
+      if (variant === 'preview') {
+        rotateY.set((px - 0.5) * 2 * PRICING_TIER_ANIM.MAX_TILT_DEG);
+        rotateX.set((0.5 - py) * 2 * PRICING_TIER_ANIM.MAX_TILT_DEG);
+      }
+    },
+    [reduceMotion, variant, rotateX, rotateY],
+  );
+
+  const reset = useCallback(() => {
+    rotateX.set(0);
+    rotateY.set(0);
+  }, [rotateX, rotateY]);
+
+  const glowLayer = (
+    <>
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-y-0 z-10 w-1/3 -translate-x-[300%] -skew-x-12 bg-linear-to-r from-transparent via-white/8 to-transparent group-hover/card:translate-x-[450%] group-hover/card:transition-transform group-hover/card:duration-700 group-hover/card:ease-out"
+      />
+    </>
+  );
+
   const cardClassName = cn(
-    'flex w-full flex-col transition-[box-shadow,translate] duration-300 ease-out motion-reduce:transition-none',
+    'relative flex w-full flex-col transition-[box-shadow,translate] duration-300 ease-out motion-reduce:transition-none',
     variant === 'preview' && 'h-full',
     variant === 'detail' &&
       showSelectedHighlight &&
@@ -148,36 +185,47 @@ export function PricingTierCard({
 
   if (variant === 'preview') {
     return (
-      <Link
-        href={detailHref}
-        scroll={false}
-        onClick={() => {
-          sessionStorage.setItem(PRICING_PAGE.SCROLL_PLAN_FLAG, '1');
-        }}
-        className="group block h-full rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-        aria-label={`${tier.NAME} — ${PRICING_SECTION.VIEW_DETAILS}`}
+      <motion.div
+        ref={frameRef}
+        className="h-full [perspective:1200px]"
+        onPointerMove={handlePointerMove}
+        onPointerLeave={reset}
       >
-        <Card className={cardClassName}>
-          <div className={shellClassName}>{cardBody}</div>
-          <CardFooter className="mt-auto flex-col items-stretch">
-            <span
-              className={cn(
-                'inline-flex h-10 w-full items-center justify-center rounded-lg px-4 text-sm font-medium',
-                tier.HIGHLIGHT
-                  ? 'bg-primary text-primary-foreground'
-                  : 'border-edge text-content border bg-transparent',
-              )}
-            >
-              {PRICING_SECTION.VIEW_DETAILS}
-            </span>
-          </CardFooter>
-        </Card>
-      </Link>
+        <motion.div style={{ rotateX, rotateY, transformStyle: 'preserve-3d' }} className="h-full">
+          <Link
+            href={detailHref}
+            scroll={false}
+            onClick={() => {
+              sessionStorage.setItem(PRICING_PAGE.SCROLL_PLAN_FLAG, '1');
+            }}
+            className="group block h-full rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            aria-label={`${tier.NAME} — ${PRICING_SECTION.VIEW_DETAILS}`}
+          >
+            <Card className={cardClassName}>
+              {glowLayer}
+              <div className={shellClassName}>{cardBody}</div>
+              <CardFooter className="mt-auto flex-col items-stretch">
+                <span
+                  className={cn(
+                    'inline-flex h-10 w-full items-center justify-center rounded-lg px-4 text-sm font-medium',
+                    tier.HIGHLIGHT
+                      ? 'bg-primary text-primary-foreground'
+                      : 'border-edge text-content border bg-transparent',
+                  )}
+                >
+                  {PRICING_SECTION.VIEW_DETAILS}
+                </span>
+              </CardFooter>
+            </Card>
+          </Link>
+        </motion.div>
+      </motion.div>
     );
   }
 
   return (
-    <Card className={cardClassName}>
+    <Card ref={frameRef} onPointerMove={handlePointerMove} onPointerLeave={reset} className={cardClassName}>
+      {glowLayer}
       <button
         type="button"
         onClick={() => selectTier(tier.ID)}

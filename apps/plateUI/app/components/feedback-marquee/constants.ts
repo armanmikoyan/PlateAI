@@ -7,6 +7,11 @@ export const FEEDBACK_MARQUEE_SECTION = {
   TITLE: 'What people are saying',
 } as const;
 
+export const FEEDBACK_MARQUEE_ANIM = {
+  GLOW_SIZE: 220,
+  GLOW_COLOR: 'rgba(240, 196, 0, 0.10)',
+} as const;
+
 /** First row: scrolls left → right (track moves toward positive X). */
 export const FEEDBACK_MARQUEE_ROW_A_QUOTES: readonly FeedbackMarqueeQuoteRow[] = [
   {

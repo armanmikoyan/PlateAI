@@ -10,7 +10,9 @@ type FeedbackMarqueeRowProps = Readonly<{
 }>;
 
 function renderChips(quotes: readonly FeedbackMarqueeQuoteRow[]) {
-  return quotes.map((row) => <FeedbackMarqueeQuoteChip key={row.KEY} quote={row.QUOTE} />);
+  return quotes.map((row, index) => (
+    <FeedbackMarqueeQuoteChip key={row.KEY} quote={row.QUOTE} index={index} />
+  ));
 }
 
 export function FeedbackMarqueeRow({ quotes, variant }: FeedbackMarqueeRowProps) {
