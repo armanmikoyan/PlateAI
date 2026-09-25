@@ -1,3 +1,5 @@
+'use client';
+
 import { ScrollEnter } from '@/app/components/scroll';
 import { SectionIntro } from '@/app/components/section-intro';
 import { USE_CASES_SECTION, USE_CASE_CARD_ROWS } from './constants';

@@ -1,9 +1,18 @@
+'use client';
+
+import { useState } from 'react';
+import { useReducedMotion } from 'motion/react';
 import { ScrollEnter } from '@/app/components/scroll';
 import { SectionIntro } from '@/app/components/section-intro';
-import { FEATURES_SECTION, FEATURE_TILE_ROWS } from './constants';
-import { FeatureTile } from './feature-tile';
+import { FEATURE_DEMO_ROWS, FEATURES_SECTION } from './constants';
+import { FeatureDemoPreview } from './feature-demo-preview';
+import { FeatureDemoTabs } from './feature-demo-tabs';
+import type { FeatureDemoSceneKey } from './types';
 
 export default function Features() {
+  const [activeKey, setActiveKey] = useState<FeatureDemoSceneKey>(FEATURE_DEMO_ROWS[0].KEY);
+  const reduceMotion = useReducedMotion() === true;
+
   return (
     <section
       id="features"
@@ -25,13 +34,16 @@ export default function Features() {
             ),
           },
           {
-            KEY: 'bento',
+            KEY: 'showcase',
             delayClass: 'motion-safe:delay-100',
             content: (
-              <div className="mt-10 grid grid-cols-1 gap-4 sm:mt-12 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6">
-                {FEATURE_TILE_ROWS.map((tile) => (
-                  <FeatureTile key={tile.KEY} tile={tile} />
-                ))}
+              <div className="mt-10 grid grid-cols-1 items-center gap-6 sm:mt-12 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:gap-10">
+                <FeatureDemoTabs rows={FEATURE_DEMO_ROWS} activeKey={activeKey} onSelect={setActiveKey} />
+                <FeatureDemoPreview
+                  rows={FEATURE_DEMO_ROWS}
+                  activeKey={activeKey}
+                  reduceMotion={reduceMotion}
+                />
               </div>
             ),
           },
