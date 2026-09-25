@@ -17,6 +17,25 @@ export type FeatureDemoPhotoChip = Readonly<{
   VALUE: string;
 }>;
 
+export type FeatureDemoDetectionBox = Readonly<{
+  KEY: string;
+  LABEL: string;
+  LEFT_PCT: number;
+  TOP_PCT: number;
+  WIDTH_PCT: number;
+  HEIGHT_PCT: number;
+  ACCENT: string;
+}>;
+
+export type FeatureDemoGallerySlide = Readonly<{
+  KEY: string;
+  IMAGE_SRC: string;
+  IMAGE_ALT: string;
+  NAME: string;
+  CHIPS: readonly FeatureDemoPhotoChip[];
+  BOXES: readonly FeatureDemoDetectionBox[];
+}>;
+
 export type FeatureDemoContextBar = Readonly<{
   KEY: string;
   LABEL: string;

@@ -53,7 +53,7 @@ export function FeatureDemoPreview({ rows, activeKey, reduceMotion }: FeatureDem
         <p className="truncate text-sm font-semibold text-white">{active.TITLE}</p>
       </div>
 
-      <div className="relative flex h-96 flex-col justify-center overflow-hidden p-5 sm:p-6 md:h-[420px]">
+      <div className="relative flex h-[27rem] flex-col justify-center overflow-hidden p-5 sm:h-[30rem] sm:p-6 lg:h-[34rem]">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={active.KEY}

@@ -1,11 +1,14 @@
 'use client';
 
 import Image from 'next/image';
-import { motion } from 'motion/react';
+import { useCallback, useRef, useState } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
 import { cn } from '@/app/utils/cn';
 import {
+  FEATURE_DEMO_DETECTIONS,
+  FEATURE_DEMO_FINISHES,
+  FEATURE_DEMO_GALLERY,
   FEATURE_DEMO_CONTEXT,
-  FEATURE_DEMO_PHOTO,
   FEATURE_DEMO_PROFILES,
   FEATURE_DEMO_PROGRESS,
   FEATURE_DEMO_TIMING,
@@ -13,52 +16,181 @@ import {
 import type { FeatureDemoSceneProps } from './types';
 
 export function FeatureDemoPhoto({ reduceMotion }: FeatureDemoSceneProps) {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const count = FEATURE_DEMO_GALLERY.length;
+
+  const moveBy = useCallback(
+    (offset: number) => {
+      setActiveIndex((index) => (index + offset + count) % count);
+    },
+    [count],
+  );
+
   return (
     <div className="flex flex-col gap-4">
-      <div className="relative h-48 shrink-0 overflow-hidden rounded-2xl border border-white/10 bg-black shadow-2xl shadow-black/50 sm:h-64 lg:h-72">
-        <Image
-          src={FEATURE_DEMO_PHOTO.IMAGE_SRC}
-          alt={FEATURE_DEMO_PHOTO.IMAGE_ALT}
-          width={1536}
-          height={1024}
-          className="size-full object-cover"
-          priority
-        />
-        {!reduceMotion ? (
-          <motion.div
-            aria-hidden
-            className="absolute inset-x-0 h-0.5 bg-linear-to-r from-transparent via-cta to-transparent shadow-[0_0_18px_rgba(240,196,0,0.6)]"
-            initial={{ top: '-6%' }}
-            animate={{ top: '106%' }}
-            transition={{
-              duration: FEATURE_DEMO_TIMING.SCAN_S,
-              ease: 'easeInOut',
-              repeat: Infinity,
-              repeatDelay: 0.8,
-            }}
-          />
-        ) : null}
+      <div
+        ref={viewportRef}
+        className="relative h-52 shrink-0 overflow-hidden rounded-2xl border border-white/10 bg-black shadow-2xl shadow-black/50 sm:h-72 lg:h-80"
+      >
+        <motion.div
+          className="flex h-full"
+          animate={{ x: `-${activeIndex * 100}%` }}
+          transition={
+            reduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 320, damping: 32, mass: 0.9 }
+          }
+          drag="x"
+          dragElastic={0.14}
+          onDragEnd={(_event, info) => {
+            const viewportWidth = viewportRef.current?.getBoundingClientRect().width ?? 0;
+            const swipeDistance = viewportWidth * 0.15;
+            if (info.offset.x < -swipeDistance || info.velocity.x < -400) {
+              moveBy(1);
+            } else if (info.offset.x > swipeDistance || info.velocity.x > 400) {
+              moveBy(-1);
+            }
+          }}
+        >
+          {FEATURE_DEMO_GALLERY.map((slide, slideIndex) => (
+            <div key={slide.KEY} className="relative h-full w-full shrink-0">
+              <Image
+                src={slide.IMAGE_SRC}
+                alt={slide.IMAGE_ALT}
+                width={1536}
+                height={1024}
+                className="size-full object-cover"
+                priority={slideIndex === 0}
+              />
+
+              <>
+                <div className="absolute right-2.5 top-2.5 flex items-center gap-1.5 rounded-full border border-cta/30 bg-black/55 px-2.5 py-1 backdrop-blur-sm">
+                  <span className={cn('size-1.5 rounded-full bg-cta', !reduceMotion && 'animate-pulse')} />
+                  <span className="text-[10px] font-medium tracking-[0.14em] text-white/80 uppercase">
+                    {FEATURE_DEMO_DETECTIONS.STATUS_LABEL}
+                  </span>
+                </div>
+
+                {[...slide.BOXES, ...FEATURE_DEMO_FINISHES].map((box, index) => (
+                  <motion.div
+                    key={box.KEY}
+                    aria-hidden
+                    className="absolute overflow-hidden rounded-xl border"
+                    style={{
+                      left: `${box.LEFT_PCT}%`,
+                      top: `${box.TOP_PCT}%`,
+                      width: `${box.WIDTH_PCT}%`,
+                      height: `${box.HEIGHT_PCT}%`,
+                      borderColor: box.ACCENT,
+                    }}
+                    initial={reduceMotion ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.85 }}
+                    animate={
+                      reduceMotion
+                        ? { opacity: 1, scale: 1 }
+                        : {
+                            opacity: [0, 1, 1, 1, 0],
+                            scale: [0.85, 1.03, 1, 1, 1.02],
+                            boxShadow: [
+                              `0 0 0 0 ${box.ACCENT}00`,
+                              `0 0 22px 2px ${box.ACCENT}66`,
+                              `0 0 16px 0 ${box.ACCENT}55`,
+                              `0 0 16px 0 ${box.ACCENT}55`,
+                              `0 0 0 0 ${box.ACCENT}00`,
+                            ],
+                          }
+                    }
+                    transition={
+                      reduceMotion
+                        ? undefined
+                        : {
+                            duration: FEATURE_DEMO_TIMING.DETECT_S,
+                            delay: index * FEATURE_DEMO_TIMING.DETECT_STAGGER_S,
+                            repeat: Infinity,
+                            repeatDelay: FEATURE_DEMO_TIMING.DETECT_REPEAT_DELAY_S,
+                            ease: 'easeInOut',
+                          }
+                    }
+                  >
+                    <span
+                      className="absolute left-1.5 top-1.5 rounded-full px-2 py-0.5 text-[10px] font-semibold"
+                      style={{ backgroundColor: box.ACCENT, color: '#0a0a0a' }}
+                    >
+                      {box.LABEL}
+                    </span>
+                  </motion.div>
+                ))}
+
+                <div className="absolute bottom-2.5 left-2.5 rounded-full bg-black/55 px-2.5 py-1 backdrop-blur-sm">
+                  <p className="text-[10px] font-medium tracking-[0.14em] text-white/80 uppercase">
+                    {slide.NAME}
+                  </p>
+                </div>
+              </>
+            </div>
+          ))}
+        </motion.div>
       </div>
 
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-        {FEATURE_DEMO_PHOTO.CHIPS.map((chip, index) => (
-          <motion.div
-            key={chip.LABEL}
-            className="rounded-xl border border-white/8 bg-white/[0.04] px-3 py-2.5"
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.4 }}
-            transition={{
-              delay: reduceMotion
-                ? 0
-                : FEATURE_DEMO_TIMING.CHIP_DELAY_S + index * FEATURE_DEMO_TIMING.STAGGER_S,
-              duration: FEATURE_DEMO_TIMING.CHIP_S,
-              ease: 'easeOut',
-            }}
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.div
+          key={activeIndex}
+          className="grid grid-cols-2 gap-2 sm:grid-cols-4"
+          initial={reduceMotion ? false : { opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={reduceMotion ? undefined : { opacity: 0, y: -8 }}
+          transition={{ duration: FEATURE_DEMO_TIMING.CHIP_S, ease: 'easeOut' }}
+        >
+          {FEATURE_DEMO_GALLERY[activeIndex].CHIPS.map((chip, index) => (
+            <motion.div
+              key={chip.LABEL}
+              className="rounded-xl border border-white/8 bg-white/[0.04] px-3 py-2.5"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                delay: reduceMotion
+                  ? 0
+                  : FEATURE_DEMO_TIMING.CHIP_DELAY_S + index * FEATURE_DEMO_TIMING.STAGGER_S,
+                duration: FEATURE_DEMO_TIMING.CHIP_S,
+                ease: 'easeOut',
+              }}
+            >
+              <p className="text-[10px] font-medium tracking-[0.14em] text-white/40 uppercase">
+                {chip.LABEL}
+              </p>
+              <p className="mt-0.5 text-sm font-semibold text-white tabular-nums">{chip.VALUE}</p>
+            </motion.div>
+          ))}
+        </motion.div>
+      </AnimatePresence>
+
+      <div className="grid grid-cols-4 gap-2">
+        {FEATURE_DEMO_GALLERY.map((slide, slideIndex) => (
+          <button
+            key={slide.KEY}
+            type="button"
+            onClick={() => setActiveIndex(slideIndex)}
+            aria-label={`Show ${slide.NAME}`}
+            aria-current={slideIndex === activeIndex}
+            className={cn(
+              'group relative aspect-[3/2] overflow-hidden rounded-lg border border-white/10 transition-all',
+              slideIndex === activeIndex ? 'ring-2 ring-cta' : 'opacity-60 hover:opacity-100',
+            )}
           >
-            <p className="text-[10px] font-medium tracking-[0.14em] text-white/40 uppercase">{chip.LABEL}</p>
-            <p className="mt-0.5 text-sm font-semibold text-white tabular-nums">{chip.VALUE}</p>
-          </motion.div>
+            <Image
+              src={slide.IMAGE_SRC}
+              alt=""
+              width={300}
+              height={200}
+              className="size-full object-cover transition-transform duration-300 group-hover:scale-105"
+            />
+            <span
+              className={cn(
+                'absolute inset-x-0 bottom-0 px-1.5 py-1 text-center text-[10px] font-medium tracking-wide uppercase backdrop-blur-sm',
+                slideIndex === activeIndex ? 'bg-black/60 text-white' : 'bg-black/40 text-white/70',
+              )}
+            >
+              {slide.NAME}
+            </span>
+          </button>
         ))}
       </div>
     </div>

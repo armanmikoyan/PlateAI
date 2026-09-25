@@ -42,6 +42,11 @@ export function FeatureDemoTabs({ rows, activeKey, onSelect }: FeatureDemoTabsPr
             aria-controls="feature-demo-panel"
             tabIndex={isActive ? 0 : -1}
             onClick={() => onSelect(row.KEY)}
+            onMouseEnter={() => {
+              if (window.matchMedia('(hover: hover)').matches) {
+                onSelect(row.KEY);
+              }
+            }}
             onKeyDown={(event) => {
               if (event.key === 'ArrowDown') {
                 event.preventDefault();
