@@ -1,7 +1,7 @@
 import { ScrollEnter } from '@/app/components/scroll';
 import { SectionIntro } from '@/app/components/section-intro';
 import { cn } from '@/app/utils/cn';
-import { DEMO_FULL_VIDEO, DEMO_LONG_VIDEO, DEMO_SECTION, DEMO_VIDEO } from './constants';
+import { DEMO_LONG_VIDEO, DEMO_SCAN_VIDEO, DEMO_SECTION, DEMO_TABS_VIDEO, DEMO_VIDEO } from './constants';
 import type { DemoVideoProps } from './types';
 
 function DemoVideo({ src, poster, className }: DemoVideoProps) {
@@ -35,23 +35,28 @@ export default function Demo() {
             KEY: 'video',
             delayClass: 'motion-safe:delay-100',
             content: (
-              <div className="mx-auto mt-10 flex flex-col gap-17.5 sm:mt-12 lg:grid lg:grid-cols-2 lg:grid-rows-2 lg:gap-6">
+              <div className="mx-auto mt-10 flex flex-col gap-17.5 sm:mt-12 md:grid md:w-4/5 md:grid-cols-2 md:gap-5">
                 <DemoVideo
-                  className="sticky top-20 z-10 lg:static lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:h-full lg:aspect-auto"
-                  src={DEMO_FULL_VIDEO.SRC}
-                  poster={DEMO_FULL_VIDEO.POSTER}
+                  className="sticky top-20 z-10 md:static"
+                  src={DEMO_TABS_VIDEO.SRC}
+                  poster={DEMO_TABS_VIDEO.POSTER}
                 />
                 <DemoVideo
-                  className="sticky top-37.5 z-20 lg:static lg:col-start-1 lg:row-start-1"
+                  className="sticky top-30 z-20 md:static"
+                  src={DEMO_SCAN_VIDEO.SRC}
+                  poster={DEMO_SCAN_VIDEO.POSTER}
+                />
+                <DemoVideo
+                  className="sticky top-40 z-30 md:static"
                   src={DEMO_VIDEO.SRC}
                   poster={DEMO_VIDEO.POSTER}
                 />
                 <DemoVideo
-                  className="sticky top-55 z-30 lg:static lg:col-start-1 lg:row-start-2"
+                  className="sticky top-50 z-40 md:static"
                   src={DEMO_LONG_VIDEO.SRC}
                   poster={DEMO_LONG_VIDEO.POSTER}
                 />
-                <div aria-hidden className="h-[50vh] lg:hidden" />
+                <div aria-hidden className="h-[50vh] md:hidden" />
               </div>
             ),
           },

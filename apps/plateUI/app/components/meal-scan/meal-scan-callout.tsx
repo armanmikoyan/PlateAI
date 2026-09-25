@@ -38,7 +38,7 @@ export function MealScanCallout({
           strokeLinecap="round"
           strokeDasharray="0.1 10"
           vectorEffect="non-scaling-stroke"
-          className="stroke-1 sm:stroke-2 lg:stroke-3"
+          className="stroke-1"
           initial={{ pathLength: reduceMotion ? 1 : 0, opacity: 0 }}
           animate={visible ? { pathLength: 1, opacity: 1 } : { pathLength: 0, opacity: 0 }}
           transition={{
