@@ -27,8 +27,8 @@ export default async function Page(): Promise<ReactNode> {
       <Hero />
       <MealScan />
       <Demo />
-      <HowItWorks />
       <Features />
+      <HowItWorks />
       <UseCases />
       <FeedbackMarquee />
       <Pricing currentPlanId={currentPlanId} />

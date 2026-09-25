@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { useCallback, useRef, useState } from 'react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, motion, useInView } from 'motion/react';
 import { cn } from '@/app/utils/cn';
 import {
   FEATURE_DEMO_DETECTIONS,
@@ -17,7 +17,8 @@ import type { FeatureDemoSceneProps } from './types';
 
 export function FeatureDemoPhoto({ reduceMotion }: FeatureDemoSceneProps) {
   const [activeIndex, setActiveIndex] = useState(0);
-  const viewportRef = useRef<HTMLDivElement>(null);
+  const viewportRef = useRef<HTMLDivElement | null>(null);
+  const detectionInView = useInView(viewportRef, { amount: 0.3, once: true });
   const count = FEATURE_DEMO_GALLERY.length;
 
   const moveBy = useCallback(
@@ -82,24 +83,26 @@ export function FeatureDemoPhoto({ reduceMotion }: FeatureDemoSceneProps) {
                       height: `${box.HEIGHT_PCT}%`,
                       borderColor: box.ACCENT,
                     }}
-                    initial={reduceMotion ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.85 }}
+                    initial={{ opacity: 0, scale: 0.85 }}
                     animate={
                       reduceMotion
                         ? { opacity: 1, scale: 1 }
-                        : {
-                            opacity: [0, 1, 1, 1, 0],
-                            scale: [0.85, 1.03, 1, 1, 1.02],
-                            boxShadow: [
-                              `0 0 0 0 ${box.ACCENT}00`,
-                              `0 0 22px 2px ${box.ACCENT}66`,
-                              `0 0 16px 0 ${box.ACCENT}55`,
-                              `0 0 16px 0 ${box.ACCENT}55`,
-                              `0 0 0 0 ${box.ACCENT}00`,
-                            ],
-                          }
+                        : detectionInView
+                          ? {
+                              opacity: [0, 1, 1, 1, 0],
+                              scale: [0.85, 1.03, 1, 1, 1.02],
+                              boxShadow: [
+                                `0 0 0 0 ${box.ACCENT}00`,
+                                `0 0 22px 2px ${box.ACCENT}66`,
+                                `0 0 16px 0 ${box.ACCENT}55`,
+                                `0 0 16px 0 ${box.ACCENT}55`,
+                                `0 0 0 0 ${box.ACCENT}00`,
+                              ],
+                            }
+                          : { opacity: 0, scale: 0.85 }
                     }
                     transition={
-                      reduceMotion
+                      reduceMotion || !detectionInView
                         ? undefined
                         : {
                             duration: FEATURE_DEMO_TIMING.DETECT_S,

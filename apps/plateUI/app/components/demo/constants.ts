@@ -6,8 +6,8 @@ export const DEMO_SECTION = {
 } as const;
 
 export const DEMO_VIDEO = {
-  SRC: '/videos/plate-demo-salmon.mp4',
-  POSTER: '/videos/plate-demo-salmon-poster.jpg',
+  SRC: '/videos/plateai-main-demo.mp4',
+  POSTER: '/videos/plateai-main-demo-poster.jpg',
 } as const;
 
 export const DEMO_LONG_VIDEO = {
