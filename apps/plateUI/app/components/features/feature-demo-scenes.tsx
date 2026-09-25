@@ -29,10 +29,10 @@ export function FeatureDemoPhoto({ reduceMotion }: FeatureDemoSceneProps) {
   );
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex h-full flex-col gap-4">
       <div
         ref={viewportRef}
-        className="relative h-52 shrink-0 overflow-hidden rounded-2xl border border-white/10 bg-black shadow-2xl shadow-black/50 sm:h-72 lg:h-80"
+        className="relative min-h-0 flex-1 overflow-hidden rounded-2xl border border-white/10 bg-black shadow-2xl shadow-black/50"
       >
         <motion.div
           className="flex h-full"
@@ -75,7 +75,7 @@ export function FeatureDemoPhoto({ reduceMotion }: FeatureDemoSceneProps) {
                   <motion.div
                     key={box.KEY}
                     aria-hidden
-                    className="absolute overflow-hidden rounded-xl border"
+                    className="absolute rounded-lg border sm:rounded-xl"
                     style={{
                       left: `${box.LEFT_PCT}%`,
                       top: `${box.TOP_PCT}%`,
@@ -114,7 +114,7 @@ export function FeatureDemoPhoto({ reduceMotion }: FeatureDemoSceneProps) {
                     }
                   >
                     <span
-                      className="absolute left-1.5 top-1.5 rounded-full px-2 py-0.5 text-[10px] font-semibold"
+                      className="absolute top-1 left-1 rounded-full px-1.5 py-0.5 text-[9px] font-semibold whitespace-nowrap sm:top-1.5 sm:left-1.5 sm:px-2 sm:text-[10px]"
                       style={{ backgroundColor: box.ACCENT, color: '#0a0a0a' }}
                     >
                       {box.LABEL}
@@ -136,7 +136,7 @@ export function FeatureDemoPhoto({ reduceMotion }: FeatureDemoSceneProps) {
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={activeIndex}
-          className="grid grid-cols-2 gap-2 sm:grid-cols-4"
+          className="grid shrink-0 grid-cols-2 gap-2 sm:grid-cols-4"
           initial={reduceMotion ? false : { opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={reduceMotion ? undefined : { opacity: 0, y: -8 }}
@@ -145,7 +145,7 @@ export function FeatureDemoPhoto({ reduceMotion }: FeatureDemoSceneProps) {
           {FEATURE_DEMO_GALLERY[activeIndex].CHIPS.map((chip, index) => (
             <motion.div
               key={chip.LABEL}
-              className="rounded-xl border border-white/8 bg-white/[0.04] px-3 py-2.5"
+              className="rounded-xl border border-white/8 bg-white/[0.04] px-2.5 py-2 sm:px-3 sm:py-2.5"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{
@@ -159,13 +159,13 @@ export function FeatureDemoPhoto({ reduceMotion }: FeatureDemoSceneProps) {
               <p className="text-[10px] font-medium tracking-[0.14em] text-white/40 uppercase">
                 {chip.LABEL}
               </p>
-              <p className="mt-0.5 text-sm font-semibold text-white tabular-nums">{chip.VALUE}</p>
+              <p className="mt-0.5 text-xs font-semibold text-white tabular-nums sm:text-sm">{chip.VALUE}</p>
             </motion.div>
           ))}
         </motion.div>
       </AnimatePresence>
 
-      <div className="grid grid-cols-4 gap-2">
+      <div className="grid shrink-0 grid-cols-4 gap-2">
         {FEATURE_DEMO_GALLERY.map((slide, slideIndex) => (
           <button
             key={slide.KEY}
@@ -187,7 +187,7 @@ export function FeatureDemoPhoto({ reduceMotion }: FeatureDemoSceneProps) {
             />
             <span
               className={cn(
-                'absolute inset-x-0 bottom-0 px-1.5 py-1 text-center text-[10px] font-medium tracking-wide uppercase backdrop-blur-sm',
+                'absolute inset-x-0 bottom-0 truncate px-1 py-0.5 text-center text-[9px] leading-tight font-medium tracking-wide uppercase backdrop-blur-sm',
                 slideIndex === activeIndex ? 'bg-black/60 text-white' : 'bg-black/40 text-white/70',
               )}
             >
@@ -202,9 +202,9 @@ export function FeatureDemoPhoto({ reduceMotion }: FeatureDemoSceneProps) {
 
 export function FeatureDemoContext({ reduceMotion }: FeatureDemoSceneProps) {
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex h-full flex-col justify-center gap-4">
       <motion.div
-        className="flex items-end justify-between gap-3"
+        className="flex flex-wrap items-center gap-x-3 gap-y-2"
         initial={{ opacity: 0, y: 10 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.4 }}
@@ -214,15 +214,17 @@ export function FeatureDemoContext({ reduceMotion }: FeatureDemoSceneProps) {
           <p className="text-[10px] font-medium tracking-[0.14em] text-white/40 uppercase">
             {FEATURE_DEMO_CONTEXT.TARGET_LABEL}
           </p>
-          <p className="mt-0.5 text-lg font-semibold text-white tabular-nums">
+          <p className="mt-0.5 text-base font-semibold text-white tabular-nums sm:text-lg">
             {FEATURE_DEMO_CONTEXT.TARGET_VALUE}
           </p>
         </div>
-        <div className="rounded-full border border-macro-protein/25 bg-macro-protein/10 px-3 py-1.5 text-right">
-          <p className="text-[10px] font-medium tracking-[0.14em] text-macro-protein uppercase">
+        <div className="flex items-center gap-1.5 rounded-full border border-macro-protein/25 bg-macro-protein/10 px-2.5 py-1 whitespace-nowrap">
+          <p className="text-[9px] font-medium tracking-[0.1em] text-macro-protein uppercase sm:text-[10px] sm:tracking-[0.14em]">
             {FEATURE_DEMO_CONTEXT.LEFT_LABEL}
           </p>
-          <p className="text-sm font-semibold text-white tabular-nums">{FEATURE_DEMO_CONTEXT.LEFT_VALUE}</p>
+          <p className="text-xs font-semibold text-white tabular-nums sm:text-sm">
+            {FEATURE_DEMO_CONTEXT.LEFT_VALUE}
+          </p>
         </div>
       </motion.div>
 
@@ -260,7 +262,7 @@ export function FeatureDemoProgress({ reduceMotion }: FeatureDemoSceneProps) {
   const CIRCUMFERENCE = 2 * Math.PI * 42;
 
   return (
-    <div className="flex w-full flex-col gap-4">
+    <div className="flex h-full w-full flex-col justify-center gap-4">
       <motion.div
         className="flex items-center justify-between gap-3"
         initial={{ opacity: 0, y: 10 }}
@@ -355,7 +357,7 @@ export function FeatureDemoProgress({ reduceMotion }: FeatureDemoSceneProps) {
 
 export function FeatureDemoProfiles({ reduceMotion }: FeatureDemoSceneProps) {
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex h-full flex-col justify-center gap-4">
       <motion.div
         className="flex items-center gap-3"
         initial={{ opacity: 0, y: 8 }}

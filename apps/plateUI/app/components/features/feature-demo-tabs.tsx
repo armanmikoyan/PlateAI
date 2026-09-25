@@ -20,7 +20,7 @@ export function FeatureDemoTabs({ rows, activeKey, onSelect }: FeatureDemoTabsPr
   };
 
   return (
-    <div role="tablist" aria-orientation="vertical" className="flex flex-col gap-2.5">
+    <div role="tablist" aria-orientation="vertical" className="grid grid-cols-2 gap-2.5 lg:flex lg:flex-col">
       {rows.map((row) => {
         const Icon = row.ICON;
         const isActive = row.KEY === activeKey;
@@ -58,7 +58,7 @@ export function FeatureDemoTabs({ rows, activeKey, onSelect }: FeatureDemoTabsPr
               }
             }}
             className={cn(
-              'group flex w-full items-start gap-3 rounded-2xl border p-4 text-left transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cta sm:p-4.5',
+              'group flex w-full items-start gap-2.5 rounded-2xl border p-3 text-left transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cta lg:gap-3 lg:p-4.5',
               isActive
                 ? 'border-cta/30 bg-cta/[0.06]'
                 : 'border-white/10 bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.05]',
@@ -66,27 +66,27 @@ export function FeatureDemoTabs({ rows, activeKey, onSelect }: FeatureDemoTabsPr
           >
             <span
               className={cn(
-                'flex size-10 shrink-0 items-center justify-center rounded-xl transition-transform duration-200 group-hover:scale-105',
+                'flex size-9 shrink-0 items-center justify-center rounded-xl transition-transform duration-200 group-hover:scale-105 lg:size-10',
                 row.ACCENT_SHELL,
               )}
             >
-              <Icon aria-hidden className="size-5" />
+              <Icon aria-hidden className="size-4.5 lg:size-5" />
             </span>
             <span className="flex min-w-0 flex-col">
               <span
                 className={cn(
-                  'text-sm font-semibold tracking-tight',
+                  'text-xs font-semibold tracking-tight lg:text-sm',
                   isActive ? 'text-white' : 'text-white/75',
                 )}
               >
                 {row.TITLE}
               </span>
-              <span className="mt-1 text-xs/relaxed text-white/45">{row.BODY}</span>
+              <span className="mt-1 hidden text-xs/relaxed text-white/45 lg:block">{row.BODY}</span>
             </span>
             <span
               aria-hidden
               className={cn(
-                'ml-auto mt-1 size-1.5 shrink-0 self-start rounded-full transition-opacity duration-200',
+                'ml-auto mt-1 hidden size-1.5 shrink-0 self-start rounded-full transition-opacity duration-200 lg:block',
                 isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-40',
               )}
               style={{ backgroundColor: row.ACCENT_HEX }}

@@ -53,10 +53,11 @@ export function FeatureDemoPreview({ rows, activeKey, reduceMotion }: FeatureDem
         <p className="truncate text-sm font-semibold text-white">{active.TITLE}</p>
       </div>
 
-      <div className="relative flex h-[27rem] flex-col justify-center overflow-hidden p-5 sm:h-[30rem] sm:p-6 lg:h-[34rem]">
+      <div className="relative flex h-[27rem] flex-col overflow-hidden p-5 sm:h-[30rem] sm:p-6 lg:h-[34rem]">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={active.KEY}
+            className="flex h-full flex-col justify-center"
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}

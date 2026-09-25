@@ -5,6 +5,11 @@ export const DEMO_SECTION = {
     'One photo turns into calories, protein, carbs, and fat — and shows how the rest of the day fits.',
 } as const;
 
+export const DEMO_FULL_VIDEO = {
+  SRC: '/videos/full-demo.mp4',
+  POSTER: '/videos/full-demo-poster.jpg',
+} as const;
+
 export const DEMO_VIDEO = {
   SRC: '/videos/plateai-main-demo.mp4',
   POSTER: '/videos/plateai-main-demo-poster.jpg',
