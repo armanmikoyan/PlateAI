@@ -4,6 +4,7 @@ import { isActivePaidPlan } from '@plate/plate-billing/utils';
 import { getAuthSession } from '@/app/api/auth/utils';
 import Contact from '@/app/components/contact';
 import Demo from '@/app/components/demo';
+import DemoMore from '@/app/components/demo/demo-more';
 import Faq from '@/app/components/faq';
 import FeedbackMarquee from '@/app/components/feedback-marquee';
 import Features from '@/app/components/features';
@@ -28,6 +29,7 @@ export default async function Page(): Promise<ReactNode> {
       <MealScan />
       <Demo />
       <Features />
+      <DemoMore />
       <HowItWorks />
       <UseCases />
       <FeedbackMarquee />
