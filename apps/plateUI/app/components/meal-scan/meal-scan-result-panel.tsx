@@ -31,12 +31,14 @@ export function MealScanResultPanel({ detections, status, runId }: MealScanResul
           <p className="text-xs font-semibold tracking-[0.18em] text-cta uppercase">
             {MEAL_SCAN_SECTION.DETECTED_LABEL}
           </p>
-          <h3 className="mt-1.5 truncate text-lg font-semibold text-white">{MEAL_SCAN_MEAL.NAME}</h3>
+          <h3 className="mt-1.5 truncate text-lg font-semibold tracking-tight text-white">
+            {MEAL_SCAN_MEAL.NAME}
+          </h3>
         </div>
 
         <span className="flex shrink-0 items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-2 py-1 text-xs font-semibold tracking-[0.1em] uppercase">
           {isScanning ? (
-            <Loader2 className="size-3 animate-spin text-cta" aria-hidden />
+            <Loader2 className="size-3 animate-spin motion-reduce:animate-none text-cta" aria-hidden />
           ) : (
             <CheckCircle2 className="size-3 text-positive" aria-hidden />
           )}

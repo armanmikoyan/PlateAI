@@ -130,7 +130,10 @@ export function SnapUploadPanel() {
   if (loadingSavedMeal && !photo) {
     mainContent = (
       <div className="flex min-h-72 flex-1 flex-col items-center justify-center gap-3 sm:min-h-112 lg:min-h-128">
-        <LoaderCircle className="text-muted-foreground size-8 animate-spin" aria-hidden />
+        <LoaderCircle
+          className="text-muted-foreground size-8 animate-spin motion-reduce:animate-none"
+          aria-hidden
+        />
         <p className="text-muted-foreground text-sm">{SNAP.LOADING_SAVED_MEAL}</p>
       </div>
     );

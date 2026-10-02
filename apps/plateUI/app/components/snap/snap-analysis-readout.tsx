@@ -155,15 +155,15 @@ export function SnapAnalysisReadout({ analysisState, photo, onRetry }: SnapAnaly
   }
 
   return (
-    <AnimatePresence initial={false} mode="wait">
+    <AnimatePresence initial={false} mode="popLayout">
       {content ? (
         <motion.div
           key={snapReadoutStageKey(analysisState)}
           className="flex w-full min-w-0"
-          initial={{ opacity: 0, scale: 0.94 }}
+          initial={{ opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.9 }}
-          transition={{ duration: 0.2, ease: 'easeOut' }}
+          exit={{ opacity: 0, scale: 0.96 }}
+          transition={{ type: 'spring', bounce: 0, duration: 0.35, delay: 0 }}
         >
           {content}
         </motion.div>

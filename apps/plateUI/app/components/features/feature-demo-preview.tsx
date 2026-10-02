@@ -54,14 +54,16 @@ export function FeatureDemoPreview({ rows, activeKey, reduceMotion }: FeatureDem
       </div>
 
       <div className="relative flex h-[27rem] flex-col overflow-hidden p-5 sm:h-[30rem] sm:p-6 lg:h-[34rem]">
-        <AnimatePresence mode="wait" initial={false}>
+        <AnimatePresence mode="popLayout" initial={false}>
           <motion.div
             key={active.KEY}
             className="flex h-full flex-col justify-center"
-            initial={{ opacity: 0, y: 12 }}
+            initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.25, ease: 'easeOut' }}
+            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 }}
+            transition={
+              reduceMotion ? { duration: 0.15 } : { type: 'spring', bounce: 0, duration: 0.3, delay: 0 }
+            }
           >
             <FeatureDemoScene sceneKey={active.KEY} reduceMotion={reduceMotion} />
           </motion.div>

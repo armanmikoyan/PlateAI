@@ -132,7 +132,7 @@ export default function MealHistory({ user, justPurchased = false }: MealHistory
           {isActive || isCancelled ? (
             <Button variant="ghost" size="sm" onClick={handleManageSubscription} disabled={portalLoading}>
               {portalLoading ? (
-                <LoaderCircle className="size-4 animate-spin" />
+                <LoaderCircle className="size-4 animate-spin motion-reduce:animate-none" />
               ) : (
                 <ExternalLink className="size-4" />
               )}
@@ -158,7 +158,10 @@ export default function MealHistory({ user, justPurchased = false }: MealHistory
       <>
         {planSummary}
         <div className="flex flex-1 items-center justify-center py-16">
-          <LoaderCircle className="text-muted-foreground size-8 animate-spin" aria-hidden />
+          <LoaderCircle
+            className="text-muted-foreground size-8 animate-spin motion-reduce:animate-none"
+            aria-hidden
+          />
         </div>
       </>
     );

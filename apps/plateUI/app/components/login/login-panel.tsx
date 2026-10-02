@@ -13,7 +13,7 @@ export function LoginPanel({ error }: LoginPanelProps) {
     <section className="flex flex-1 flex-col items-center justify-center px-4 py-12 sm:py-16">
       <Card className="w-full max-w-lg gap-5 py-6 shadow-sm sm:py-8">
         <CardHeader className="items-center gap-2 px-6 text-center sm:px-8">
-          <CardTitle className="text-2xl sm:text-3xl">{LOGIN.TITLE}</CardTitle>
+          <CardTitle className="text-2xl tracking-tight sm:text-3xl">{LOGIN.TITLE}</CardTitle>
           <CardDescription className="text-base sm:text-lg">{LOGIN.SUBTITLE}</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-4 px-6 sm:px-8">

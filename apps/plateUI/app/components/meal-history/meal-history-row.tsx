@@ -107,7 +107,11 @@ export function MealHistoryRow({ item, onDelete }: MealHistoryRowProps) {
               aria-label={MEAL_HISTORY.REMOVE}
               onClick={handleDelete}
             >
-              {removing ? <LoaderCircle className="size-3 animate-spin" aria-hidden /> : <Trash2 />}
+              {removing ? (
+                <LoaderCircle className="size-3 animate-spin motion-reduce:animate-none" aria-hidden />
+              ) : (
+                <Trash2 />
+              )}
             </Button>
           ) : null}
           <Button

@@ -15,21 +15,15 @@ export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="bg-surface-raised/85 sticky top-0 z-50 shrink-0 border-b border-edge backdrop-blur-sm">
+    <header className="bg-surface-raised/70 supports-[backdrop-filter]:bg-surface-raised/55 sticky top-0 z-50 shrink-0 border-b border-transparent shadow-[0_1px_0_0_var(--color-edge)] backdrop-blur-xl backdrop-saturate-150 contrast-more:bg-surface-raised reduced-transparency:bg-surface-raised">
       <nav className="layout-page-shell flex h-20 items-center gap-3 sm:gap-4" aria-label="Main">
         <div className="flex min-w-0 flex-1 justify-start">
           <Link
             href="/"
-            className="text-content hover:opacity-90 flex min-w-0 items-center gap-2 text-2xl font-medium transition-opacity sm:text-3xl"
+            className="text-content hover:opacity-90 flex min-w-0 items-center gap-2 text-2xl font-medium tracking-tight motion-safe:transition-opacity sm:text-3xl"
             onClick={() => setMenuOpen(false)}
           >
-            <Image
-              src="/icons/logo.png"
-              alt="PlateAI Logo"
-              width={200}
-              height={100}
-              priority
-            />
+            <Image src="/icons/logo.png" alt="PlateAI Logo" width={200} height={100} priority />
           </Link>
         </div>
 

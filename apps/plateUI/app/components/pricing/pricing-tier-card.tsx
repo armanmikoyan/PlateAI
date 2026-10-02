@@ -76,7 +76,7 @@ export function PricingTierCard({
     <>
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-y-0 z-10 w-1/3 -translate-x-[300%] -skew-x-12 bg-linear-to-r from-transparent via-white/8 to-transparent group-hover/card:translate-x-[450%] group-hover/card:transition-transform group-hover/card:duration-700 group-hover/card:ease-out"
+        className="pointer-events-none absolute inset-y-0 z-10 w-1/3 -translate-x-[300%] -skew-x-12 bg-linear-to-r from-transparent via-white/8 to-transparent group-hover/card:translate-x-[450%] group-hover/card:transition-transform group-hover/card:duration-700 group-hover/card:ease-out motion-reduce:transition-none"
       />
     </>
   );
@@ -234,6 +234,7 @@ export function PricingTierCard({
         className={cn(
           'block w-full cursor-pointer text-left',
           'rounded-t-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent',
+          'motion-safe:transition-transform motion-safe:duration-150 motion-safe:ease-out motion-safe:active:scale-[0.99] motion-reduce:transition-none',
         )}
       >
         <div data-pricing-tier-shell={true} className={shellClassName}>

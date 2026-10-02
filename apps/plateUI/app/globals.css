@@ -7,6 +7,8 @@
 @import './components/product-hunt-badge/product-hunt-badge.css';
 
 @custom-variant dark (&:is(.dark *));
+@custom-variant reduced-transparency (@media (prefers-reduced-transparency: reduce));
+@custom-variant contrast-more (@media (prefers-contrast: more));
 
 /* App palette + fonts. Geist vars come from next/font on <html>. */
 @theme inline {
@@ -71,6 +73,75 @@
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, 'SF Mono', 'Menlo', 'Monaco', 'Consolas', monospace;
   --font-heading: var(--font-sans);
+
+  /* Critically damped spring (zeta = 1), settled in 0.4s. Use with
+     duration-400 for anything a user can touch — retargets cleanly, no
+     overshoot. Mirrors Apple: damping 1.0, response 0.4. */
+  --ease-spring-out: linear(
+    0.0862,
+    0.2544,
+    0.4287,
+    0.5794,
+    0.6987,
+    0.7886,
+    0.8539,
+    0.9003,
+    0.9326,
+    0.9548,
+    0.9699,
+    0.9801,
+    0.9869,
+    0.9914,
+    0.9944,
+    0.9964,
+    0.9976,
+    0.9985,
+    0.999,
+    0.9994,
+    0.9996,
+    0.9997,
+    0.9998,
+    0.9999,
+    0.9999,
+    1,
+    1,
+    1,
+    1,
+    1
+  );
+  /* Same curve, time-reversed, for the exit half of reversible transitions. */
+  --ease-spring-in: linear(
+    0,
+    0,
+    0,
+    0,
+    0.0001,
+    0.0003,
+    0.0005,
+    0.0011,
+    0.0026,
+    0.0052,
+    0.0101,
+    0.0161,
+    0.0261,
+    0.0463,
+    0.0997,
+    0.2114,
+    0.5727,
+    0.7456,
+    0.8473,
+    0.9134,
+    0.9538,
+    0.9764,
+    0.9899,
+    0.9964,
+    0.999,
+    0.9999,
+    1,
+    1,
+    1,
+    1
+  );
 }
 
 @layer base {
@@ -123,6 +194,35 @@
 
   html {
     @apply font-sans;
+    /* Geist is a variable font — let its optical-size axis tighten large text. */
+    font-optical-sizing: auto;
+    -webkit-text-size-adjust: 100%;
+    /* Avoid layout shift when a scrollbar appears/disappears. */
+    scrollbar-gutter: stable;
+  }
+
+  /* Reduced transparency: drop the blur and give those surfaces a real
+     background, otherwise they become washed-out and unreadable. */
+  @media (prefers-reduced-transparency: reduce) {
+    [class*='backdrop-blur'] {
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      background-color: var(--color-surface-raised);
+    }
+  }
+
+  @media (prefers-contrast: more) {
+    :root {
+      --color-content-muted: #d4d4d8;
+      --color-content-subtle: #a1a1aa;
+      --color-edge: #3f3f46;
+      --color-edge-strong: #71717a;
+    }
+
+    [class*='backdrop-blur'] {
+      background-color: var(--color-surface-raised);
+      border-color: var(--color-edge-strong);
+    }
   }
 }
 

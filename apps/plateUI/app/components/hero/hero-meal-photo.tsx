@@ -79,7 +79,7 @@ export function HeroMealPhoto({
           className="absolute inset-0 overflow-hidden"
           initial={reduceMotion ? { opacity: 0 } : { opacity: 0, filter: 'blur(16px)' }}
           animate={{ opacity: 1, filter: 'blur(0px)' }}
-          exit={reduceMotion ? { opacity: 0 } : { opacity: 0, filter: 'blur(12px)' }}
+          exit={reduceMotion ? { opacity: 0 } : { opacity: 0, filter: 'blur(16px)' }}
           transition={crossfade}
         >
           {useKenBurns ? (

@@ -63,7 +63,7 @@ export function UseCaseCard({ card }: UseCaseCardProps) {
 
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-y-0 w-1/4 -translate-x-[250%] -skew-x-12 bg-linear-to-r from-transparent via-white/10 to-transparent group-hover:translate-x-[450%] group-hover:transition-transform group-hover:duration-700 group-hover:ease-out"
+          className="pointer-events-none absolute inset-y-0 w-1/4 -translate-x-[250%] -skew-x-12 bg-linear-to-r from-transparent via-white/10 to-transparent group-hover:translate-x-[450%] group-hover:transition-transform group-hover:duration-700 group-hover:ease-out motion-reduce:transition-none"
         />
 
         <div className="relative z-20 flex h-full flex-col gap-4">

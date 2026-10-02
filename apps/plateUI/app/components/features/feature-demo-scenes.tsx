@@ -17,6 +17,7 @@ import type { FeatureDemoSceneProps } from './types';
 
 export function FeatureDemoPhoto({ reduceMotion }: FeatureDemoSceneProps) {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [releaseVelocity, setReleaseVelocity] = useState(0);
   const viewportRef = useRef<HTMLDivElement | null>(null);
   const detectionInView = useInView(viewportRef, { amount: 0.3, once: true });
   const count = FEATURE_DEMO_GALLERY.length;
@@ -38,13 +39,18 @@ export function FeatureDemoPhoto({ reduceMotion }: FeatureDemoSceneProps) {
           className="flex h-full"
           animate={{ x: `-${activeIndex * 100}%` }}
           transition={
-            reduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 320, damping: 32, mass: 0.9 }
+            reduceMotion
+              ? { duration: 0 }
+              : { type: 'spring', stiffness: 320, damping: 32, mass: 0.9, velocity: releaseVelocity }
           }
           drag="x"
+          dragDirectionLock
           dragElastic={0.14}
           onDragEnd={(_event, info) => {
-            const viewportWidth = viewportRef.current?.getBoundingClientRect().width ?? 0;
-            const swipeDistance = viewportWidth * 0.15;
+            const trackPx = viewportRef.current?.getBoundingClientRect().width ?? 0;
+            const swipeDistance = trackPx * 0.15;
+            // Hand the release velocity to the snap spring so the handoff is seamless.
+            setReleaseVelocity(info.velocity.x);
             if (info.offset.x < -swipeDistance || info.velocity.x < -400) {
               moveBy(1);
             } else if (info.offset.x > swipeDistance || info.velocity.x > 400) {
