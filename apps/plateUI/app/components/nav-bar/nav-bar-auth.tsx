@@ -1,10 +1,8 @@
 'use client';
 
 import Link from 'next/link';
+import { useAtomValue } from 'jotai';
 import { ChevronDownIcon, HistoryIcon, LogInIcon, LogOutIcon } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { NAV_AUTH, NAV_AUTH_ACCOUNT_TRIGGER_SHELL, NAV_AUTH_LOADING_SHELL } from './constants';
-import { initialsForName } from './utils';
 import { Avatar, AvatarFallback } from '@/app/ui/avatar';
 import { Button } from '@/app/ui/button';
 import {
@@ -16,71 +14,28 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/app/ui/dropdown-menu';
-import type { AuthMeResponse, AuthUser } from '@/app/api/auth/types';
-import { MEAL_ANALYSES_CHANGED_EVENT } from '@/app/utils/meal-analyses/constants';
-import { pendingMealCount } from '@/app/components/meal-history/utils';
-import { fetchMealHistory } from '@/app/components/meal-history/utils';
+import {
+  NAV_AUTH,
+  NAV_AUTH_ACCOUNT_TRIGGER_DRAWER_SHELL,
+  NAV_AUTH_ACCOUNT_TRIGGER_SHELL,
+  NAV_AUTH_LOADING_DRAWER_SHELL,
+  NAV_AUTH_LOADING_SHELL,
+  NAV_AUTH_SIGN_IN_DRAWER_SHELL,
+  NAV_AUTH_SIGN_IN_SHELL,
+} from './constants';
+import { navAuthPendingCountAtom, navAuthReadyAtom, navAuthUserAtom } from './state';
+import type { NavBarAuthProps } from './types';
+import { initialsForName } from './utils';
 
-export function NavBarAuth() {
-  const [user, setUser] = useState<AuthUser | null>(null);
-  const [pendingCount, setPendingCount] = useState(0);
-  const [ready, setReady] = useState(false);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function loadPendingCount() {
-      const history = await fetchMealHistory();
-      if (!cancelled && history) {
-        setPendingCount(pendingMealCount(history.items));
-      }
-    }
-
-    async function loadSession() {
-      try {
-        let response = await fetch('/api/auth/me', { cache: 'no-store' });
-
-        if (response.status === 401) {
-          await fetch('/api/auth/refresh', { cache: 'no-store' });
-          response = await fetch('/api/auth/me', { cache: 'no-store' });
-        }
-
-        if (!response.ok) {
-          return;
-        }
-
-        const payload = (await response.json()) as AuthMeResponse;
-        if (!cancelled) {
-          setUser(payload.user);
-        }
-
-        loadPendingCount();
-      } catch {
-        return;
-      } finally {
-        if (!cancelled) {
-          setReady(true);
-        }
-      }
-    }
-
-    loadSession();
-
-    function handleMealAnalysesChanged() {
-      loadPendingCount();
-    }
-
-    window.addEventListener(MEAL_ANALYSES_CHANGED_EVENT, handleMealAnalysesChanged);
-
-    return () => {
-      cancelled = true;
-      window.removeEventListener(MEAL_ANALYSES_CHANGED_EVENT, handleMealAnalysesChanged);
-    };
-  }, []);
+export function NavBarAuth({ variant }: NavBarAuthProps) {
+  const user = useAtomValue(navAuthUserAtom);
+  const pendingCount = useAtomValue(navAuthPendingCountAtom);
+  const ready = useAtomValue(navAuthReadyAtom);
+  const isDrawer = variant === 'drawer';
 
   if (!ready) {
     return (
-      <div aria-hidden className={NAV_AUTH_LOADING_SHELL}>
+      <div aria-hidden className={isDrawer ? NAV_AUTH_LOADING_DRAWER_SHELL : NAV_AUTH_LOADING_SHELL}>
         <div className="size-7 shrink-0 rounded-full bg-muted/60 sm:size-8" />
         <div className="hidden h-4 w-20 max-w-28 rounded bg-muted/60 sm:block sm:max-w-32" />
         <div className="hidden size-3.5 shrink-0 rounded-sm bg-muted/60 sm:block sm:size-4" />
@@ -92,13 +47,13 @@ export function NavBarAuth() {
     return (
       <Button
         aria-label={NAV_AUTH.SIGN_IN}
-        className="h-8 shrink-0 gap-1.5 px-2.5 text-xs sm:h-9 sm:px-4 sm:text-sm"
+        className={isDrawer ? NAV_AUTH_SIGN_IN_DRAWER_SHELL : NAV_AUTH_SIGN_IN_SHELL}
         render={<Link href="/login" />}
         nativeButton={false}
         variant="outline"
       >
         <LogInIcon data-icon="inline-start" />
-        <span className="hidden xl:inline">{NAV_AUTH.SIGN_IN}</span>
+        {isDrawer ? NAV_AUTH.SIGN_IN : <span className="hidden xl:inline">{NAV_AUTH.SIGN_IN}</span>}
       </Button>
     );
   }
@@ -109,7 +64,7 @@ export function NavBarAuth() {
         aria-label={NAV_AUTH.ACCOUNT_MENU}
         render={
           <Button
-            className={NAV_AUTH_ACCOUNT_TRIGGER_SHELL}
+            className={isDrawer ? NAV_AUTH_ACCOUNT_TRIGGER_DRAWER_SHELL : NAV_AUTH_ACCOUNT_TRIGGER_SHELL}
             variant="ghost"
           />
         }
@@ -119,10 +74,18 @@ export function NavBarAuth() {
             {initialsForName(user.name)}
           </AvatarFallback>
         </Avatar>
-        <span className="hidden max-w-28 truncate text-xs font-medium sm:inline sm:max-w-32 sm:text-sm">
-          {user.name}
-        </span>
-        <ChevronDownIcon className="text-muted-foreground hidden size-3.5 sm:inline sm:size-4" />
+        {isDrawer ? (
+          <span className="min-w-0 flex-1 truncate text-sm font-medium">{user.name}</span>
+        ) : (
+          <span className="hidden max-w-28 truncate text-xs font-medium sm:inline sm:max-w-32 sm:text-sm">
+            {user.name}
+          </span>
+        )}
+        {isDrawer ? (
+          <ChevronDownIcon className="text-muted-foreground size-4" />
+        ) : (
+          <ChevronDownIcon className="text-muted-foreground hidden size-3.5 sm:inline sm:size-4" />
+        )}
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-60">
         <DropdownMenuGroup>
@@ -133,7 +96,11 @@ export function NavBarAuth() {
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem className="cursor-pointer" render={<Link href={NAV_AUTH.MEAL_HISTORY_HREF} />} nativeButton={false}>
+          <DropdownMenuItem
+            className="cursor-pointer"
+            render={<Link href={NAV_AUTH.MEAL_HISTORY_HREF} />}
+            nativeButton={false}
+          >
             <HistoryIcon />
             {NAV_AUTH.MEAL_HISTORY}
             {pendingCount > 0 ? (

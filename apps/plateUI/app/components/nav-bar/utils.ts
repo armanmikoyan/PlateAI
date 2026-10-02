@@ -24,16 +24,25 @@ export function navScrollSpyBandPx(headerOffsetPx: number, extraPx: number): num
   return headerOffsetPx + extraPx;
 }
 
+/**
+ * The active section is the one whose top sits closest above the band — chosen by
+ * geometry, not by array order. Returns `null` while the page top (hero, demo) is
+ * still on screen, so no link is highlighted when no section is actually in view.
+ */
 export function getActiveSectionId(
   sections: readonly Pick<NavMainSectionLinkRow, 'SECTION_ID'>[],
   topsById: Readonly<Record<string, number | undefined>>,
   bandPx: number,
 ): string | null {
   let active: string | null = null;
+  let activeTop = Number.NEGATIVE_INFINITY;
   for (const row of sections) {
     const top = topsById[row.SECTION_ID];
-    if (top === undefined) continue;
-    if (top <= bandPx) active = row.SECTION_ID;
+    if (top === undefined || top > bandPx) continue;
+    if (top > activeTop) {
+      active = row.SECTION_ID;
+      activeTop = top;
+    }
   }
   return active;
 }
@@ -62,10 +71,7 @@ export function scrollBehavior(reduceMotion: boolean): ScrollBehavior {
 }
 
 export function getActiveSectionIdFromScroll(): string | null {
-  const bandPx = navScrollSpyBandPx(
-    NAV_SCROLL_SPY_HEADER_OFFSET_PX,
-    NAV_SCROLL_SPY_VIEWPORT_EXTRA_PX,
-  );
+  const bandPx = navScrollSpyBandPx(NAV_SCROLL_SPY_HEADER_OFFSET_PX, NAV_SCROLL_SPY_VIEWPORT_EXTRA_PX);
   const topsById: Record<string, number | undefined> = {};
   for (const row of NAV_MAIN_SECTION_LINKS) {
     const el = document.getElementById(row.SECTION_ID);
@@ -97,30 +103,35 @@ export function navigateToSection(href: string, e: MouseEvent<HTMLAnchorElement>
 export function subscribeNavScrollSpy(onStoreChange: () => void) {
   if (typeof window === 'undefined') return () => {};
 
-  const onScrollOrResize = () => {
-    onStoreChange();
-  };
+  let frame = 0;
 
-  const onHashChange = () => {
-    window.requestAnimationFrame(() => {
+  // Scroll events fire faster than frames. Coalesce them into one
+  // `getBoundingClientRect` pass per frame — measuring on every event forces a
+  // synchronous layout read per event and makes the page stutter while scrolling.
+  const scheduleStoreChange = () => {
+    if (frame !== 0) return;
+    frame = window.requestAnimationFrame(() => {
+      frame = 0;
       onStoreChange();
     });
   };
 
-  window.addEventListener('scroll', onScrollOrResize, { passive: true });
-  window.addEventListener('resize', onScrollOrResize);
-  window.addEventListener('hashchange', onHashChange);
+  window.addEventListener('scroll', scheduleStoreChange, { passive: true });
+  window.addEventListener('resize', scheduleStoreChange);
+  window.addEventListener('hashchange', scheduleStoreChange);
 
   if ('onscrollend' in window) {
-    window.addEventListener('scrollend', onScrollOrResize, { passive: true });
+    window.addEventListener('scrollend', scheduleStoreChange, { passive: true });
   }
 
   return () => {
-    window.removeEventListener('scroll', onScrollOrResize);
-    window.removeEventListener('resize', onScrollOrResize);
-    window.removeEventListener('hashchange', onHashChange);
+    if (frame !== 0) window.cancelAnimationFrame(frame);
+    frame = 0;
+    window.removeEventListener('scroll', scheduleStoreChange);
+    window.removeEventListener('resize', scheduleStoreChange);
+    window.removeEventListener('hashchange', scheduleStoreChange);
     if ('onscrollend' in window) {
-      window.removeEventListener('scrollend', onScrollOrResize);
+      window.removeEventListener('scrollend', scheduleStoreChange);
     }
   };
 }

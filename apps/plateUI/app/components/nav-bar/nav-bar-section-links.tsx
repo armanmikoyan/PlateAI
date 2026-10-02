@@ -2,8 +2,16 @@
 
 import type { MouseEvent } from 'react';
 import { useSyncExternalStore } from 'react';
+import { motion, useReducedMotion } from 'motion/react';
 import { cn } from '@/app/utils/cn';
-import { NAV_DRAWER_SECTION_LINKS, NAV_MAIN_SECTION_LINKS } from './constants';
+import {
+  NAV_ACTIVE_PILL_CLASS,
+  NAV_ACTIVE_PILL_LAYOUT_ID,
+  NAV_DRAWER_SECTION_LINKS,
+  NAV_MAIN_SECTION_LINKS,
+  NAV_MOTION_REDUCED,
+  NAV_MOTION_SPRING,
+} from './constants';
 import type { NavBarSectionLinksProps } from './types';
 import {
   getNavScrollSpyServerSnapshot,
@@ -18,10 +26,12 @@ export function NavBarSectionLinks({ onAfterNavigate, variant }: NavBarSectionLi
     getNavScrollSpySnapshot,
     getNavScrollSpyServerSnapshot,
   );
+  const reduceMotion = useReducedMotion();
 
   const linkClass = (isActive: boolean) =>
     cn(
-      variant === 'desktop' && 'cursor-pointer transition-colors',
+      variant === 'desktop' &&
+        'relative isolate cursor-pointer px-4 py-2 transition-colors motion-reduce:transition-none',
       variant === 'drawer' &&
         'block cursor-pointer rounded-lg px-3 py-2.5 text-base font-medium transition-colors motion-reduce:transition-none',
       variant === 'drawer' && isActive && 'bg-surface-overlay/70 text-accent-mid',
@@ -50,6 +60,14 @@ export function NavBarSectionLinks({ onAfterNavigate, variant }: NavBarSectionLi
             onClick={(e) => handleClick(row.HREF, e)}
             className={linkClass(isActive)}
           >
+            {variant === 'desktop' && isActive ? (
+              <motion.span
+                aria-hidden
+                layoutId={NAV_ACTIVE_PILL_LAYOUT_ID}
+                className={NAV_ACTIVE_PILL_CLASS}
+                transition={reduceMotion ? NAV_MOTION_REDUCED : NAV_MOTION_SPRING}
+              />
+            ) : null}
             {row.LABEL}
           </a>
         );
