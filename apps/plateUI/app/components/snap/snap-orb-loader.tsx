@@ -95,7 +95,13 @@ export function SnapOrbLoader() {
       >
         {SNAP.ANALYZING}
       </motion.p>
-      <div ref={containerRef} className="flex size-full items-center justify-center">
+      {/*
+        `useSnapOrbSize` reads `clientWidth`/`clientHeight` to size the canvas, so this box
+        cannot get its height from the canvas or the two wait on each other. Above `lg` the
+        grid row gives it a definite height; below `lg` the row is `auto`, so `aspect-square`
+        derives it from the width instead.
+      */}
+      <div ref={containerRef} className="flex size-full items-center justify-center max-lg:aspect-square">
         <canvas ref={canvasRef} className="block" aria-hidden />
       </div>
     </motion.div>

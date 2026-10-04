@@ -60,7 +60,7 @@ export const SNAP_PANEL_STAGE = {
 } as const;
 
 /** Shell every stage renders inside — see `SNAP_STAGE_MIN_HEIGHT_CLASS`. */
-export const SNAP_STAGE_SHELL_CLASS = 'flex w-full min-w-0 flex-1 flex-col' as const;
+export const SNAP_STAGE_SHELL_CLASS = 'flex w-full min-w-0 flex-col lg:min-h-0 lg:flex-1' as const;
 
 /**
  * The right-column cards opt out of `Card`'s flat grey with a dotted field instead.
@@ -288,19 +288,31 @@ export const SNAP_CAMERA_CAPTURE_FILE = 'plate.jpg' as const;
  * Height invariant for the stage slot, mirroring the nav bar's `NAV_HEADER_SLOT_PX`:
  * the slot never resizes, only its contents swap, so nothing below it moves.
  *
- * `SNAP_STAGE_SHELL_CLASS` is `flex-1` and inherits the leftover height from the panel
+ * Above `lg` the slot is `flex-1` and inherits the leftover height from the panel
  * (which fills the viewport). Every stage must then fill that same box — the drop zone
  * via `flex-1`, the post-upload grid via `flex-1`, and every `Card` via `h-full`.
  * Drop any one of those and the page jumps the moment the stage changes.
+ *
+ * Below `lg` the panel is content-sized instead: the three stages stack there, and a
+ * photo plus a readout cannot fit a phone viewport. Locking the slot to the leftover
+ * pushed the CTA and the readout below the fold, so the page scrolls instead and the
+ * `min-h-*` floor below is what keeps the drop zone filling the screen.
  */
-export const SNAP_STAGE_MIN_HEIGHT_CLASS = 'min-h-72 sm:min-h-112 lg:min-h-128' as const;
+export const SNAP_STAGE_MIN_HEIGHT_CLASS = 'min-h-[24rem] sm:min-h-112 lg:min-h-128' as const;
 
 export const SNAP_PHOTO_CARD_SHELL = 'relative h-full w-full gap-0 overflow-hidden py-0' as const;
 
 export const SNAP_ANALYSIS_CARD_SHELL = 'relative h-full w-full gap-0 overflow-hidden py-0' as const;
 
+/**
+ * Phones stack the three cells, so the row track decides the preview's height. `1fr`
+ * rows would only resolve against the leftover *above* `lg` (the grid is content-sized
+ * there), and three auto rows would hand the photo nothing at all — so the photo gets a
+ * real track of its own and the arrow and readout keep their content height. `lg`
+ * restores the side-by-side row where the cards share the leftover.
+ */
 export const SNAP_STAGE_GRID_SHELL =
-  'relative grid w-full min-w-0 flex-1 grid-cols-1 items-start gap-5 [&>*]:min-w-0 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:gap-8' as const;
+  'relative grid w-full min-w-0 flex-1 grid-cols-1 grid-rows-[20rem_auto_auto] gap-5 sm:grid-rows-[24rem_auto_auto] [&>*]:min-w-0 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:grid-rows-1 lg:items-start lg:gap-8' as const;
 
 /**
  * Grid cells must be `h-full` too: `h-full` on the `Card` resolves against the cell,
