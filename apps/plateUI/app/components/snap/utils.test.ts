@@ -1,13 +1,114 @@
 import { describe, expect, it } from 'vitest';
 import { DEVICE_TYPE } from '@/app/utils/device-detection/types';
-import { SNAP, SNAP_ANALYSIS_STATUS, SNAP_HEADING_PHASE, SNAP_LOCKED_REASON } from './constants';
+import {
+  SNAP,
+  SNAP_ANALYSIS_STATUS,
+  SNAP_HEADING_PHASE,
+  SNAP_LOCKED_REASON,
+  SNAP_PANEL_STAGE,
+} from './constants';
 import {
   fileFromJpegDataUrl,
   firstAcceptedImageFile,
   shouldCompressImageFile,
   snapHeadingCopy,
   snapHeadingPhase,
+  snapPanelStageKey,
 } from './utils';
+
+import type { SnapAnalysisState } from './types';
+
+describe('snapPanelStageKey', () => {
+  it('prefers the loading stage while a saved meal is being fetched and no photo exists', () => {
+    expect(
+      snapPanelStageKey({
+        analysisState: { STATUS: SNAP_ANALYSIS_STATUS.IDLE },
+        hasPhoto: false,
+        loadingSavedMeal: true,
+      }),
+    ).toBe(SNAP_PANEL_STAGE.LOADING);
+  });
+
+  it('yields to the photo stage once a photo exists, even mid-fetch', () => {
+    expect(
+      snapPanelStageKey({
+        analysisState: { STATUS: SNAP_ANALYSIS_STATUS.IDLE },
+        hasPhoto: true,
+        loadingSavedMeal: true,
+      }),
+    ).toBe(SNAP_PANEL_STAGE.PHOTO);
+  });
+
+  it('returns the drop zone when there is no photo', () => {
+    expect(
+      snapPanelStageKey({
+        analysisState: { STATUS: SNAP_ANALYSIS_STATUS.ERROR, MESSAGE: 'Could not analyze that photo.' },
+        hasPhoto: false,
+        loadingSavedMeal: false,
+      }),
+    ).toBe(SNAP_PANEL_STAGE.ZONE);
+  });
+
+  it('returns the photo stage for an idle analysis', () => {
+    expect(
+      snapPanelStageKey({
+        analysisState: { STATUS: SNAP_ANALYSIS_STATUS.IDLE },
+        hasPhoto: true,
+        loadingSavedMeal: false,
+      }),
+    ).toBe(SNAP_PANEL_STAGE.PHOTO);
+  });
+
+  it('returns the paywall stage for a plan-required analysis', () => {
+    expect(
+      snapPanelStageKey({
+        analysisState: { STATUS: SNAP_ANALYSIS_STATUS.PLAN_REQUIRED },
+        hasPhoto: true,
+        loadingSavedMeal: false,
+      }),
+    ).toBe(SNAP_PANEL_STAGE.PLAN_REQUIRED);
+  });
+
+  it.each([SNAP_ANALYSIS_STATUS.LOADING, SNAP_ANALYSIS_STATUS.ERROR])(
+    'returns the analysis stage for a %s analysis',
+    (status) => {
+      const analysisState: SnapAnalysisState =
+        status === SNAP_ANALYSIS_STATUS.LOADING
+          ? { STATUS: SNAP_ANALYSIS_STATUS.LOADING }
+          : { STATUS: SNAP_ANALYSIS_STATUS.ERROR, MESSAGE: 'Could not analyze that photo.' };
+
+      expect(snapPanelStageKey({ analysisState, hasPhoto: true, loadingSavedMeal: false })).toBe(
+        SNAP_PANEL_STAGE.ANALYSIS,
+      );
+    },
+  );
+
+  it('returns the analysis stage for a successful analysis', () => {
+    const analysisState: SnapAnalysisState = {
+      STATUS: SNAP_ANALYSIS_STATUS.SUCCESS,
+      LOCKED: true,
+      LOCKED_REASON: SNAP_LOCKED_REASON.PLAN,
+      ANALYSIS_ID: 'abc',
+      ANALYSIS: {
+        locked: true,
+        mealName: 'Grilled salmon',
+        carbsG: 18,
+        fatG: 46,
+        satFatG: 16,
+        fiberG: 6,
+        sugarG: 8,
+        sodiumMg: 520,
+        potassiumMg: 980,
+        confidence: 'high',
+        notes: null,
+      },
+    };
+
+    expect(snapPanelStageKey({ analysisState, hasPhoto: true, loadingSavedMeal: false })).toBe(
+      SNAP_PANEL_STAGE.ANALYSIS,
+    );
+  });
+});
 
 describe('firstAcceptedImageFile', () => {
   it('returns the first file without checking mime type', () => {

@@ -28,7 +28,7 @@ export function MealScanResultPanel({ detections, status, runId }: MealScanResul
     <div className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-surface/70 p-3.5 shadow-xl shadow-black/30 backdrop-blur-xl sm:p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-xs font-semibold tracking-[0.18em] text-cta uppercase">
+          <p className="text-[0.6875rem] font-medium tracking-[0.18em] text-cta uppercase">
             {MEAL_SCAN_SECTION.DETECTED_LABEL}
           </p>
           <h3 className="mt-1.5 truncate text-lg font-semibold tracking-tight text-white">
@@ -36,7 +36,7 @@ export function MealScanResultPanel({ detections, status, runId }: MealScanResul
           </h3>
         </div>
 
-        <span className="flex shrink-0 items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-2 py-1 text-xs font-semibold tracking-[0.1em] uppercase">
+        <span className="flex shrink-0 items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-2 py-1 text-[0.6875rem] font-medium tracking-[0.1em] uppercase">
           {isScanning ? (
             <Loader2 className="size-3 animate-spin motion-reduce:animate-none text-cta" aria-hidden />
           ) : (
@@ -71,7 +71,7 @@ export function MealScanResultPanel({ detections, status, runId }: MealScanResul
         ))}
       </ul>
       <div className="flex items-center justify-between gap-3 border-t border-white/8 pt-2.5">
-        <p className="text-xs font-semibold tracking-[0.18em] text-white/40 uppercase">
+        <p className="text-[0.6875rem] font-medium tracking-[0.18em] text-white/40 uppercase">
           {MEAL_SCAN_SECTION.NUTRITION_LABEL}
         </p>
         <p className="flex items-baseline gap-1">

@@ -1,7 +1,8 @@
 'use client';
 
-import { SNAP_STAGE_GRID_SHELL } from './constants';
+import { SNAP_STAGE_CELL_CLASS, SNAP_STAGE_GRID_SHELL, SNAP_STAGE_MIN_HEIGHT_CLASS } from './constants';
 import { HeroBetweenCardsArrow } from '@/app/components/hero/hero-between-cards-arrow';
+import { cn } from '@/app/utils/cn';
 import { SnapMealPhotoCard } from './snap-meal-photo-card';
 import { SnapAnalysisReadout } from './snap-analysis-readout';
 import { SnapAnalyzeCta } from './snap-analyze-cta';
@@ -15,8 +16,8 @@ import type {
 
 function SnapStageGrid({ photo, right, photoActions, photoActionsDisabled }: SnapStageGridProps) {
   return (
-    <div className={SNAP_STAGE_GRID_SHELL}>
-      <div className="relative z-0 w-full min-w-0">
+    <div className={cn(SNAP_STAGE_GRID_SHELL, SNAP_STAGE_MIN_HEIGHT_CLASS)}>
+      <div className={SNAP_STAGE_CELL_CLASS}>
         <SnapMealPhotoCard
           key={photo.PREVIEW_URL}
           previewUrl={photo.PREVIEW_URL}
@@ -27,7 +28,7 @@ function SnapStageGrid({ photo, right, photoActions, photoActionsDisabled }: Sna
       <div className="self-center">
         <HeroBetweenCardsArrow />
       </div>
-      <div className="relative z-0 w-full min-w-0">{right}</div>
+      <div className={SNAP_STAGE_CELL_CLASS}>{right}</div>
     </div>
   );
 }

@@ -50,7 +50,7 @@ export default function MealScan() {
 
       <div className="grid grid-cols-1 items-center gap-6 sm:gap-8 xl:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] xl:gap-12">
         <div className="max-w-3xl">
-          <p className="text-xs font-semibold tracking-[0.2em] text-cta uppercase">
+          <p className="text-[0.6875rem] font-medium tracking-[0.2em] text-cta uppercase">
             {MEAL_SCAN_SECTION.EYEBROW}
           </p>
           <h2

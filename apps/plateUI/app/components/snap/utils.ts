@@ -19,6 +19,7 @@ import {
   SNAP_HEADING_PHASE,
   SNAP_IMAGE_COMPRESSION,
   SNAP_LOCKED_REASON,
+  SNAP_PANEL_STAGE,
 } from './constants';
 import type {
   SavedMealPayload,
@@ -26,6 +27,8 @@ import type {
   SnapHeadingCopy,
   SnapHeadingPhase,
   SnapNutrientValues,
+  SnapPanelStageKey,
+  SnapPanelStageKeyInput,
   SnapPhoto,
 } from './types';
 
@@ -45,6 +48,37 @@ export function toSnapSavedMealCache(item: SavedMealPayload): SnapSavedMealCache
     status: item.status,
     analysis: item.analysis,
   };
+}
+
+/**
+ * The single source of truth for what the panel renders, and for the heading: both switch
+ * on this, so they can never disagree about the stage on screen.
+ *
+ * `PLAN_REQUIRED` is checked before `IDLE` because it is the one non-photo-success state
+ * that still renders a photo card — it just swaps the right-hand readout for the paywall.
+ */
+export function snapPanelStageKey({
+  analysisState,
+  hasPhoto,
+  loadingSavedMeal,
+}: SnapPanelStageKeyInput): SnapPanelStageKey {
+  if (loadingSavedMeal && !hasPhoto) {
+    return SNAP_PANEL_STAGE.LOADING;
+  }
+
+  if (!hasPhoto) {
+    return SNAP_PANEL_STAGE.ZONE;
+  }
+
+  if (analysisState.STATUS === SNAP_ANALYSIS_STATUS.PLAN_REQUIRED) {
+    return SNAP_PANEL_STAGE.PLAN_REQUIRED;
+  }
+
+  if (analysisState.STATUS === SNAP_ANALYSIS_STATUS.IDLE) {
+    return SNAP_PANEL_STAGE.PHOTO;
+  }
+
+  return SNAP_PANEL_STAGE.ANALYSIS;
 }
 
 export function snapHeadingPhase(

@@ -1,19 +1,26 @@
 'use client';
 
 import { useRef, useState, type DragEvent, type MouseEvent, type ReactNode } from 'react';
-import { AlertCircle, Camera, ImageUp, LoaderCircle, Upload } from 'lucide-react';
+import { AlertCircle, Camera, ImageUp, LoaderCircle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/app/ui/alert';
 import { Button } from '@/app/ui/button';
-import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/app/ui/empty';
 import { cn } from '@/app/utils/cn';
 import { DEVICE_TYPE } from '@/app/utils/device-detection/types';
 import { useDeviceType } from '@/app/utils/device-detection/use-device-type';
 import { trackSnapPhoto } from '@/app/utils/analytics';
-import { ACCEPTED_IMAGE_ACCEPT, SNAP, SNAP_ANALYSIS_STATUS } from './constants';
+import {
+  ACCEPTED_IMAGE_ACCEPT,
+  SNAP,
+  SNAP_ANALYSIS_STATUS,
+  SNAP_PANEL_STAGE,
+  SNAP_STAGE_MIN_HEIGHT_CLASS,
+  SNAP_STAGE_SHELL_CLASS,
+} from './constants';
 import { useSnapAnalyze, useSnapPhoto, useSnapSavedMealLoader } from './hooks';
 import { SnapAnalysisStage, SnapPhotoStage, SnapPlanRequiredStage } from './snap-stage';
 import { SnapCameraDialog } from './snap-camera-dialog';
-import { canUseCameraStream, firstAcceptedImageFile } from './utils';
+import { SnapUploadZone } from './snap-upload-zone';
+import { canUseCameraStream, firstAcceptedImageFile, snapPanelStageKey } from './utils';
 
 export function SnapUploadPanel() {
   const { photo, setPhoto } = useSnapPhoto();
@@ -27,10 +34,6 @@ export function SnapUploadPanel() {
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const showAnalysisLayout =
-    Boolean(photo) &&
-    analysisState.STATUS !== SNAP_ANALYSIS_STATUS.IDLE &&
-    analysisState.STATUS !== SNAP_ANALYSIS_STATUS.PLAN_REQUIRED;
   const photoActionsDisabled =
     analysisState.STATUS === SNAP_ANALYSIS_STATUS.LOADING ||
     (analysisState.STATUS === SNAP_ANALYSIS_STATUS.SUCCESS && analysisState.LOCKED === true);
@@ -125,9 +128,15 @@ export function SnapUploadPanel() {
     onRemove: removePhoto,
   };
 
+  const stageKey = snapPanelStageKey({
+    analysisState,
+    hasPhoto: Boolean(photo),
+    loadingSavedMeal,
+  });
+
   let mainContent: ReactNode;
 
-  if (loadingSavedMeal && !photo) {
+  if (stageKey === SNAP_PANEL_STAGE.LOADING) {
     mainContent = (
       <div className="flex min-h-72 flex-1 flex-col items-center justify-center gap-3 sm:min-h-112 lg:min-h-128">
         <LoaderCircle
@@ -137,7 +146,7 @@ export function SnapUploadPanel() {
         <p className="text-muted-foreground text-sm">{SNAP.LOADING_SAVED_MEAL}</p>
       </div>
     );
-  } else if (showAnalysisLayout && photo) {
+  } else if (stageKey === SNAP_PANEL_STAGE.ANALYSIS && photo) {
     mainContent = (
       <SnapAnalysisStage
         analysisState={analysisState}
@@ -149,9 +158,9 @@ export function SnapUploadPanel() {
         }}
       />
     );
-  } else if (photo && analysisState.STATUS === SNAP_ANALYSIS_STATUS.PLAN_REQUIRED) {
+  } else if (stageKey === SNAP_PANEL_STAGE.PLAN_REQUIRED && photo) {
     mainContent = <SnapPlanRequiredStage photo={photo} photoActions={photoActions} />;
-  } else if (photo) {
+  } else if (stageKey === SNAP_PANEL_STAGE.PHOTO && photo) {
     mainContent = (
       <SnapPhotoStage
         photo={photo}
@@ -163,36 +172,25 @@ export function SnapUploadPanel() {
     );
   } else {
     mainContent = (
-      <Empty
-        className={cn(
-          'min-h-72 flex-1 sm:min-h-112 lg:min-h-128',
-          deviceType === DEVICE_TYPE.PHONE ? 'border' : 'cursor-pointer border-4 border-dashed',
-          deviceType === DEVICE_TYPE.DESKTOP && isDragging && 'border-cta bg-muted/40',
-        )}
+      <SnapUploadZone
+        title={deviceType === DEVICE_TYPE.PHONE ? SNAP.DROP_TITLE_PHONE : SNAP.DROP_TITLE}
+        description={SNAP.DROP_BODY}
+        {...(deviceType === DEVICE_TYPE.PHONE ? {} : { hint: SNAP.DROP_HINT })}
+        actions={emptyActions}
+        interactive={deviceType === DEVICE_TYPE.DESKTOP}
+        isDragging={isDragging}
         onClick={handleZoneClick}
-        {...(deviceType === DEVICE_TYPE.PHONE
-          ? {}
-          : {
-              onDragEnter: handleDragEnter,
-              onDragLeave: handleDragLeave,
-              onDragOver: handleDragOver,
-              onDrop: handleDrop,
-            })}
-      >
-        <EmptyHeader>
-          <EmptyMedia variant="icon">
-            <Upload aria-hidden />
-          </EmptyMedia>
-          <EmptyTitle>
-            {deviceType === DEVICE_TYPE.PHONE ? SNAP.DROP_TITLE_PHONE : SNAP.DROP_TITLE}
-          </EmptyTitle>
-          <EmptyDescription>{SNAP.DROP_BODY}</EmptyDescription>
-        </EmptyHeader>
-        <EmptyContent>
-          {deviceType === DEVICE_TYPE.DESKTOP ? <p>{SNAP.DROP_HINT}</p> : null}
-          {emptyActions}
-        </EmptyContent>
-      </Empty>
+        dragHandlers={
+          deviceType === DEVICE_TYPE.PHONE
+            ? undefined
+            : {
+                onDragEnter: handleDragEnter,
+                onDragLeave: handleDragLeave,
+                onDragOver: handleDragOver,
+                onDrop: handleDrop,
+              }
+        }
+      />
     );
   }
 
@@ -223,7 +221,7 @@ export function SnapUploadPanel() {
           event.target.value = '';
         }}
       />
-      {mainContent}
+      <div className={cn(SNAP_STAGE_SHELL_CLASS, SNAP_STAGE_MIN_HEIGHT_CLASS)}>{mainContent}</div>
       {error ? (
         <Alert variant="destructive">
           <AlertCircle />

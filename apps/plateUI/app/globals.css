@@ -192,6 +192,13 @@
     background-attachment: fixed;
   }
 
+  /* Selection is brand CTA yellow with canvas text — the default is invisible on a
+     black canvas. Solid, not tinted, so it stays legible over photos and video. */
+  ::selection {
+    background-color: var(--color-cta);
+    color: var(--color-canvas);
+  }
+
   html {
     @apply font-sans;
     /* Geist is a variable font — let its optical-size axis tighten large text. */

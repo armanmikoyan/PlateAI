@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { DragEvent, MouseEvent, ReactNode } from 'react';
 import type {
   MealAnalysisLockedResult,
   MealAnalysisPreview,
@@ -6,7 +6,7 @@ import type {
   MealAnalysisStatus,
 } from '@plate/plate-ai/types';
 import type { HeroStatTileChrome } from '@/app/components/hero/constants';
-import { SNAP_ANALYSIS_STATUS, SNAP_HEADING_PHASE, SNAP_LOCKED_REASON } from './constants';
+import { SNAP_ANALYSIS_STATUS, SNAP_HEADING_PHASE, SNAP_LOCKED_REASON, SNAP_PANEL_STAGE } from './constants';
 
 export type AcceptedImageType = 'image/jpeg' | 'image/png' | 'image/webp';
 
@@ -135,6 +135,51 @@ export type SnapStageGridProps = Readonly<{
 
 export type SnapAnalyzeCtaProps = Readonly<{
   onAnalyze: () => void;
+}>;
+
+export type SnapPanelStageKey = (typeof SNAP_PANEL_STAGE)[keyof typeof SNAP_PANEL_STAGE];
+
+export type SnapPanelStageKeyInput = Readonly<{
+  analysisState: SnapAnalysisState;
+  hasPhoto: boolean;
+  loadingSavedMeal: boolean;
+}>;
+
+/** One spring target for the upload zone, mirroring `NAV_BAR_REST` / `NAV_BAR_CONDENSED`. */
+export type SnapUploadZoneGeometry = Readonly<{
+  borderRadius: number;
+  paddingLeft: number;
+  paddingRight: number;
+  scale: number;
+  y: number;
+}>;
+
+export type SnapUploadZoneRing = Readonly<{
+  /** Bumped per click so `AnimatePresence` replays the ripple instead of reusing the node. */
+  ID: number;
+  /** Pointer position inside the zone, as a percentage of its box. */
+  X_PERCENT: number;
+  Y_PERCENT: number;
+}>;
+
+export type SnapUploadZoneDragHandlers = Readonly<{
+  onDragEnter: (event: DragEvent<HTMLDivElement>) => void;
+  onDragLeave: (event: DragEvent<HTMLDivElement>) => void;
+  onDragOver: (event: DragEvent<HTMLDivElement>) => void;
+  onDrop: (event: DragEvent<HTMLDivElement>) => void;
+}>;
+
+export type SnapUploadZoneProps = Readonly<{
+  actions: ReactNode;
+  description: string;
+  /** Omitted on phones, where there is no drop target to hint at. */
+  hint?: string;
+  /** Desktop only: enables hover, tilt, the dashed 4px edge and the drag handlers. */
+  interactive: boolean;
+  isDragging: boolean;
+  onClick: (event: MouseEvent<HTMLDivElement>) => void;
+  title: string;
+  dragHandlers?: SnapUploadZoneDragHandlers;
 }>;
 
 export type SnapHeaderProps = Readonly<{

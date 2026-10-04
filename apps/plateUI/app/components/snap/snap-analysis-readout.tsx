@@ -16,11 +16,14 @@ import {
   SNAP_LOCKED_DECOY,
   SNAP_LOCKED_REASON,
   SNAP_PHOTO_CARD_SHELL,
+  SNAP_STAGE_CARD_CONTENT_CLASS,
+  SNAP_STAGE_CARD_SURFACE_CLASS,
 } from './constants';
 import { SnapAnalysisLockedPreview } from './snap-analysis-locked-preview';
 import { SnapAnalysisUnlockedReadout } from './snap-analysis-unlocked-readout';
 import { SnapLockedPlaceholder } from './snap-locked-placeholder';
 import { SnapOrbLoader } from './snap-orb-loader';
+import { SnapStageDots } from './snap-stage-dots';
 import type { SnapAnalysisReadoutProps, SnapAnalysisState } from './types';
 
 function SnapAnalysisLockedHeader({
@@ -82,8 +85,11 @@ function SnapAnalysisPlaceholderCard() {
       className={cn(
         '@container/result flex h-full w-full flex-col items-center justify-center gap-3 p-6 text-center',
         SNAP_PHOTO_CARD_SHELL,
+        SNAP_STAGE_CARD_SURFACE_CLASS,
+        SNAP_STAGE_CARD_CONTENT_CLASS,
       )}
     >
+      <SnapStageDots />
       <ScanLine className="text-content-subtle size-8" aria-hidden />
       <p className="font-heading text-content text-base font-semibold tracking-tight">
         {SNAP_ANALYSIS_PLACEHOLDER.TITLE}
@@ -159,7 +165,7 @@ export function SnapAnalysisReadout({ analysisState, photo, onRetry }: SnapAnaly
       {content ? (
         <motion.div
           key={snapReadoutStageKey(analysisState)}
-          className="flex w-full min-w-0"
+          className="flex h-full w-full min-w-0"
           initial={{ opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.96 }}

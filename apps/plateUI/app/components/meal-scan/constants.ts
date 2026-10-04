@@ -34,7 +34,7 @@ export const MEAL_SCAN_DIM = {
 } as const;
 
 export const MEAL_SCAN_CHIP_CLASS =
-  'inline-flex items-center rounded-full border px-[0.8cqw] py-[0.6cqw] text-[clamp(14px,2.5cqw,26px)] leading-none font-bold whitespace-nowrap shadow-md shadow-black/40 backdrop-blur-md';
+  'inline-flex items-center rounded-full border px-[0.8cqw] py-[0.6cqw] text-[clamp(13px,2.1cqw,22px)] leading-none font-medium whitespace-nowrap shadow-md shadow-black/40 backdrop-blur-md';
 
 export const MEAL_SCAN_TIMING = {
   SCAN_DURATION_S: 3.4,
