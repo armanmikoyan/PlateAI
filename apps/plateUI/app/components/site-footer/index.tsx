@@ -32,7 +32,10 @@ export default function SiteFooter() {
   return (
     <footer
       id="footer"
-      className="scroll-mt-28 py-14 sm:py-16 lg:py-20"
+      /* `relative z-10` lifts it above the pricing page's fixed banner layer; `bg-canvas`
+         makes it opaque so that banner stops at the end of the pricing content. On every
+         other page the body is already `bg-canvas`, so the background is a no-op there. */
+      className="bg-canvas scroll-mt-28 relative z-10 py-14 sm:py-16 lg:py-20"
       aria-labelledby="site-footer-heading"
     >
       <div className="layout-page-shell">

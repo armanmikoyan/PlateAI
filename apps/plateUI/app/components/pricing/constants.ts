@@ -40,6 +40,17 @@ export const PRICING_TIER_ANIM = {
   MAX_TILT_DEG: 6,
 } as const;
 
+/**
+ * Intrinsic size of the banner. The layer renders at this ratio with `w-full h-auto`
+ * rather than `fill` + `object-cover`: the photo's subjects sit at the left and right
+ * edges with a black middle, so any horizontal crop lands on nothing. Sizing from the
+ * intrinsic ratio keeps the whole frame visible at every breakpoint and lets the
+ * letterboxing fall on the black canvas, where it disappears.
+ */
+export const PRICING_BANNER_IMAGE_WIDTH = 1672;
+
+export const PRICING_BANNER_IMAGE_HEIGHT = 941;
+
 export const PRICING_TIERS = [
   {
     ID: SUBSCRIPTION_PLAN.BASIC,

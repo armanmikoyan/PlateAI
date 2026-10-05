@@ -12,38 +12,40 @@ export default function PricingPage({ currentPlanId = null }: PricingPageProps) 
   return (
     <>
       <PricingUrlSync />
-      <div className="border-edge bg-canvas relative isolate overflow-hidden border-t py-16 sm:py-20 lg:py-20">
+      <div className="relative isolate">
         <PricingBannerBackground />
-        <ScrollEnter
-          className="layout-page-shell"
-          rows={[
-            { KEY: 'intro', content: <PricingPageIntro /> },
-            {
-              KEY: 'grid',
-              content: <PricingTierGrid variant="detail" currentPlanId={currentPlanId} />,
-              delayClass: 'motion-safe:delay-150',
-            },
-          ]}
-        />
+
+        <div className="border-edge bg-canvas/80 border-t py-16 sm:py-20 lg:py-20">
+          <ScrollEnter
+            className="layout-page-shell"
+            rows={[
+              { KEY: 'intro', content: <PricingPageIntro /> },
+              {
+                KEY: 'grid',
+                content: <PricingTierGrid variant="detail" currentPlanId={currentPlanId} />,
+                delayClass: 'motion-safe:delay-150',
+              },
+            ]}
+          />
+        </div>
+
+        <section
+          className="border-edge scroll-mt-28 border-t bg-surface/80 py-16 sm:py-20 lg:py-20"
+          aria-labelledby="pricing-comparison-heading"
+        >
+          <ScrollEnter
+            className="layout-page-shell"
+            rows={[
+              {
+                KEY: 'comparison',
+                content: <PricingComparisonTable />,
+              },
+            ]}
+          />
+        </section>
       </div>
 
-      <section
-        className="border-edge scroll-mt-28 border-t bg-surface py-16 sm:py-20 lg:py-20"
-        aria-labelledby="pricing-comparison-heading"
-      >
-        <ScrollEnter
-          className="layout-page-shell"
-          rows={[
-            {
-              KEY: 'comparison',
-              content: <PricingComparisonTable />,
-            },
-          ]}
-        />
-      </section>
-
       <SiteFooter />
-      <div aria-hidden className="h-28 shrink-0 sm:h-32" />
       <PricingFixedCta currentPlanId={currentPlanId} />
     </>
   );
