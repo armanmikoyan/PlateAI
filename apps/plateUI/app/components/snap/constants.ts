@@ -300,6 +300,19 @@ export const SNAP_CAMERA_CAPTURE_FILE = 'plate.jpg' as const;
  */
 export const SNAP_STAGE_MIN_HEIGHT_CLASS = 'min-h-[24rem] sm:min-h-112 lg:min-h-128' as const;
 
+/**
+ * Page-wide background loop behind the snap panel. `muted` + `playsInline` are both
+ * required for mobile autoplay — without `playsInline` iOS Safari hijacks the video
+ * into its own fullscreen player. The poster is the paint-before-decode frame and the
+ * reduced-motion end state.
+ */
+export const SNAP_BG_VIDEO_SRC = '/videos/snap-bg.mp4' as const;
+
+export const SNAP_BG_VIDEO_POSTER = '/videos/snap-bg-poster.jpg' as const;
+
+/** Scrim over the loop. The panel cards are translucent, so this is what keeps them legible. */
+export const SNAP_BG_VIDEO_SCRIM_CLASS = 'absolute inset-0 bg-canvas/72' as const;
+
 export const SNAP_PHOTO_CARD_SHELL = 'relative h-full w-full gap-0 overflow-hidden py-0' as const;
 
 export const SNAP_ANALYSIS_CARD_SHELL = 'relative h-full w-full gap-0 overflow-hidden py-0' as const;
