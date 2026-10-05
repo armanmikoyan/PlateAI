@@ -1,5 +1,6 @@
 import SiteFooter from '@/app/components/site-footer';
 import { ScrollEnter } from '@/app/components/scroll';
+import { PricingBannerBackground } from './pricing-banner-background';
 import { PricingComparisonTable } from './pricing-comparison-table';
 import { PricingFixedCta } from './pricing-fixed-cta';
 import { PricingPageIntro } from './pricing-page-intro';
@@ -11,7 +12,8 @@ export default function PricingPage({ currentPlanId = null }: PricingPageProps) 
   return (
     <>
       <PricingUrlSync />
-      <div className="border-edge bg-canvas border-t py-16 sm:py-20 lg:py-20">
+      <div className="border-edge bg-canvas relative isolate overflow-hidden border-t py-16 sm:py-20 lg:py-20">
+        <PricingBannerBackground />
         <ScrollEnter
           className="layout-page-shell"
           rows={[
