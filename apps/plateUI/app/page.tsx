@@ -9,6 +9,7 @@ import Faq from '@/app/components/faq';
 import FeedbackMarquee from '@/app/components/feedback-marquee';
 import Features from '@/app/components/features';
 import Hero from '@/app/components/hero';
+import { HomepageBgVideo } from '@/app/components/homepage/homepage-bg-video';
 import HowItWorks from '@/app/components/how-it-works';
 import MealScan from '@/app/components/meal-scan';
 import Pricing from '@/app/components/pricing';
@@ -25,17 +26,20 @@ export default async function Page(): Promise<ReactNode> {
 
   return (
     <>
-      <Hero />
-      <MealScan />
-      <Demo />
-      <Features />
-      <DemoMore />
-      <HowItWorks />
-      <UseCases />
-      <FeedbackMarquee />
-      <Pricing currentPlanId={currentPlanId} />
-      <Faq />
-      <Contact />
+      <div className="relative isolate">
+        <HomepageBgVideo />
+        <Hero />
+        <MealScan />
+        <Demo />
+        <Features />
+        <DemoMore />
+        <HowItWorks />
+        <UseCases />
+        <FeedbackMarquee />
+        <Pricing currentPlanId={currentPlanId} />
+        <Faq />
+        <Contact />
+      </div>
       <SiteFooter />
     </>
   );
