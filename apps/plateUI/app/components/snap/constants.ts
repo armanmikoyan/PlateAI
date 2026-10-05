@@ -1,3 +1,5 @@
+import type { OrbState } from 'thinking-orbs/engine';
+
 export const SNAP_ANALYSIS_STATUS = {
   IDLE: 'idle',
   LOADING: 'loading',
@@ -15,7 +17,8 @@ export const SNAP_HEADING_PHASE = {
 } as const;
 
 export const SNAP_ORB = {
-  STATE: 'solving',
+  /** Typed as `OrbState` so a state the package doesn't ship fails at compile time. */
+  STATE: 'composing' satisfies OrbState,
   TUNED_SIZE: 64,
   FILL: 0.9,
   MAX_SIZE: 560,
