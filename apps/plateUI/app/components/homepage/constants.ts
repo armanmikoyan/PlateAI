@@ -14,7 +14,6 @@ export const HOMEPAGE_BG_VIDEOS = [
   { SRC: '/videos/home-bg-2.mp4' },
   { SRC: '/videos/home-bg-3.mp4' },
   { SRC: '/videos/home-bg-4.mp4' },
-  { SRC: '/videos/home-bg-5.mp4' },
   { SRC: '/videos/home-bg-6.mp4' },
 ] as const;
 
