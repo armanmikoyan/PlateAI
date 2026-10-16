@@ -92,6 +92,19 @@ export const HERO_FLIP_ROTATE_MS = 5000 as const;
 export const HERO_FLIP_S = 0.55 as const;
 export const HERO_FLIP_EASE = [0.22, 1, 0.36, 1] as const;
 
+/**
+ * Cursor spotlight over the hero: a broad, very soft radial glow that trails the
+ * pointer like a flashlight sweeping the plate. Size lives here because the JS
+ * halves it to center the disc under the cursor. Alpha stays low — the section sits
+ * over a near-black video — and the disc is purely additive-looking light, so there
+ * is no visible ring or edge.
+ */
+export const HERO_SPOTLIGHT_SIZE_PX = 560 as const;
+export const HERO_SPOTLIGHT_BG =
+  'radial-gradient(circle, rgb(255 255 255 / 0.1) 0%, rgb(255 255 255 / 0.04) 38%, rgb(255 255 255 / 0) 66%)' as const;
+export const HERO_SPOTLIGHT_CLASS =
+  'rounded-full transition-opacity duration-700 will-change-transform' as const;
+
 /** Upload | arrow | result from `md` up; stacked on small screens. */
 export const HERO_ENTER_GRID_SHELL =
   'relative grid w-full min-w-0 grid-cols-1 items-stretch gap-5 [&>*]:min-w-0 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:gap-8' as const;
