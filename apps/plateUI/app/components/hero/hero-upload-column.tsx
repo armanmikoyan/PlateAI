@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { Card } from '@/app/ui/card';
 import { cn } from '@/app/utils/cn';
 import { HERO, HERO_ENTER_MOTION_REDUCE, HERO_MEAL_SLIDES, type HeroUploadColumnProps } from './constants';
 import { HeroMealPhoto } from './hero-meal-photo';
@@ -16,18 +15,16 @@ export default function HeroUploadColumn({ meal, onCycleComplete }: HeroUploadCo
       )}
       aria-label={HERO.CTA}
     >
-      <Card className="h-full min-h-0 w-full flex-1 gap-0 overflow-hidden py-0">
-        <div className="relative min-h-0 flex-1 overflow-hidden">
-          <HeroMealPhoto
-            meal={meal}
-            sizes={HERO.UPLOAD_IMAGE_SIZES}
-            priority={meal.KEY === HERO_MEAL_SLIDES[0]?.KEY}
-            kenBurns
-            showCycleProgress
-            onCycleComplete={onCycleComplete}
-          />
-        </div>
-      </Card>
+      <div className="relative h-full min-h-0 w-full flex-1 overflow-hidden rounded-xl">
+        <HeroMealPhoto
+          meal={meal}
+          sizes={HERO.UPLOAD_IMAGE_SIZES}
+          priority={meal.KEY === HERO_MEAL_SLIDES[0]?.KEY}
+          kenBurns
+          showCycleProgress
+          onCycleComplete={onCycleComplete}
+        />
+      </div>
     </Link>
   );
 }

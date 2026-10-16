@@ -9,13 +9,7 @@
  * blown-out highlight that read as a flash before the clip faded in. The element's own
  * `bg-canvas` holds a plain dark field until the first frame decodes instead.
  */
-export const HOMEPAGE_BG_VIDEOS = [
-  { SRC: '/videos/home-bg-1.mp4' },
-  { SRC: '/videos/home-bg-2.mp4' },
-  { SRC: '/videos/home-bg-3.mp4' },
-  { SRC: '/videos/home-bg-4.mp4' },
-  { SRC: '/videos/home-bg-6.mp4' },
-] as const;
+export const HOMEPAGE_BG_VIDEOS = [{ SRC: '/videos/home-bg-7.mp4' }] as const;
 
 /**
  * Much lighter than the pricing banner's scrim, and deliberately so: these clips are
