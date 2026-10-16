@@ -1,9 +1,15 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-import { HERO_ENTER_GRID_SHELL, HERO_MEAL_SLIDES } from './constants';
+import {
+  HERO_ENTER_GRID_SHELL,
+  HERO_MEAL_SLIDES,
+  HERO_TILT_PHOTO_DEPTH,
+  HERO_TILT_RESULT_DEPTH,
+} from './constants';
 import { HeroBetweenCardsArrow } from './hero-between-cards-arrow';
 import HeroResultReadout from './hero-result-readout';
+import { HeroTilt } from './hero-tilt';
 import HeroUploadColumn from './hero-upload-column';
 
 export function HeroMealStage() {
@@ -21,13 +27,13 @@ export function HeroMealStage() {
 
   return (
     <div className={HERO_ENTER_GRID_SHELL}>
-      <div className="relative z-0 flex w-full min-w-0 lg:self-start">
+      <HeroTilt className="relative z-0 flex w-full min-w-0 lg:self-start" depth={HERO_TILT_PHOTO_DEPTH}>
         <HeroUploadColumn meal={meal} onCycleComplete={advance} />
-      </div>
+      </HeroTilt>
       <HeroBetweenCardsArrow />
-      <div className="relative z-0 flex w-full min-w-0">
+      <HeroTilt className="relative z-0 flex w-full min-w-0" depth={HERO_TILT_RESULT_DEPTH}>
         <HeroResultReadout meal={meal} />
-      </div>
+      </HeroTilt>
     </div>
   );
 }

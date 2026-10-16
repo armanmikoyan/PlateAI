@@ -28,6 +28,9 @@ export type {
   HeroKenBurnsLayerProps,
   HeroCycleProgressBarProps,
   HeroUploadColumnProps,
+  HeroResultReadoutProps,
+  HeroTiltProps,
+  HeroMagneticProps,
 } from './types';
 
 export const HERO = {
@@ -104,6 +107,18 @@ export const HERO_SPOTLIGHT_BG =
   'radial-gradient(circle, rgb(255 255 255 / 0.1) 0%, rgb(255 255 255 / 0.04) 38%, rgb(255 255 255 / 0) 66%)' as const;
 export const HERO_SPOTLIGHT_CLASS =
   'rounded-full transition-opacity duration-700 will-change-transform' as const;
+
+/** Max degrees the cards rotate toward the cursor, and the spring that eases there. */
+export const HERO_TILT_MAX_DEG = 8 as const;
+export const HERO_TILT_SPRING = { damping: 18, stiffness: 140, mass: 0.4 } as const;
+/** Cards sit at slightly different depths so the tilt reads as parallax, not a slab. */
+export const HERO_TILT_PHOTO_DEPTH = 1 as const;
+export const HERO_TILT_RESULT_DEPTH = 0.62 as const;
+export const HERO_TILT_SHELL = 'transform-gpu will-change-transform [transform-style:preserve-3d]' as const;
+
+/** Magnetic pull on the CTA: max px it leans toward the cursor, and ease. */
+export const HERO_MAGNETIC_STRENGTH_PX = 14 as const;
+export const HERO_MAGNETIC_SPRING = { damping: 20, stiffness: 180, mass: 0.5 } as const;
 
 /** Upload | arrow | result from `md` up; stacked on small screens. */
 export const HERO_ENTER_GRID_SHELL =

@@ -5,15 +5,11 @@ import { motion, useReducedMotion } from 'motion/react';
 import { Badge } from '@/app/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/ui/card';
 import { cn } from '@/app/utils/cn';
-import { HERO, HERO_ENTER_MOTION_REDUCE, type HeroMealSlide } from './constants';
+import { HERO, HERO_ENTER_MOTION_REDUCE, type HeroResultReadoutProps } from './constants';
 import { HeroBlurSwap } from './hero-blur-swap';
 import { HeroMealPhoto } from './hero-meal-photo';
 import { HeroNutrientTile } from './hero-nutrient-tile';
 import { heroCaloriesTileForMeal, heroNutrientTilesForMeal } from './utils';
-
-type HeroResultReadoutProps = Readonly<{
-  meal: HeroMealSlide;
-}>;
 
 export default function HeroResultReadout({ meal }: HeroResultReadoutProps) {
   const caloriesTile = heroCaloriesTileForMeal(meal);

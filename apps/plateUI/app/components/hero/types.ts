@@ -1,4 +1,5 @@
 import type { LucideIcon } from 'lucide-react';
+import type { ReactNode } from 'react';
 
 export type HeroMockMealChipRow = Readonly<{
   ICON: LucideIcon;
@@ -85,4 +86,19 @@ export type HeroCycleProgressBarProps = Readonly<{
 export type HeroUploadColumnProps = Readonly<{
   meal: HeroMealSlide;
   onCycleComplete: () => void;
+}>;
+
+export type HeroResultReadoutProps = Readonly<{
+  meal: HeroMealSlide;
+}>;
+
+export type HeroTiltProps = Readonly<{
+  className?: string;
+  depth?: number;
+  children: ReactNode;
+}>;
+
+export type HeroMagneticProps = Readonly<{
+  className?: string;
+  children: ReactNode;
 }>;
