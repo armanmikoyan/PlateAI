@@ -52,11 +52,12 @@ export type HeroMealSlide = Readonly<{
   MACROS: HeroMealMacros;
 }>;
 
-import { HERO_INTRO_LINES } from './constants';
-
-export type HeroIntroLineKey = (typeof HERO_INTRO_LINES)[number]['KEY'];
-
 export type HeroNutrientTileProps = HeroStatTileModel;
+
+export type HeroFlipTextProps = Readonly<{
+  variants: readonly string[];
+  index: number;
+}>;
 
 export type HeroMealPhotoProps = Readonly<{
   meal: HeroMealSlide;

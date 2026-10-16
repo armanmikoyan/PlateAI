@@ -1,7 +1,7 @@
 import { cn } from '@/app/utils/cn';
 import { HERO_ENTER_MOTION_REDUCE, HERO_ENTER_SHELL_BLOCKS } from './constants';
 import { HeroCta } from './hero-cta';
-import { HeroIntroTypewriter } from './hero-intro-typewriter';
+import { HeroIntro } from './hero-intro';
 import { HeroMealStage } from './hero-meal-stage';
 
 export default function Hero() {
@@ -12,7 +12,7 @@ export default function Hero() {
           <div key={ID} className={cn(SHELL, HERO_ENTER_MOTION_REDUCE)}>
             {ID === 'intro' ? (
               <>
-                <HeroIntroTypewriter />
+                <HeroIntro />
                 <HeroCta />
               </>
             ) : (

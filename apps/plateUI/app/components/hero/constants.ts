@@ -24,7 +24,6 @@ export type {
   HeroStatTileModel,
   HeroNutrientTileRowModel,
   HeroMealSlide,
-  HeroIntroLineKey,
   HeroMealPhotoProps,
   HeroKenBurnsLayerProps,
   HeroCycleProgressBarProps,
@@ -73,32 +72,25 @@ export const HERO_MEAL_COPY_SWAP_S = 0.45 as const;
 export const HERO_ENTER_MOTION_REDUCE =
   'motion-reduce:animate-none! motion-reduce:opacity-100! motion-reduce:transform-none! motion-reduce:filter-none!' as const;
 
-/** Shared Tailwind for typewriter carets under reduced motion. */
-export const HERO_TYPEWRITER_CARET_REDUCE_CLASS =
-  'motion-reduce:animate-none! motion-reduce:opacity-65!' as const;
+/** Heading variants flipped through the hero; first entry is the primary copy. */
+export const HERO_HEADING_VARIANTS: readonly string[] = [
+  HERO.HEADING,
+  'One photo. Your whole meal, measured.',
+  'See the calories hiding in your plate.',
+  'Point your camera. Know every macro.',
+];
 
-export const HERO_INTRO_TYPE_START_MS = 380 as const;
+/** Subhead variants flipped through the hero; first entry is the primary copy. */
+export const HERO_SUBHEAD_VARIANTS: readonly string[] = [
+  HERO.SUBHEAD,
+  'One photo becomes calories, protein, carbs, and fat—instantly. See how your next meal fits before the day gets away from you.',
+  'Point. Snap. Know. PlateAI reads your plate and breaks down the macros—so you can stop guessing and start hitting your numbers.',
+  'No scales. No logging. Just a photo. PlateAI estimates calories and macros in seconds and shows how the rest of your day stacks up.',
+];
 
-export const HERO_INTRO_LINES = [
-  {
-    KEY: 'h',
-    EL: 'h1',
-    ID: 'hero-heading',
-    SHELL: 'text-content font-heading text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl',
-    CARET: 'animate-caret-blink text-content-muted inline-block align-baseline font-light',
-    TEXT: HERO.HEADING,
-    MS: 16,
-  },
-  {
-    KEY: 's',
-    EL: 'p',
-    ID: undefined,
-    SHELL: 'text-content-muted mt-3 max-w-3xl text-base/relaxed sm:text-lg',
-    CARET: 'animate-caret-blink text-content-muted/80 inline-block align-baseline font-light',
-    TEXT: HERO.SUBHEAD,
-    MS: 8,
-  },
-] as const;
+export const HERO_FLIP_ROTATE_MS = 5000 as const;
+export const HERO_FLIP_S = 0.55 as const;
+export const HERO_FLIP_EASE = [0.22, 1, 0.36, 1] as const;
 
 /** Upload | arrow | result from `md` up; stacked on small screens. */
 export const HERO_ENTER_GRID_SHELL =
