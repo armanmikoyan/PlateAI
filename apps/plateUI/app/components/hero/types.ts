@@ -57,3 +57,31 @@ import { HERO_INTRO_LINES } from './constants';
 export type HeroIntroLineKey = (typeof HERO_INTRO_LINES)[number]['KEY'];
 
 export type HeroNutrientTileProps = HeroStatTileModel;
+
+export type HeroMealPhotoProps = Readonly<{
+  meal: HeroMealSlide;
+  sizes: string;
+  priority?: boolean;
+  loading?: 'lazy' | 'eager';
+  kenBurns?: boolean;
+  showCycleProgress?: boolean;
+  onCycleComplete?: () => void;
+}>;
+
+export type HeroKenBurnsLayerProps = Readonly<{
+  meal: HeroMealSlide;
+  sizes: string;
+  priority: boolean;
+  loading?: 'lazy' | 'eager';
+  rotateS: number;
+}>;
+
+export type HeroCycleProgressBarProps = Readonly<{
+  rotateS: number;
+  onCycleComplete: () => void;
+}>;
+
+export type HeroUploadColumnProps = Readonly<{
+  meal: HeroMealSlide;
+  onCycleComplete: () => void;
+}>;

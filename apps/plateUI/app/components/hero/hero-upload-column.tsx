@@ -3,14 +3,10 @@
 import Link from 'next/link';
 import { Card } from '@/app/ui/card';
 import { cn } from '@/app/utils/cn';
-import { HERO, HERO_ENTER_MOTION_REDUCE, HERO_MEAL_SLIDES, type HeroMealSlide } from './constants';
+import { HERO, HERO_ENTER_MOTION_REDUCE, HERO_MEAL_SLIDES, type HeroUploadColumnProps } from './constants';
 import { HeroMealPhoto } from './hero-meal-photo';
 
-type HeroUploadColumnProps = Readonly<{
-  meal: HeroMealSlide;
-}>;
-
-export default function HeroUploadColumn({ meal }: HeroUploadColumnProps) {
+export default function HeroUploadColumn({ meal, onCycleComplete }: HeroUploadColumnProps) {
   return (
     <Link
       href={HERO.CTA_HREF}
@@ -28,6 +24,7 @@ export default function HeroUploadColumn({ meal }: HeroUploadColumnProps) {
             priority={meal.KEY === HERO_MEAL_SLIDES[0]?.KEY}
             kenBurns
             showCycleProgress
+            onCycleComplete={onCycleComplete}
           />
         </div>
       </Card>

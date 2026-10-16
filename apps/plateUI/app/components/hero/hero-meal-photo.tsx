@@ -1,47 +1,29 @@
 'use client';
 
-import { useEffect } from 'react';
-import { AnimatePresence, motion, useAnimationControls, useReducedMotion } from 'motion/react';
+import { useEffect, useRef } from 'react';
+import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion } from 'motion/react';
 import Image from 'next/image';
 import {
   HERO_MEAL_KEN_BURNS_FROM,
   HERO_MEAL_KEN_BURNS_TO,
   HERO_MEAL_PHOTO_CROSSFADE_S,
   HERO_MEAL_ROTATE_MS,
-  type HeroMealSlide,
 } from './constants';
+import type { HeroKenBurnsLayerProps, HeroMealPhotoProps, HeroCycleProgressBarProps } from './types';
 import { cn } from '@/app/utils/cn';
 
-type HeroMealPhotoProps = Readonly<{
-  meal: HeroMealSlide;
-  sizes: string;
-  priority?: boolean;
-  loading?: 'lazy' | 'eager';
-  kenBurns?: boolean;
-  showCycleProgress?: boolean;
-}>;
-
-type HeroKenBurnsLayerProps = Readonly<{
-  meal: HeroMealSlide;
-  sizes: string;
-  priority: boolean;
-  loading?: 'lazy' | 'eager';
-  rotateS: number;
-}>;
-
 function HeroKenBurnsLayer({ meal, sizes, priority, loading, rotateS }: HeroKenBurnsLayerProps) {
-  const controls = useAnimationControls();
+  const scale = useMotionValue<number>(HERO_MEAL_KEN_BURNS_FROM);
 
   useEffect(() => {
-    controls.set({ scale: HERO_MEAL_KEN_BURNS_FROM });
-    controls.start({
-      scale: HERO_MEAL_KEN_BURNS_TO,
-      transition: { duration: rotateS, ease: 'linear' },
-    });
-  }, [controls, meal.KEY, rotateS]);
+    const animation = animate(scale, HERO_MEAL_KEN_BURNS_TO, { duration: rotateS, ease: 'linear' });
+    return () => {
+      animation.stop();
+    };
+  }, [scale, rotateS, meal.KEY]);
 
   return (
-    <motion.div animate={controls} className="absolute inset-0 origin-center">
+    <motion.div style={{ scale }} className="absolute inset-0 origin-center">
       <Image
         src={meal.IMAGE_SRC}
         alt={meal.IMAGE_ALT}
@@ -55,6 +37,31 @@ function HeroKenBurnsLayer({ meal, sizes, priority, loading, rotateS }: HeroKenB
   );
 }
 
+function HeroCycleProgressBar({ rotateS, onCycleComplete }: HeroCycleProgressBarProps) {
+  const scaleX = useMotionValue(0);
+  const onCycleCompleteRef = useRef(onCycleComplete);
+  onCycleCompleteRef.current = onCycleComplete;
+
+  useEffect(() => {
+    const animation = animate(scaleX, 1, {
+      duration: rotateS,
+      ease: 'linear',
+      onComplete: () => onCycleCompleteRef.current(),
+    });
+    return () => {
+      animation.stop();
+    };
+  }, [scaleX, rotateS]);
+
+  return (
+    <motion.span
+      aria-hidden
+      className="bg-accent absolute inset-x-0 bottom-0 z-10 h-0.5 origin-left"
+      style={{ scaleX }}
+    />
+  );
+}
+
 export function HeroMealPhoto({
   meal,
   sizes,
@@ -62,14 +69,15 @@ export function HeroMealPhoto({
   loading,
   kenBurns = false,
   showCycleProgress = false,
+  onCycleComplete,
 }: HeroMealPhotoProps) {
   const reduceMotion = useReducedMotion();
-  const rotateS = HERO_MEAL_ROTATE_MS / 1000;
   const crossfade = {
     duration: reduceMotion ? 0.2 : HERO_MEAL_PHOTO_CROSSFADE_S,
     ease: [0.22, 1, 0.36, 1] as const,
   };
   const useKenBurns = kenBurns && reduceMotion !== true;
+  const advance = onCycleComplete ?? (() => {});
 
   return (
     <>
@@ -87,7 +95,7 @@ export function HeroMealPhoto({
               meal={meal}
               priority={priority}
               loading={loading}
-              rotateS={rotateS}
+              rotateS={HERO_MEAL_ROTATE_MS / 1000}
               sizes={sizes}
             />
           ) : (
@@ -104,13 +112,10 @@ export function HeroMealPhoto({
         </motion.div>
       </AnimatePresence>
       {showCycleProgress && reduceMotion !== true ? (
-        <motion.span
+        <HeroCycleProgressBar
           key={`${meal.KEY}-progress`}
-          aria-hidden
-          className="bg-accent absolute inset-x-0 bottom-0 z-10 h-0.5 origin-left"
-          initial={{ scaleX: 0 }}
-          animate={{ scaleX: 1 }}
-          transition={{ duration: rotateS, ease: 'linear' }}
+          rotateS={HERO_MEAL_ROTATE_MS / 1000}
+          onCycleComplete={advance}
         />
       ) : null}
     </>

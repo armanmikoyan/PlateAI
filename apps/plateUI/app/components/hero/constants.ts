@@ -25,6 +25,10 @@ export type {
   HeroNutrientTileRowModel,
   HeroMealSlide,
   HeroIntroLineKey,
+  HeroMealPhotoProps,
+  HeroKenBurnsLayerProps,
+  HeroCycleProgressBarProps,
+  HeroUploadColumnProps,
 } from './types';
 
 export const HERO = {
