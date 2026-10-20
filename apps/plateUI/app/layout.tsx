@@ -6,6 +6,7 @@ import './globals.css';
 import { Navbar } from '@/app/components/nav-bar';
 import ProductHuntBadge from '@/app/components/product-hunt-badge';
 import { Toaster } from '@/app/ui/toast';
+import { WireGlobalHaptics } from '@/app/utils/global-haptics';
 import { readSiteUrl } from '@/app/utils/site/url';
 
 type RootLayoutProps = Readonly<{
@@ -71,6 +72,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <ProductHuntBadge />
         <main className="flex min-h-0 flex-1 flex-col">{children}</main>
         <Toaster />
+        <WireGlobalHaptics />
         {process.env.NODE_ENV === 'production' && process.env.NEXT_PUBLIC_GA_ID ? (
           <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
         ) : null}
