@@ -22,7 +22,7 @@ function getStatusCopy(status: MealScanStatus) {
 export function MealScanResultPanel({ detections, status, runId }: MealScanResultPanelProps) {
   const statusCopy = getStatusCopy(status);
   const isScanning = status === 'running';
-  const hasResults = status !== 'idle';
+  const hasResults = status === 'complete';
 
   return (
     <div className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-surface/70 p-3.5 shadow-xl shadow-black/30 backdrop-blur-xl sm:p-4">

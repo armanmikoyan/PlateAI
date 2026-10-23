@@ -7,6 +7,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { Button } from '@/app/ui/button';
 import { Card } from '@/app/ui/card';
 import { cn } from '@/app/utils/cn';
+import { ScanOverlay } from '@/app/components/scan-overlay/scan-overlay';
 import {
   SNAP,
   SNAP_MOTION_REDUCED,
@@ -15,7 +16,6 @@ import {
   SNAP_STAGE_SPRING,
 } from './constants';
 import { SnapPhotoActions } from './snap-photo-actions';
-import { SnapScanOverlay } from './snap-scan-overlay';
 import type { SnapMealPhotoCardProps } from './types';
 export function SnapMealPhotoCard({
   previewUrl,
@@ -74,7 +74,7 @@ export function SnapMealPhotoCard({
               scanning ? 'scale-[1.03]' : 'scale-100',
             )}
           />
-          <AnimatePresence>{scanning ? <SnapScanOverlay /> : null}</AnimatePresence>
+          <AnimatePresence>{scanning ? <ScanOverlay className="inset-0" /> : null}</AnimatePresence>
           {showSettings ? (
             <Button
               type="button"

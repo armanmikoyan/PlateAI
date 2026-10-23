@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useInView, useReducedMotion } from 'motion/react';
-import { MEAL_SCAN_DETECTIONS, MEAL_SCAN_SECTION } from './constants';
+import { MEAL_SCAN_DETECTIONS, MEAL_SCAN_SECTION, MEAL_SCAN_TIMING } from './constants';
 import { MealScanResultPanel } from './meal-scan-result-panel';
 import { MealScanVisual } from './meal-scan-visual';
 import type { MealScanStatus } from './types';
@@ -32,9 +32,19 @@ export default function MealScan() {
     playScan();
   }, [isInView, playScan]);
 
-  const handleScanComplete = useCallback(() => {
-    setStatus('complete');
-  }, []);
+  useEffect(() => {
+    if (status !== 'running') {
+      return;
+    }
+
+    const timeout = window.setTimeout(() => {
+      setStatus('complete');
+    }, MEAL_SCAN_TIMING.SCAN_DURATION_S * 1000);
+
+    return () => {
+      window.clearTimeout(timeout);
+    };
+  }, [status]);
 
   return (
     <section
@@ -70,7 +80,6 @@ export default function MealScan() {
           status={status}
           runId={runId}
           reduceMotion={reduceMotion}
-          onScanComplete={handleScanComplete}
         />
 
         <div className="w-full">

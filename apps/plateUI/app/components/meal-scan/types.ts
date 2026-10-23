@@ -34,7 +34,6 @@ export type MealScanVisualProps = Readonly<{
   status: MealScanStatus;
   runId: number;
   reduceMotion: boolean;
-  onScanComplete: () => void;
   className?: string;
 }>;
 

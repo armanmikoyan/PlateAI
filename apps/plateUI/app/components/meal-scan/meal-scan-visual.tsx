@@ -2,28 +2,21 @@
 
 import { useRef } from 'react';
 import Image from 'next/image';
-import { motion } from 'motion/react';
+import { AnimatePresence, motion } from 'motion/react';
 import { cn } from '@/app/utils/cn';
+import { ScanOverlay } from '@/app/components/scan-overlay/scan-overlay';
 import { MEAL_SCAN_DIM, MEAL_SCAN_MEAL, MEAL_SCAN_TIMING } from './constants';
 import { useMealScanLabelLayout } from './hooks';
 import { MealScanCallout } from './meal-scan-callout';
 import { getMealScanImageRect, getMealScanLabelDelay, getMealScanRevealDelay } from './utils';
 import type { MealScanVisualProps } from './types';
 
-export function MealScanVisual({
-  detections,
-  status,
-  runId,
-  reduceMotion,
-  onScanComplete,
-  className,
-}: MealScanVisualProps) {
+export function MealScanVisual({ detections, status, runId, reduceMotion, className }: MealScanVisualProps) {
   const layerRef = useRef<HTMLDivElement | null>(null);
   const { LABELS, SIZES } = useMealScanLabelLayout(layerRef, detections);
 
   const isScanning = status === 'running';
   const isComplete = status === 'complete';
-  const showDetections = status !== 'idle';
 
   return (
     <div
@@ -62,38 +55,11 @@ export function MealScanVisual({
         <div className={`absolute inset-0 ${MEAL_SCAN_DIM.GRADIENT}`} />
       </motion.div>
 
-      <svg
-        viewBox={`0 0 ${MEAL_SCAN_MEAL.WIDTH} ${MEAL_SCAN_MEAL.HEIGHT}`}
-        className="pointer-events-none absolute z-20"
-        style={getMealScanImageRect()}
-        fill="none"
-        aria-hidden
-      >
-        <defs>
-          <linearGradient id="meal-scan-gradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#f0c400" stopOpacity="0" />
-            <stop offset="65%" stopColor="#f0c400" stopOpacity="0.18" />
-            <stop offset="100%" stopColor="#f0c400" stopOpacity="0.65" />
-          </linearGradient>
-        </defs>
-
-        {isScanning && (
-          <motion.rect
-            key={`scan-${runId}`}
-            x={0}
-            width={MEAL_SCAN_MEAL.WIDTH}
-            height={190}
-            fill="url(#meal-scan-gradient)"
-            initial={{ y: -190 }}
-            animate={{ y: MEAL_SCAN_MEAL.HEIGHT }}
-            transition={{
-              duration: reduceMotion ? 0.4 : MEAL_SCAN_TIMING.SCAN_DURATION_S,
-              ease: reduceMotion ? 'linear' : MEAL_SCAN_TIMING.SCAN_EASE,
-              onComplete: onScanComplete,
-            }}
-          />
-        )}
-      </svg>
+      <AnimatePresence>
+        {isScanning ? (
+          <ScanOverlay key={`scan-${runId}`} loop={false} style={getMealScanImageRect()} />
+        ) : null}
+      </AnimatePresence>
 
       <div ref={layerRef} className="absolute z-30" style={getMealScanImageRect()}>
         {detections.map((detection) => (
@@ -102,9 +68,9 @@ export function MealScanVisual({
             detection={detection}
             solvedPoint={LABELS[detection.KEY] ?? null}
             size={SIZES[detection.KEY] ?? null}
-            revealDelay={getMealScanRevealDelay(detection, status)}
-            labelDelay={getMealScanLabelDelay(detection, status)}
-            visible={showDetections}
+            revealDelay={reduceMotion ? 0 : getMealScanRevealDelay(detection, status)}
+            labelDelay={reduceMotion ? 0 : getMealScanLabelDelay(detection, status)}
+            visible={isComplete}
             isComplete={isComplete}
             reduceMotion={reduceMotion}
             runId={runId}

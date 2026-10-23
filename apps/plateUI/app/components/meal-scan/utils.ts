@@ -198,12 +198,12 @@ export function getMealScanLabelStyle(color: string): CSSProperties {
 }
 
 export function getMealScanRevealDelay(detection: MealScanDetection, status: MealScanStatus): number {
-  if (status !== 'running') {
+  if (status !== 'complete') {
     return 0;
   }
 
-  const beamProgress = detection.TARGET_Y / MEAL_SCAN_MEAL.HEIGHT;
-  return beamProgress * MEAL_SCAN_TIMING.SCAN_DURATION_S;
+  const order = detection.TARGET_Y / MEAL_SCAN_MEAL.HEIGHT;
+  return MEAL_SCAN_TIMING.DETECTION_START_S + order * MEAL_SCAN_TIMING.DETECTION_REVEAL_SPAN_S;
 }
 
 export function getMealScanLabelDelay(detection: MealScanDetection, status: MealScanStatus): number {

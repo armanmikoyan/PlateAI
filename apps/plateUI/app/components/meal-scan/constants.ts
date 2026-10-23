@@ -20,8 +20,8 @@ export const MEAL_SCAN_MEAL = {
   NAME: 'Grilled steak plate',
   WIDTH: 1536,
   HEIGHT: 1024,
-  FRAME_ASPECT: 1.2,
-  FRAME_MAX_WIDTH: 'min(100%, calc((100svh - 16rem) * 1.2))',
+  FRAME_ASPECT: 1.5,
+  FRAME_MAX_WIDTH: '100%',
   RETICLE_RADIUS: 18,
   DOT_RADIUS: 5.5,
 } as const;
@@ -37,12 +37,13 @@ export const MEAL_SCAN_CHIP_CLASS =
   'inline-flex items-center rounded-full border px-[0.8cqw] py-[0.6cqw] text-[clamp(13px,2.1cqw,22px)] leading-none font-medium whitespace-nowrap shadow-md shadow-black/40 backdrop-blur-md';
 
 export const MEAL_SCAN_TIMING = {
-  SCAN_DURATION_S: 3.4,
+  SCAN_DURATION_S: 3.6,
+  DETECTION_START_S: 0.2,
+  DETECTION_REVEAL_SPAN_S: 0.5,
   CALLOUT_ENTRANCE_S: 0.45,
   LABEL_LEAD_S: 0.18,
   DIM_DELAY_S: 1,
   DIM_TRANSITION_S: 0.9,
-  SCAN_EASE: [0.22, 1, 0.36, 1] as const,
 } as const;
 
 export const MEAL_SCAN_STATUS = {
