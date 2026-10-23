@@ -4,7 +4,7 @@ import { Menu } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState, type MouseEvent } from 'react';
+import { useEffect, useState, type MouseEvent } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
 import { Button } from '@/app/ui/button';
 import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '@/app/ui/sheet';
@@ -42,6 +42,10 @@ export function Navbar() {
   const pathname = usePathname();
   useNavAuthSession();
   const condensed = useNavBarCondensed();
+
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
 
   function handleLogoClick(event: MouseEvent<HTMLAnchorElement>) {
     setMenuOpen(false);

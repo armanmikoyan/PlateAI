@@ -197,17 +197,16 @@ export function getMealScanLabelStyle(color: string): CSSProperties {
   };
 }
 
-export function getMealScanRevealDelay(detection: MealScanDetection, status: MealScanStatus): number {
+export function getMealScanRevealDelay(index: number, status: MealScanStatus): number {
   if (status !== 'complete') {
     return 0;
   }
 
-  const order = detection.TARGET_Y / MEAL_SCAN_MEAL.HEIGHT;
-  return MEAL_SCAN_TIMING.DETECTION_START_S + order * MEAL_SCAN_TIMING.DETECTION_REVEAL_SPAN_S;
+  return MEAL_SCAN_TIMING.DETECTION_START_S + index * MEAL_SCAN_TIMING.DETECTION_STAGGER_S;
 }
 
-export function getMealScanLabelDelay(detection: MealScanDetection, status: MealScanStatus): number {
-  return getMealScanRevealDelay(detection, status) + MEAL_SCAN_TIMING.LABEL_LEAD_S;
+export function getMealScanLabelDelay(index: number, status: MealScanStatus): number {
+  return getMealScanRevealDelay(index, status) + MEAL_SCAN_TIMING.LABEL_LEAD_S;
 }
 
 function toPercent(value: number, axis: 'WIDTH' | 'HEIGHT'): string {

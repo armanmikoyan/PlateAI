@@ -48,14 +48,14 @@ export function MealScanResultPanel({ detections, status, runId }: MealScanResul
       </div>
 
       <ul className="-mx-1 grid grid-cols-2 gap-1.5">
-        {detections.map((detection) => (
+        {detections.map((detection, index) => (
           <motion.li
             key={`${runId}-${detection.KEY}`}
             className="flex min-w-0 items-center gap-1.5 rounded-lg border border-white/6 bg-white/3 py-1.5 pr-1.5 pl-2 [@media(max-height:820px)]:py-1"
             initial={{ opacity: 0, x: -6 }}
             animate={hasResults ? { opacity: 1, x: 0 } : { opacity: 0, x: -6 }}
             transition={{
-              delay: getMealScanLabelDelay(detection, status),
+              delay: getMealScanLabelDelay(index, status),
               duration: 0.35,
               ease: 'easeOut',
             }}

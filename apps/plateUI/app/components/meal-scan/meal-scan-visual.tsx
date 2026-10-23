@@ -62,14 +62,14 @@ export function MealScanVisual({ detections, status, runId, reduceMotion, classN
       </AnimatePresence>
 
       <div ref={layerRef} className="absolute z-30" style={getMealScanImageRect()}>
-        {detections.map((detection) => (
+        {detections.map((detection, index) => (
           <MealScanCallout
             key={detection.KEY}
             detection={detection}
             solvedPoint={LABELS[detection.KEY] ?? null}
             size={SIZES[detection.KEY] ?? null}
-            revealDelay={reduceMotion ? 0 : getMealScanRevealDelay(detection, status)}
-            labelDelay={reduceMotion ? 0 : getMealScanLabelDelay(detection, status)}
+            revealDelay={reduceMotion ? 0 : getMealScanRevealDelay(index, status)}
+            labelDelay={reduceMotion ? 0 : getMealScanLabelDelay(index, status)}
             visible={isComplete}
             isComplete={isComplete}
             reduceMotion={reduceMotion}
