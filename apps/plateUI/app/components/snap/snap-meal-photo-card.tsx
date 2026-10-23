@@ -3,7 +3,7 @@
 import { useEffect, useState, type MouseEvent } from 'react';
 import Image from 'next/image';
 import { Settings2 } from 'lucide-react';
-import { motion, useReducedMotion } from 'motion/react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { Button } from '@/app/ui/button';
 import { Card } from '@/app/ui/card';
 import { cn } from '@/app/utils/cn';
@@ -15,11 +15,13 @@ import {
   SNAP_STAGE_SPRING,
 } from './constants';
 import { SnapPhotoActions } from './snap-photo-actions';
+import { SnapScanOverlay } from './snap-scan-overlay';
 import type { SnapMealPhotoCardProps } from './types';
 export function SnapMealPhotoCard({
   previewUrl,
   photoActions,
   photoActionsDisabled = false,
+  scanning = false,
 }: SnapMealPhotoCardProps) {
   const [actionsOpen, setActionsOpen] = useState(false);
   const reduceMotion = useReducedMotion() === true;
@@ -67,8 +69,12 @@ export function SnapMealPhotoCard({
             fill
             unoptimized
             sizes="(max-width: 1024px) 100vw, 50vw"
-            className="object-cover"
+            className={cn(
+              'object-cover motion-safe:transition-transform motion-safe:duration-700 motion-safe:ease-out',
+              scanning ? 'scale-[1.03]' : 'scale-100',
+            )}
           />
+          <AnimatePresence>{scanning ? <SnapScanOverlay /> : null}</AnimatePresence>
           {showSettings ? (
             <Button
               type="button"

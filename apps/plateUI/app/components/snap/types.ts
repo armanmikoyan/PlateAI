@@ -124,6 +124,7 @@ export type SnapMealPhotoCardProps = Readonly<{
   previewUrl: string;
   photoActions?: Omit<SnapPhotoActionsProps, 'disabled'>;
   photoActionsDisabled?: boolean;
+  scanning?: boolean;
 }>;
 
 export type SnapStageGridProps = Readonly<{
@@ -131,6 +132,7 @@ export type SnapStageGridProps = Readonly<{
   right: ReactNode;
   photoActions?: Omit<SnapPhotoActionsProps, 'disabled'>;
   photoActionsDisabled?: boolean;
+  scanning?: boolean;
 }>;
 
 export type SnapAnalyzeCtaProps = Readonly<{

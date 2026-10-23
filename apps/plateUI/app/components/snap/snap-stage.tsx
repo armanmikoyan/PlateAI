@@ -1,6 +1,11 @@
 'use client';
 
-import { SNAP_STAGE_CELL_CLASS, SNAP_STAGE_GRID_SHELL, SNAP_STAGE_MIN_HEIGHT_CLASS } from './constants';
+import {
+  SNAP_ANALYSIS_STATUS,
+  SNAP_STAGE_CELL_CLASS,
+  SNAP_STAGE_GRID_SHELL,
+  SNAP_STAGE_MIN_HEIGHT_CLASS,
+} from './constants';
 import { HeroBetweenCardsArrow } from '@/app/components/hero/hero-between-cards-arrow';
 import { cn } from '@/app/utils/cn';
 import { SnapMealPhotoCard } from './snap-meal-photo-card';
@@ -14,7 +19,7 @@ import type {
   SnapStageGridProps,
 } from './types';
 
-function SnapStageGrid({ photo, right, photoActions, photoActionsDisabled }: SnapStageGridProps) {
+function SnapStageGrid({ photo, right, photoActions, photoActionsDisabled, scanning }: SnapStageGridProps) {
   return (
     <div className={cn(SNAP_STAGE_GRID_SHELL, SNAP_STAGE_MIN_HEIGHT_CLASS)}>
       <div className={SNAP_STAGE_CELL_CLASS}>
@@ -23,6 +28,7 @@ function SnapStageGrid({ photo, right, photoActions, photoActionsDisabled }: Sna
           previewUrl={photo.PREVIEW_URL}
           photoActions={photoActions}
           photoActionsDisabled={photoActionsDisabled}
+          scanning={scanning}
         />
       </div>
       <div className="self-center">
@@ -59,6 +65,7 @@ export function SnapAnalysisStage({
       photo={photo}
       photoActions={photoActions}
       photoActionsDisabled={photoActionsDisabled}
+      scanning={analysisState.STATUS === SNAP_ANALYSIS_STATUS.LOADING}
       right={<SnapAnalysisReadout analysisState={analysisState} photo={photo} onRetry={onRetry} />}
     />
   );
