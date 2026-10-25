@@ -1,6 +1,9 @@
+'use client';
+
 import { ArrowRight, Camera } from 'lucide-react';
 import Form from 'next/form';
 import { ShimmerButton } from '@/app/ui/shimmer-button';
+import { trackCtaClick } from '@/app/utils/analytics';
 import { HERO } from './constants';
 import { HeroMagnetic } from './hero-magnetic';
 
@@ -11,6 +14,7 @@ export function HeroCta() {
         <HeroMagnetic className="inline-block">
           <ShimmerButton
             type="submit"
+            onClick={() => trackCtaClick('hero', HERO.CTA_HREF)}
             background="linear-gradient(165deg, var(--color-cta-soft) 0%, var(--color-cta) 48%, var(--color-cta-deep) 100%)"
             shimmerColor="var(--color-content)"
             shimmerSize="2px"

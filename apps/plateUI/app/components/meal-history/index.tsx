@@ -13,6 +13,7 @@ import { SUBSCRIPTION_STATUS } from '@plate/plate-billing/constants';
 import { Badge } from '@/app/ui/badge';
 import { Button } from '@/app/ui/button';
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from '@/app/ui/empty';
+import { trackCtaClick, trackManageSubscription, trackMealDelete } from '@/app/utils/analytics';
 import { MEAL_HISTORY, MEAL_HISTORY_PLAN_LABELS, MEAL_HISTORY_STATUS_LABELS } from './constants';
 import { useMealHistory } from './hooks';
 import { MealHistoryRow } from './meal-history-row';
@@ -71,9 +72,11 @@ export default function MealHistory({ user, justPurchased = false }: MealHistory
     }
 
     removeItem(analysisId);
+    trackMealDelete();
   }
 
   async function handleManageSubscription() {
+    trackManageSubscription();
     setPortalLoading(true);
     try {
       const response = await fetch('/api/checkout/portal');
@@ -188,7 +191,15 @@ export default function MealHistory({ user, justPurchased = false }: MealHistory
             <EmptyDescription>{MEAL_HISTORY.EMPTY_BODY}</EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
-            <Button nativeButton={false} render={<Link href={MEAL_HISTORY.EMPTY_CTA_HREF} />}>
+            <Button
+              nativeButton={false}
+              render={
+                <Link
+                  href={MEAL_HISTORY.EMPTY_CTA_HREF}
+                  onClick={() => trackCtaClick('history_empty', MEAL_HISTORY.EMPTY_CTA_HREF)}
+                />
+              }
+            >
               {MEAL_HISTORY.EMPTY_CTA}
             </Button>
           </EmptyContent>

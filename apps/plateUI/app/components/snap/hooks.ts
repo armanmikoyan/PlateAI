@@ -7,7 +7,12 @@ import { MEAL_ANALYSIS_STATUS } from '@plate/plate-ai/constants';
 import { isLockedMealAnalysis } from '@plate/plate-ai/utils';
 import { readSnapSavedMealCache, writeSnapSavedMealCache } from '@/app/utils/meal-analyses/session-cache';
 import { mealAnalysisImageUrl } from '@/app/utils/meal-analyses/image';
-import { trackAnalysisComplete } from '@/app/utils/analytics';
+import {
+  trackAnalysisComplete,
+  trackAnalysisFailed,
+  trackAnalysisStart,
+  trackLimitReached,
+} from '@/app/utils/analytics';
 import { RATE_LIMIT_TOAST_TIMEOUT_MS, RATE_LIMIT_TOAST_TITLE } from '@/app/utils/rate-limit/constants';
 import { formatRetryDescription } from '@/app/utils/rate-limit/utils';
 import { toast } from '@/app/ui/toast';
@@ -235,6 +240,8 @@ export function useSnapAnalyze(): UseSnapAnalyzeResult {
       setResumeAnalysisId(null);
 
       if (isLockedMealAnalysis(body.analysis)) {
+        trackAnalysisComplete(body.analysis.confidence, true);
+        trackLimitReached('plan');
         setAnalysisState({
           STATUS: SNAP_ANALYSIS_STATUS.SUCCESS,
           LOCKED: true,
@@ -266,6 +273,7 @@ export function useSnapAnalyze(): UseSnapAnalyzeResult {
         });
 
         if (response.status === 401) {
+          trackAnalysisFailed('sign_in_required');
           setAnalysisState({ STATUS: SNAP_ANALYSIS_STATUS.ERROR, MESSAGE: SNAP.SIGN_IN_REQUIRED });
           return;
         }
@@ -274,6 +282,7 @@ export function useSnapAnalyze(): UseSnapAnalyzeResult {
           const body = (await response.json().catch(() => null)) as SnapAnalyzeErrorResponse | null;
 
           if (body?.retryAfterSeconds) {
+            trackLimitReached('rate_limit');
             toast.add({
               title: RATE_LIMIT_TOAST_TITLE,
               description: formatRetryDescription(body.retryAfterSeconds),
@@ -285,6 +294,7 @@ export function useSnapAnalyze(): UseSnapAnalyzeResult {
             return;
           }
 
+          trackLimitReached('daily');
           const message = body?.error ?? SNAP.DAILY_LIMIT_REACHED;
           toast.add({
             title: SNAP.DAILY_LIMIT_TITLE,
@@ -298,6 +308,7 @@ export function useSnapAnalyze(): UseSnapAnalyzeResult {
 
         if (!response.ok) {
           const body = (await response.json().catch(() => null)) as SnapAnalyzeErrorResponse | null;
+          trackAnalysisFailed('server');
           setResumeAnalysisId(body?.id ?? analysisId);
           setAnalysisState({
             STATUS: SNAP_ANALYSIS_STATUS.ERROR,
@@ -309,6 +320,7 @@ export function useSnapAnalyze(): UseSnapAnalyzeResult {
         const body = (await response.json()) as SnapAnalyzeSuccessResponse;
         applyPendingAnalysis(body);
       } catch {
+        trackAnalysisFailed('network');
         setResumeAnalysisId(analysisId);
         setAnalysisState({ STATUS: SNAP_ANALYSIS_STATUS.ERROR, MESSAGE: SNAP.ANALYSIS_ERROR });
       }
@@ -320,6 +332,15 @@ export function useSnapAnalyze(): UseSnapAnalyzeResult {
     if (!photo) {
       return;
     }
+
+    const entry =
+      analysisState.STATUS === SNAP_ANALYSIS_STATUS.SUCCESS && analysisState.LOCKED === true
+        ? 'unlock'
+        : resumeAnalysisId
+          ? 'resume'
+          : 'new';
+
+    trackAnalysisStart(entry);
 
     if (analysisState.STATUS === SNAP_ANALYSIS_STATUS.SUCCESS && analysisState.LOCKED === true) {
       await completePendingAnalysis(analysisState.ANALYSIS_ID);
@@ -334,6 +355,7 @@ export function useSnapAnalyze(): UseSnapAnalyzeResult {
     setAnalysisState({ STATUS: SNAP_ANALYSIS_STATUS.LOADING });
 
     if (!photo.FILE) {
+      trackAnalysisFailed('unknown');
       setAnalysisState({ STATUS: SNAP_ANALYSIS_STATUS.ERROR, MESSAGE: SNAP.ANALYSIS_ERROR });
       return;
     }
@@ -349,6 +371,7 @@ export function useSnapAnalyze(): UseSnapAnalyzeResult {
       });
 
       if (response.status === 401) {
+        trackAnalysisFailed('sign_in_required');
         setAnalysisState({ STATUS: SNAP_ANALYSIS_STATUS.ERROR, MESSAGE: SNAP.SIGN_IN_REQUIRED });
         return;
       }
@@ -357,6 +380,7 @@ export function useSnapAnalyze(): UseSnapAnalyzeResult {
         const body = (await response.json().catch(() => null)) as SnapAnalyzeErrorResponse | null;
 
         if (body?.planRequired) {
+          trackLimitReached('plan_required');
           toast.add({
             title: SNAP.FREE_LIMIT_TITLE,
             description: body.error ?? SNAP.FREE_LIMIT_REACHED,
@@ -368,6 +392,7 @@ export function useSnapAnalyze(): UseSnapAnalyzeResult {
         }
 
         if (body?.pendingLimit) {
+          trackLimitReached('pending');
           toast.add({
             title: SNAP.PENDING_LIMIT_TITLE,
             description: body.error ?? SNAP.PENDING_LIMIT_REACHED,
@@ -379,6 +404,7 @@ export function useSnapAnalyze(): UseSnapAnalyzeResult {
         }
 
         if (body?.retryAfterSeconds) {
+          trackLimitReached('rate_limit');
           toast.add({
             title: RATE_LIMIT_TOAST_TITLE,
             description: formatRetryDescription(body.retryAfterSeconds),
@@ -389,6 +415,7 @@ export function useSnapAnalyze(): UseSnapAnalyzeResult {
           return;
         }
 
+        trackLimitReached('daily');
         const message = body?.error ?? SNAP.DAILY_LIMIT_REACHED;
         toast.add({
           title: SNAP.DAILY_LIMIT_TITLE,
@@ -406,6 +433,7 @@ export function useSnapAnalyze(): UseSnapAnalyzeResult {
 
       if (!response.ok) {
         const body = (await response.json().catch(() => null)) as SnapAnalyzeErrorResponse | null;
+        trackAnalysisFailed('server');
         if (body?.id) {
           setResumeAnalysisId(body.id);
         }
@@ -419,6 +447,7 @@ export function useSnapAnalyze(): UseSnapAnalyzeResult {
       const body = (await response.json()) as SnapAnalyzeSuccessResponse;
       applyPendingAnalysis(body);
     } catch {
+      trackAnalysisFailed('network');
       setAnalysisState({ STATUS: SNAP_ANALYSIS_STATUS.ERROR, MESSAGE: SNAP.ANALYSIS_ERROR });
     }
   }, [

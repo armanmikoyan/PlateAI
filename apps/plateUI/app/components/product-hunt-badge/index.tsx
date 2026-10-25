@@ -3,6 +3,7 @@
 import type { MouseEvent } from 'react';
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
+import { trackOutboundClick } from '@/app/utils/analytics';
 import { cn } from '@/app/utils/cn';
 import { PRODUCT_HUNT_BADGE } from './constants';
 import Image from 'next/image';
@@ -42,7 +43,11 @@ export default function ProductHuntBadge() {
   }, []);
 
   const handleClick = (event: MouseEvent<HTMLAnchorElement>) => {
-    if (expanded) return;
+    if (expanded) {
+      trackOutboundClick('product_hunt', PRODUCT_HUNT_BADGE.HREF);
+      return;
+    }
+
     event.preventDefault();
     setExpanded(true);
   };

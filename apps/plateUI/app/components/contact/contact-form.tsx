@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { trackContactSubmit } from '@/app/utils/analytics';
 import { RATE_LIMIT_TOAST_TIMEOUT_MS, RATE_LIMIT_TOAST_TITLE } from '@/app/utils/rate-limit/constants';
 import { formatRetryDescription } from '@/app/utils/rate-limit/utils';
 import { toast } from '@/app/ui/toast';
@@ -79,6 +80,7 @@ export function ContactForm() {
         });
 
         if (response.ok) {
+          trackContactSubmit('success');
           form.reset();
           toast.add({
             title: CONTACT_SECTION.FORM_SUCCESS,
@@ -89,6 +91,7 @@ export function ContactForm() {
         }
 
         const payload = (await response.json().catch(() => null)) as ContactErrorResponse | null;
+        trackContactSubmit('error');
 
         if (response.status === 429 && payload?.retryAfterSeconds) {
           toast.add({
@@ -101,6 +104,7 @@ export function ContactForm() {
 
         setErrorMessage(payload?.error ?? CONTACT_SECTION.FORM_ERROR);
       } catch {
+        trackContactSubmit('error');
         setErrorMessage(CONTACT_SECTION.FORM_SERVER_UNAVAILABLE);
       } finally {
         setSending(false);

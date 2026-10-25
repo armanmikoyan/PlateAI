@@ -1,6 +1,9 @@
+'use client';
+
 import { Camera } from 'lucide-react';
 import Form from 'next/form';
 import { ShimmerButton } from '@/app/ui/shimmer-button';
+import { trackCtaClick } from '@/app/utils/analytics';
 import { NAV } from './constants';
 
 export function NavBarSnapCta() {
@@ -8,6 +11,7 @@ export function NavBarSnapCta() {
     <Form action={NAV.SNAP_CTA_HREF} className="shrink-0">
       <ShimmerButton
         type="submit"
+        onClick={() => trackCtaClick('nav', NAV.SNAP_CTA_HREF)}
         background={NAV.SNAP_CTA_SHIMMER_BACKGROUND}
         shimmerColor={NAV.SNAP_CTA_SHIMMER_COLOR}
         shimmerSize="2px"

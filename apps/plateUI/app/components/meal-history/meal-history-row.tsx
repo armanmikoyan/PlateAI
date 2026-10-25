@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ChevronRight, Clock3, LoaderCircle, Trash2 } from 'lucide-react';
 import { MEAL_ANALYSIS_STATUS } from '@plate/plate-ai/constants';
+import { trackMealOpen } from '@/app/utils/analytics';
 import { writeSnapSavedMealCache } from '@/app/utils/meal-analyses/session-cache';
 import { Badge } from '@/app/ui/badge';
 import { Button } from '@/app/ui/button';
@@ -54,6 +55,7 @@ export function MealHistoryRow({ item, onDelete }: MealHistoryRowProps) {
         : MEAL_HISTORY.VIEW_RESULTS;
 
   function handleOpenSavedMeal() {
+    trackMealOpen(item.status);
     writeSnapSavedMealCache(mealHistorySnapCachePayload(item));
   }
 

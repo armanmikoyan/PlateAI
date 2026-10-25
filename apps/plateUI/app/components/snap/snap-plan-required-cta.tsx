@@ -5,6 +5,7 @@ import { SUBSCRIPTION_PLAN } from '@plate/plate-billing/constants';
 import { buildPricingTierHref } from '@/app/components/pricing/utils';
 import { Card, CardContent } from '@/app/ui/card';
 import { ShimmerButton } from '@/app/ui/shimmer-button';
+import { trackCtaClick } from '@/app/utils/analytics';
 import { cn } from '@/app/utils/cn';
 import {
   SNAP,
@@ -15,6 +16,8 @@ import {
 import { SnapStageDots } from './snap-stage-dots';
 
 export function SnapPlanRequiredCta() {
+  const pricingHref = buildPricingTierHref(SUBSCRIPTION_PLAN.PRO);
+
   return (
     <Card className={cn('border-dashed', SNAP_PHOTO_CARD_SHELL, SNAP_STAGE_CARD_SURFACE_CLASS)}>
       <SnapStageDots />
@@ -24,7 +27,7 @@ export function SnapPlanRequiredCta() {
           SNAP_STAGE_CARD_CONTENT_CLASS,
         )}
       >
-        <Link href={buildPricingTierHref(SUBSCRIPTION_PLAN.PRO)}>
+        <Link href={pricingHref} onClick={() => trackCtaClick('snap_plan_required', pricingHref)}>
           <ShimmerButton
             type="button"
             background={SNAP.PAYWALL_CTA_SHIMMER_BACKGROUND}

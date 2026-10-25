@@ -1,39 +1,33 @@
 FROM node:24-alpine AS base
 WORKDIR /app
+ENV NEXT_TELEMETRY_DISABLED=1
+RUN apk add --no-cache libc6-compat
 
 FROM base AS deps
-RUN apk add --no-cache libc6-compat
 COPY package.json package-lock.json ./
-COPY apps/plateUI/package.json apps/plateUI/package.json
-COPY packages/plate-billing/package.json packages/plate-billing/package.json
-COPY apps/plateUI/tsconfig.json apps/plateUI/tsconfig.json
-COPY tsconfig.base.json tsconfig.base.json
-RUN npm ci
+COPY apps/plateUI/package.json ./apps/plateUI/package.json
+COPY apps/plateServer/package.json ./apps/plateServer/package.json
+COPY packages/plate-ai/package.json ./packages/plate-ai/package.json
+COPY packages/plate-billing/package.json ./packages/plate-billing/package.json
+RUN --mount=type=cache,target=/root/.npm,sharing=locked HUSKY=0 npm ci --no-audit --no-fund
 
 FROM base AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app ./
 COPY . .
 ARG NEXT_PUBLIC_SITE_URL
 ARG NEXT_PUBLIC_GA_ID
 ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
 ENV NEXT_PUBLIC_GA_ID=$NEXT_PUBLIC_GA_ID
-ENV NEXT_TELEMETRY_DISABLED=1
-RUN npm run build
+RUN --mount=type=cache,target=/app/apps/plateUI/.next/cache,sharing=locked npm run build
 
 FROM base AS dev
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app ./
 COPY . .
-ENV NEXT_TELEMETRY_DISABLED=1
 EXPOSE 3000
 CMD ["npm", "run", "dev"]
 
 FROM base AS runner
-WORKDIR /app
-
 ENV NODE_ENV=production
-ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
 

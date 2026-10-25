@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { AuthMeResponse } from '@/app/api/auth/types';
 import type { MealAnalysisSummary } from '@plate/plate-ai/types';
+import { trackPurchase } from '@/app/utils/analytics';
 import { MEAL_HISTORY } from './constants';
 import type { UseMealHistoryResult } from './types';
 import { fetchMealHistory, pendingMealCount } from './utils';
@@ -10,7 +11,7 @@ import { fetchMealHistory, pendingMealCount } from './utils';
 const PLAN_SYNC_MAX_ATTEMPTS = 10;
 const PLAN_SYNC_RETRY_MS = 1000;
 
-async function waitForRecordedPlan(): Promise<boolean> {
+async function waitForRecordedPlan(): Promise<AuthMeResponse['user']['subscriptionPlan']> {
   for (let attempt = 0; attempt < PLAN_SYNC_MAX_ATTEMPTS; attempt += 1) {
     try {
       const response = await fetch('/api/auth/me', { cache: 'no-store' });
@@ -19,7 +20,7 @@ async function waitForRecordedPlan(): Promise<boolean> {
         const payload = (await response.json()) as AuthMeResponse;
 
         if (payload.user.subscriptionPlan !== null && payload.user.subscriptionStatus !== null) {
-          return true;
+          return payload.user.subscriptionPlan;
         }
       }
     } catch {
@@ -31,7 +32,7 @@ async function waitForRecordedPlan(): Promise<boolean> {
     }
   }
 
-  return false;
+  return null;
 }
 
 export function useMealHistory(justPurchased = false): UseMealHistoryResult {
@@ -61,10 +62,11 @@ export function useMealHistory(justPurchased = false): UseMealHistoryResult {
 
     async function loadMealHistory() {
       if (justPurchased) {
-        const recorded = await waitForRecordedPlan();
+        const recordedPlan = await waitForRecordedPlan();
         await fetch('/api/auth/refresh', { method: 'GET' });
+        trackPurchase(recordedPlan ?? 'unknown');
 
-        if (!recorded) {
+        if (!recordedPlan) {
           setError(MEAL_HISTORY.PLAN_SYNC_ERROR);
         }
       }

@@ -7,7 +7,7 @@ import { resolveActivePricingTierId, buildPricingTierHref } from './utils';
 import { PRICING_SECTION } from './constants';
 import { pricingSelectedTierIdAtom } from './state';
 import type { PricingTierRow, UsePricingSelectTier, UsePricingPurchase } from './types';
-import { trackCheckoutStart } from '@/app/utils/analytics';
+import { trackCheckoutStart, trackPlanSelect } from '@/app/utils/analytics';
 
 const PRICING_TIER_SHELL_SELECTOR = '[data-pricing-tier-shell]';
 const PRICING_TIER_CARD_SELECTOR = '[data-pricing-tier-card]';
@@ -30,6 +30,7 @@ export function usePricingSelectTier(): UsePricingSelectTier {
   return useCallback(
     (tierId: string) => {
       setSelectedTierId(tierId);
+      trackPlanSelect(tierId);
     },
     [setSelectedTierId],
   );

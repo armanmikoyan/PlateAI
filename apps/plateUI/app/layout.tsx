@@ -4,8 +4,10 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import { GoogleAnalytics } from '@next/third-parties/google';
 import './globals.css';
 import { Navbar } from '@/app/components/nav-bar';
+import PageViewTracker from '@/app/components/page-view-tracker';
 import ProductHuntBadge from '@/app/components/product-hunt-badge';
 import { Toaster } from '@/app/ui/toast';
+import WebVitals from '@/app/components/web-vitals';
 import { WireGlobalHaptics } from '@/app/utils/global-haptics';
 import { readSiteUrl } from '@/app/utils/site/url';
 
@@ -74,7 +76,11 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <Toaster />
         <WireGlobalHaptics />
         {process.env.NODE_ENV === 'production' && process.env.NEXT_PUBLIC_GA_ID ? (
-          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
+          <>
+            <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
+            <PageViewTracker />
+            <WebVitals />
+          </>
         ) : null}
       </body>
     </html>
