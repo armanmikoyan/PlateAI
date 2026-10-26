@@ -1,27 +1,29 @@
-/**
- * Background loops for the homepage. Order is fixed so the rotation is predictable; a
- * random clip is chosen once per page load (see `pickHomepageBgVideoIndex`). Add new
- * uploads as `home-bg-<n>` pairs and extend this array — the numbers need not be
- * contiguous, so retired clips can be deleted without renaming the rest.
- *
- * Intentionally no `poster` per clip: a poster is a real frame lifted from the footage, so
- * a randomly chosen clip showed an arbitrary still while the video buffered — often a
- * blown-out highlight that read as a flash before the clip faded in. The element's own
- * `bg-canvas` holds a plain dark field until the first frame decodes instead.
- */
-export const HOMEPAGE_BG_VIDEOS = [{ SRC: '/videos/home-bg-7.mp4' }] as const;
+/** Full-page replacement for the retired homepage background video. */
+export const HOMEPAGE_BG_SHELL_CLASS =
+  'pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-canvas' as const;
+
+/** Warm and cool pools of light behind the hero. */
+export const HOMEPAGE_BG_GLOW_CLASS =
+  'absolute inset-0 bg-[radial-gradient(60%_50%_at_50%_38%,rgb(251_191_36/0.12),transparent_72%),radial-gradient(45%_45%_at_80%_20%,rgb(125_211_252/0.06),transparent_72%)]' as const;
+
+/** The untouched meal-scan grid, with the yellow maze drawn on top of its lines. */
+export const HOMEPAGE_BG_GRID_WRAPPER_CLASS = 'absolute inset-0 opacity-55' as const;
+
+export const HOMEPAGE_BG_MAZE_CANVAS_CLASS = 'absolute inset-0 size-full' as const;
+
+export const HOMEPAGE_BG_VIGNETTE_CLASS =
+  'absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_20%,rgb(0_0_0/0.75)_100%)]' as const;
 
 /**
- * Much lighter than the pricing banner's scrim, and deliberately so: these clips are
- * near-black fields (mean luma ~10-25/255) with small bright highlights, so anything
- * heavier multiplies what little signal they have down to a flat black rectangle.
+ * A circular front expands from the grid vertex at the viewport center, revealing every
+ * square edge it passes. All directions grow at the same rate until the grid is covered.
  */
-export const HOMEPAGE_BG_VIDEO_SCRIM_CLASS =
-  'absolute inset-0 bg-linear-to-b from-canvas/25 via-canvas/10 to-canvas/55' as const;
-
-/**
- * Flat darkening pass, sitting above the scrim. It lives in the fixed layer rather than on
- * the page wrapper so the nav's 80px slot — which is rendered outside `main` — gets the
- * exact same treatment as the content below it and no seam shows at the boundary.
- */
-export const HOMEPAGE_BG_VIDEO_OVERLAY_CLASS = 'absolute inset-0 bg-canvas/60' as const;
+export const HOMEPAGE_BG_MAZE = {
+  SPREAD_DURATION_S: 8,
+  LINE_WIDTH_PX: 1,
+  MAX_FRAME_STEP_S: 0.05,
+  RESIZE_DEBOUNCE_MS: 180,
+  DPR_CAP: 2,
+  TRAIL_COLOR: 'rgba(251, 191, 36, 0.34)',
+  ACTIVE_COLOR: 'rgba(253, 230, 138, 0.56)',
+} as const;

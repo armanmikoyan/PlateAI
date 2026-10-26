@@ -95,19 +95,6 @@ export const HERO_FLIP_ROTATE_MS = 5000 as const;
 export const HERO_FLIP_S = 0.55 as const;
 export const HERO_FLIP_EASE = [0.22, 1, 0.36, 1] as const;
 
-/**
- * Cursor spotlight over the hero: a broad, very soft radial glow that trails the
- * pointer like a flashlight sweeping the plate. Size lives here because the JS
- * halves it to center the disc under the cursor. Alpha stays low — the section sits
- * over a near-black video — and the disc is purely additive-looking light, so there
- * is no visible ring or edge.
- */
-export const HERO_SPOTLIGHT_SIZE_PX = 560 as const;
-export const HERO_SPOTLIGHT_BG =
-  'radial-gradient(circle, rgb(255 255 255 / 0.1) 0%, rgb(255 255 255 / 0.04) 38%, rgb(255 255 255 / 0) 66%)' as const;
-export const HERO_SPOTLIGHT_CLASS =
-  'rounded-full transition-opacity duration-700 will-change-transform' as const;
-
 /** Max degrees the cards rotate toward the cursor, and the spring that eases there. */
 export const HERO_TILT_MAX_DEG = 8 as const;
 export const HERO_TILT_SPRING = { damping: 18, stiffness: 140, mass: 0.4 } as const;
