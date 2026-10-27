@@ -14,3 +14,7 @@ export type HomepageMazeParams = {
   reduceMotion: boolean;
   cellPx: number;
 };
+
+export type HomepageCursorParams = {
+  cellPx: number;
+};

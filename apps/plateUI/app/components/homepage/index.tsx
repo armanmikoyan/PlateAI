@@ -14,6 +14,7 @@ import {
   HOMEPAGE_BG_SHELL_CLASS,
   HOMEPAGE_BG_VIGNETTE_CLASS,
 } from './constants';
+import { HomepageCursor } from './homepage-cursor';
 import { useHomepageMaze } from './hooks';
 
 export default function HomepageBackground() {
@@ -28,7 +29,7 @@ export default function HomepageBackground() {
     <div aria-hidden className={HOMEPAGE_BG_SHELL_CLASS}>
       <div className={HOMEPAGE_BG_GLOW_CLASS} />
 
-      <div className={HOMEPAGE_BG_GRID_WRAPPER_CLASS}>
+      <div className={HOMEPAGE_BG_GRID_WRAPPER_CLASS + ' pointer-events-none'}>
         <div className={SCAN_OVERLAY_GRID_MASK_CLASS}>
           <div
             className={SCAN_OVERLAY_GRID_CLASS}
@@ -42,12 +43,30 @@ export default function HomepageBackground() {
       </div>
 
       {reduceMotion ? null : (
-        <div className={SCAN_OVERLAY_GRID_MASK_CLASS}>
-          <canvas ref={canvasRef} className={HOMEPAGE_BG_MAZE_CANVAS_CLASS} />
+        <div className={SCAN_OVERLAY_GRID_MASK_CLASS + ' pointer-events-auto'}>
+          <canvas
+            ref={canvasRef}
+            className={HOMEPAGE_BG_MAZE_CANVAS_CLASS}
+            onPointerMove={(e) => {
+              const canvas = canvasRef.current;
+              if (!canvas) return;
+              const rect = canvas.getBoundingClientRect();
+              canvas.dataset.mx = String(e.clientX - rect.left);
+              canvas.dataset.my = String(e.clientY - rect.top);
+            }}
+            onPointerLeave={() => {
+              const canvas = canvasRef.current;
+              if (!canvas) return;
+              delete canvas.dataset.mx;
+              delete canvas.dataset.my;
+            }}
+          />
         </div>
       )}
 
       <div className={HOMEPAGE_BG_VIGNETTE_CLASS} />
+
+      {reduceMotion ? null : <HomepageCursor cellPx={cell} />}
     </div>
   );
 }

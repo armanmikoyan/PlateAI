@@ -14,6 +14,21 @@ export const HOMEPAGE_BG_MAZE_CANVAS_CLASS = 'absolute inset-0 size-full' as con
 export const HOMEPAGE_BG_VIGNETTE_CLASS =
   'absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_20%,rgb(0_0_0/0.75)_100%)]' as const;
 
+export const HOMEPAGE_CURSOR_GLOW_CLASS =
+  'pointer-events-none absolute size-60 rounded-full bg-[radial-gradient(circle,rgb(253_230_138/0.14),rgb(251_191_36/0.05)_45%,transparent_72%)] mix-blend-screen' as const;
+
+export const HOMEPAGE_CURSOR_CELL_CLASS =
+  'pointer-events-none absolute border border-accent/80 bg-accent/10 shadow-[0_0_18px_rgb(251_191_36/0.35),inset_0_0_10px_rgb(251_191_36/0.18)]' as const;
+
+export const HOMEPAGE_CURSOR_GLOW_SPRING = { stiffness: 520, damping: 38, mass: 0.5 } as const;
+
+export const HOMEPAGE_CURSOR_CELL_SPRING = { stiffness: 700, damping: 45, mass: 0.4 } as const;
+
+export const HOMEPAGE_CURSOR_OPACITY_SPRING = { stiffness: 320, damping: 32 } as const;
+
+/** Grid cell size for homepage background only. */
+export const HOMEPAGE_BG_GRID_SIZE_PX = 16 as const;
+
 /**
  * A circular front expands from the grid vertex at the viewport center, revealing every
  * square edge it passes. All directions grow at the same rate until the grid is covered.
