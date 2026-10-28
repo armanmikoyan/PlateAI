@@ -85,7 +85,6 @@ export function useHomepageMaze({ canvasRef, reduceMotion, cellPx }: HomepageMaz
     let elapsed = 0;
     let lastTime = 0;
     let running = true;
-    let idleTime = 0;
 
     const strokeSegment = (
       target: CanvasRenderingContext2D,
@@ -109,11 +108,6 @@ export function useHomepageMaze({ canvasRef, reduceMotion, cellPx }: HomepageMaz
       context.clearRect(0, 0, width, height);
       context.drawImage(trailCanvas, 0, 0, width, height);
 
-      const mx = canvas.dataset.mx ? Number(canvas.dataset.mx) : NaN;
-      const my = canvas.dataset.my ? Number(canvas.dataset.my) : NaN;
-      const hasHover = Number.isFinite(mx) && Number.isFinite(my);
-      const idleWave = Math.sin(idleTime * 0.7) * 0.1;
-
       for (const edge of edges) {
         if (edge.nearDistance >= radius || edge.farDistance <= radius) {
           continue;
@@ -121,51 +115,16 @@ export function useHomepageMaze({ canvasRef, reduceMotion, cellPx }: HomepageMaz
 
         const span = edge.farDistance - edge.nearDistance;
         const fraction = span > 0 ? (radius - edge.nearDistance) / span : 1;
-        const nearX = edge.nearX + (edge.farX - edge.nearX) * fraction;
-        const nearY = edge.nearY + (edge.farY - edge.nearY) * fraction;
 
-        const dx = edge.farX - edge.nearX;
-        const dy = edge.farY - edge.nearY;
-        const len = Math.hypot(dx, dy);
-        const nx = len > 0 ? -dy / len : 0;
-        const ny = len > 0 ? dx / len : 0;
-        const midX = (edge.nearX + edge.farX) / 2;
-        const midY = (edge.nearY + edge.farY) / 2;
-
-        let dip = idleWave * cellPx * 0.12;
-        if (hasHover) {
-          const distToMid = Math.hypot(midX - mx, midY - my);
-          if (distToMid < cellPx * 4) {
-            const t = Math.pow(1 - distToMid / (cellPx * 4), 1.5);
-            dip = dip + t * cellPx * 0.22;
-          }
-        }
-
-        if (Math.abs(dip) < 0.4) {
-          strokeSegment(
-            context,
-            edge.nearX,
-            edge.nearY,
-            nearX,
-            nearY,
-            HOMEPAGE_BG_MAZE.ACTIVE_COLOR,
-            'round',
-          );
-          continue;
-        }
-
-        const bendX = midX + nx * dip;
-        const bendY = midY + ny * dip;
-        const bx = nearX + (bendX - nearX) * 0.6;
-        const by = nearY + (bendY - nearY) * 0.6;
-
-        context.strokeStyle = `rgba(253, 230, 138, ${0.45 + Math.min(0.32, Math.abs(dip) / (cellPx * 0.28))})`;
-        context.lineWidth = HOMEPAGE_BG_MAZE.LINE_WIDTH_PX + Math.min(0.5, Math.abs(dip) / (cellPx * 0.28));
-        context.lineCap = 'round';
-        context.beginPath();
-        context.moveTo(edge.nearX, edge.nearY);
-        context.quadraticCurveTo(bx, by, nearX, nearY);
-        context.stroke();
+        strokeSegment(
+          context,
+          edge.nearX,
+          edge.nearY,
+          edge.nearX + (edge.farX - edge.nearX) * fraction,
+          edge.nearY + (edge.farY - edge.nearY) * fraction,
+          HOMEPAGE_BG_MAZE.ACTIVE_COLOR,
+          'round',
+        );
       }
     };
 
@@ -178,7 +137,6 @@ export function useHomepageMaze({ canvasRef, reduceMotion, cellPx }: HomepageMaz
         lastTime === 0 ? 0 : Math.min((time - lastTime) / 1000, HOMEPAGE_BG_MAZE.MAX_FRAME_STEP_S);
       lastTime = time;
       elapsed += delta;
-      idleTime += delta;
 
       const progress = maxDistance === 0 ? 1 : Math.min(elapsed / HOMEPAGE_BG_MAZE.SPREAD_DURATION_S, 1);
       const radius = progress * maxDistance;
@@ -203,7 +161,13 @@ export function useHomepageMaze({ canvasRef, reduceMotion, cellPx }: HomepageMaz
       }
 
       drawFrame(radius);
-      animationFrame = requestAnimationFrame(loop);
+
+      if (radius < maxDistance) {
+        animationFrame = requestAnimationFrame(loop);
+        return;
+      }
+
+      running = false;
     };
 
     const reset = (): void => {
@@ -226,10 +190,30 @@ export function useHomepageMaze({ canvasRef, reduceMotion, cellPx }: HomepageMaz
       edges = createEdges(width, height, cellPx);
       maxDistance = edges[edges.length - 1]?.farDistance ?? 0;
       completedIndex = 0;
-      elapsed = 0;
       lastTime = 0;
       running = true;
-      idleTime = 0;
+
+      const progress = maxDistance === 0 ? 1 : Math.min(elapsed / HOMEPAGE_BG_MAZE.SPREAD_DURATION_S, 1);
+      const radius = progress * maxDistance;
+
+      while (completedIndex < edges.length) {
+        const edge = edges[completedIndex];
+
+        if (!edge || edge.farDistance > radius) {
+          break;
+        }
+
+        strokeSegment(
+          trailContext,
+          edge.nearX,
+          edge.nearY,
+          edge.farX,
+          edge.farY,
+          HOMEPAGE_BG_MAZE.TRAIL_COLOR,
+          'butt',
+        );
+        completedIndex += 1;
+      }
 
       cancelAnimationFrame(animationFrame);
       animationFrame = requestAnimationFrame(loop);

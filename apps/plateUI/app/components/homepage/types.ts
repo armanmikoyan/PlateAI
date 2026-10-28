@@ -18,3 +18,9 @@ export type HomepageMazeParams = {
 export type HomepageCursorParams = {
   cellPx: number;
 };
+
+export type HomepageClickSquare = {
+  id: number;
+  x: number;
+  y: number;
+};

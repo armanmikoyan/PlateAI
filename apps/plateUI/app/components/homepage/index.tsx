@@ -43,24 +43,8 @@ export default function HomepageBackground() {
       </div>
 
       {reduceMotion ? null : (
-        <div className={SCAN_OVERLAY_GRID_MASK_CLASS + ' pointer-events-auto'}>
-          <canvas
-            ref={canvasRef}
-            className={HOMEPAGE_BG_MAZE_CANVAS_CLASS}
-            onPointerMove={(e) => {
-              const canvas = canvasRef.current;
-              if (!canvas) return;
-              const rect = canvas.getBoundingClientRect();
-              canvas.dataset.mx = String(e.clientX - rect.left);
-              canvas.dataset.my = String(e.clientY - rect.top);
-            }}
-            onPointerLeave={() => {
-              const canvas = canvasRef.current;
-              if (!canvas) return;
-              delete canvas.dataset.mx;
-              delete canvas.dataset.my;
-            }}
-          />
+        <div className={SCAN_OVERLAY_GRID_MASK_CLASS}>
+          <canvas ref={canvasRef} className={HOMEPAGE_BG_MAZE_CANVAS_CLASS} />
         </div>
       )}
 
